@@ -1,0 +1,13 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "SPKU_API_URL": "https://udara.jakarta.go.id/api/lokasi_stasiun_udara",
+    "OPEN_METEO_ARCHIVE_URL": "https://archive-api.open-meteo.com/v1/archive",
+    "OPEN_METEO_FORECAST_URL": "https://api.open-meteo.com/v1/forecast",
+    "BLOB_CONTAINER_RAW": "raw",
+    "BLOB_CONTAINER_PROCESSED": "processed",
+    "DATA_DIR": ""
+  }
+}

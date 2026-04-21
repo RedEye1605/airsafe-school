@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="disable">
+
+<head>
+
+    <meta charset="utf-8" />
+    <title>Beranda | Kualitas Udara di Wilayah  Jakarta</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Dinas Lingkungan Hidup Jakarta" name="description" />
+    <meta content="Themesbrand" name="author" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="/logo-dinas.ico">
+
+    
+    <link href="/lib/leaflet/leaflet.css" rel="stylesheet" />
+
+
+    <!--Swiper slider css-->
+    <link href="/dist/assets/libs/swiper/swiper-bundle.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Layout config Js -->
+    <script src="/dist/assets/js/layout.js"></script>
+    <!-- Bootstrap Css -->
+    <link href="/dist/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    
+    <link rel="stylesheet" href="/css/addon.css" />
+
+
+    <!-- Icons Css -->
+    <link href="/dist/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <!-- App Css-->
+    <link href="/dist/assets/css/app.min.css" rel="stylesheet" type="text/css" />
+    <!-- custom Css-->
+    <link href="/dist/assets/css/custom.min.css" rel="stylesheet" type="text/css" />
+    <link href="/css/landing.css" rel="stylesheet" />
+
+</head>
+
+<body data-bs-spy="scroll" data-bs-target="#navbar-example">
+
+    <!-- Begin page -->
+    <div class="layout-wrapper landing">
+        <nav class="navbar navbar-expand-lg navbar-landing fixed-top" id="navbar">
+            <div class="container">
+                <a class="navbar-brand" href="/">
+                    <img src="/images/logo/logo_udara.png" class="card-logo card-logo-dark" alt="Udara Jakarta" height="28" />
+                    <img src="/images/logo/logo_udara.png" class="card-logo card-logo-light" alt="Udara Jakarta" height="28" />
+                </a>
+                <button class="navbar-toggler py-0 fs-20 text-body" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="mdi mdi-menu"></i>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mx-auto mt-2 mt-lg-0" id="navbar-example">
+                        <li class="nav-item">
+                            <a class='nav-link active' href="/">Beranda</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class='nav-link' href="/#berita">Berita</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class='nav-link ' href="/tentang">Tentang Ispu</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class='nav-link ' href="/lokasi_stasiun">Lokasi SPKU</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class='nav-link ' href="/regulasi">Regulasi </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class='nav-link ' href="/faq">FAQ </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class='nav-link ' href="/kontak">Kontak</a>
+                        </li>
+                    </ul>
+
+                        <div class="">
+                            <a href="/login" class="btn btn-primary">Login</a>
+                        </div>
+                   
+                </div>
+
+            </div>
+        </nav>
+        <!-- end navbar -->
+        <div class="vertical-overlay" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent.show"></div>
+        
+
+
+<!-- start hero section -->
+<section class="section pb-0" id="beranda">
+    <div class="bg-overlay bg-overlay-pattern h-100"></div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-12 col-sm-12">
+                <div class="text-center mt-lg-1 pt-3">
+                    <h1 class="mb-1 ff-secondary fw-semibold lh-base">Kualitas Udara<span style="color : #00afef !important"> Jakarta </span></h1>
+                    <p class="lead lh-base">Cek kualitas udara di wilayah Jakarta dengan ISPU</p>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-lg-6 col-sm-6">
+                        <div class="mt-1 mt-sm-1 pt-sm-1 mb-sm-n5 demo-carousel">
+                            <div class="carousel slide carousel-fade" data-bs-ride="carousel">
+                                <div class="carousel-inner shadow-lg bg-white rounded-5">
+                                    <div class="carousel-item active" data-bs-interval="2000">
+                                        <div id="map" class="leaflet-map w-100" style="height : 670px !important;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="text-center mt-lg-1 pt-3">
+                            <h4 class="mb-1 ff-secondary fw-semibold lh-base">Kualitas Udara Terbaik</h4>
+                            <p class="lead lh-base"> Senin, 20 April 2026 06.30.00</p>
+                        </div>
+                        <div class="card card-success rounded-5 mb-2">
+                            <div class="card-body text-center">
+
+                                <div class="row justify-content-center mb-3">
+                                    <div class="col-lg-4">
+                                        <p class="card-text mt-3 mb-2 fw-bold" style="font-size: 2.53125rem !important;">6</p>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <img style="height : 90px !important;" src="/images/icon/Baik.png" />
+                                    </div>
+                                </div>
+
+                                <p class="card-text fw-bold" style="font-size: 1.53125rem !important;">Baik</p>
+                                <p class="card-text">Parameter : PM25 </p>
+                                <p class="card-text">Konsentrasi : 2.01 &micro;g/m<sup>3</sup> </p>
+                                <p class="card-text"><span class="fw-bold">Lokasi :</span> DKI08 PPOP Ragunan</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-2 mt-1 mt-sm-1 pt-sm-1">
+                            <div class="flex-shrink-0 me-1">
+                                <i class="ri-question-line fs-24 align-middle text-success me-1"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h5 class="mb-1 fw-semibold"> Rekomendasi Aktifitas:</h5>
+                            </div>
+                        </div>
+                        <div class="card rounded-5 mb-2">
+                            <div class="card-body text-center">
+                                <p class='card-text fw-bold'>Setiap orang: </p> <p> Sangat baik melakukan kegiatan di luar ruangan</p><p class='card-text fw-bold'> Kelompok sensitif: </p> <p> Sangat baik melakukan kegiatan di luar ruangan</p>
+                            </div>
+                        </div>
+                        <!--end accordion-->
+
+                    </div>
+                    <div class="col-lg-3">
+
+                        <div class="text-center mt-lg-1 pt-3">
+                            <h4 class="mb-1 ff-secondary fw-semibold lh-base">Kualitas Udara Terburuk</h4>
+                            <p class="lead lh-base">Senin, 20 April 2026 08.00.00</p>
+                        </div>
+                        <div class="card card-secondary rounded-5 mb-2">
+                            <div class="card-body text-center">
+
+                                <div class="row justify-content-center mb-3">
+                                    <div class="col-lg-4">
+                                        <p class="card-text mt-3 mb-2 fw-bold" style="font-size: 2.53125rem !important;">85</p>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <img style="height : 90px !important;" src="/images/icon/sedang2.png" />
+                                    </div>
+                                </div>
+
+                                <p class="card-text fw-bold" style="font-size: 1.53125rem !important;">Sedang</p>
+                                <p class="card-text">Parameter : PM25 </p>
+                                <p class="card-text">Konsentrasi :  &micro;g/m<sup>3</sup> </p>
+
+                                <p class="card-text"><span class="fw-bold">Lokasi :</span> DKI04 Lubang Buaya</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-2 mt-1 mt-sm-1 pt-sm-1">
+                            <div class="flex-shrink-0 me-1">
+                                <i class="ri-question-line fs-24 align-middle text-success me-1"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h5 class="mb-1 fw-semibold"> Rekomendasi Aktifitas:</h5>
+                            </div>
+                        </div>
+                        <div class="card rounded-5 mb-2">
+                            <div class="card-body text-center">
+                                <p class='card-text fw-bold'>Setiap orang: </p> <p> Masih dapat beraktivitas di luar.</p> <p class='card-text fw-bold'> Kelompok sensitif: </p> <p> Kurangi aktivitas fisik yang terlalu lama atau berat.</p><p>Dianjurkan Menggunakan Masker</p>
+                            </div>
+                        </div>
+                        <!--end accordion-->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- end container -->
+
+</section>
+<!-- end hero section -->
+<section class="section my-3" id="berita">
+    <div class="container">
+        <div class="justify-content-center">
+            <div class="row">
+                <div class="col-lg-3 mb-3">
+                    <h1 class="mt-4 ff-secondary fw-semibold lh-base text-center mb-3">Kualitas Udara</h1>
+                    <div class="card plan-box mb-0 rounded-4">
+                        <div class="card-body mb-5 h-100">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    <h5 class="mb-3 mt-2 fw-semibold">Peringkat Terbawah di 10 Lokasi</h5>
+                                </div>
+                            </div>
+                            <div>
+                                <ul class="list-unstyled text-muted vstack gap-3 ff-secondary mt-1">
+                                        <li>
+                                            <a href="/detail_lokasi/?id=42rFMJBqtAQe9hV&#x2B;9ma0ZVsA&#x2B;aZ/ai0UKI1R0wrILhbiVB5BDTuQHdVxDkKeclucqCJg9PaufLd5Ud9pPO2G7TK2AHtrsR05dTPoc4skV2Y=">
+                                                <div class="d-flex row">
+                                                    <div class="col-lg-10">
+                                                        <div class="flex-grow-1">
+                                                            DKI04 Lubang Buaya
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        <div class="flex-shrink-0 text-success me-5">
+                                                            <div class="marker-circle rounded-circle d-block d-flex justify-content-center align-items-center text-white bulat" style="background-color:#10CEF9;">85</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </li>                                        
+                                        <li>
+                                            <a href="/detail_lokasi/?id=q/Ncym1cz9FoO0Hyk1E&#x2B;LldyvRfL8qIhaOblpcursScxXqZgKKO7bg5EKRr5hrPXqYGcG77QXMuVIFnxKxtwnsBFkYhy/jlKQZXaxG91ROU=">
+                                                <div class="d-flex row">
+                                                    <div class="col-lg-10">
+                                                        <div class="flex-grow-1">
+                                                            LCS-03 Hutan Kota Srengseng
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        <div class="flex-shrink-0 text-success me-5">
+                                                            <div class="marker-circle rounded-circle d-block d-flex justify-content-center align-items-center text-white bulat" style="background-color:#10CEF9;">79</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </li>                                        
+                                        <li>
+                                            <a href="/detail_lokasi/?id=q/2USb0UtorXGSad2RsM7UutjIPIN4THV8LlN5l&#x2B;NMiTlNJOV/Xvhg1PhyKFiMWSrVUla2qZawa4HQHLVGIWkEbJQzfty1oDhJUgv8ndaYQ=">
+                                                <div class="d-flex row">
+                                                    <div class="col-lg-10">
+                                                        <div class="flex-grow-1">
+                                                            DKI19 Pondok Rangon
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        <div class="flex-shrink-0 text-success me-5">
+                                                            <div class="marker-circle rounded-circle d-block d-flex justify-content-center align-items-center text-white bulat" style="background-color:#10CEF9;">76</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </li>                                        
+                                        <li>
+                                            <a href="/detail_lokasi/?id=Ui&#x2B;cU/HWQjZ504xiYTtenMB/iZRBJgDByiaVLmOEtUwJ3Xormo8PXIVP9hbs9HRq5yK4s4t9gExTrsPjn2VtM5yjKnbvPlMPQFEQmAy/XO4=">
+                                                <div class="d-flex row">
+                                                    <div class="col-lg-10">
+                                                        <div class="flex-grow-1">
+                                                            DKI06 RPTRA Manggala Bisma, Papanggo
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        <div class="flex-shrink-0 text-success me-5">
+                                                            <div class="marker-circle rounded-circle d-block d-flex justify-content-center align-items-center text-white bulat" style="background-color:#10CEF9;">73</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </li>                                        
+                                        <li>
+                                            <a href="/detail_lokasi/?id=5KgvZCbMowDCOAQNPV47AKYGAy8wK0sddkFEehmIlzgxtkyUSMr2H8LkIIjeGnKqIK44/TsgF&#x2B;PsAhrH7BwGp1GWeMA&#x2B;DtCzu2/eFPv6//c=">
+                                                <div class="d-flex row">
+                                                    <div class="col-lg-10">
+                                                        <div class="flex-grow-1">
+                                                            DKI01 Bundaran HI
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        <div class="flex-shrink-0 text-success me-5">
+                                                            <div class="marker-circle rounded-circle d-block d-flex justify-content-center align-items-center text-white bulat" style="background-color:#10CEF9;">72</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </li>                                        
+                                        <li>
+                                            <a href="/detail_lokasi/?id=lBjNJYcj1RtBOhhgK2HZQ1GlKB61HsK7KFkHAVuvFnozCIVeVAZVwuAv7alsmn&#x2B;KqOfWQBkGnWVJgrB2WmqspQi5ssE5K7ZRv7a7maM74aE=">
+                                                <div class="d-flex row">
+                                                    <div class="col-lg-10">
+                                                        <div class="flex-grow-1">
+                                                            DKI18 Lebak Bulus
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        <div class="flex-shrink-0 text-success me-5">
+                                                            <div class="marker-circle rounded-circle d-block d-flex justify-content-center align-items-center text-white bulat" style="background-color:#10CEF9;">69</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </li>                                        
+                                        <li>
+                                            <a href="/detail_lokasi/?id=9yrQL/sr4aNd6FxA5NrgCCtCrJSg2Rw1J2H8QNoJKrRl4p1x9AIhHB4Jy3SJWnZ3KzJvOeaB5xiLwKi2dBooXAb9/IV&#x2B;P1lSdlNwDLBg53I=">
+                                                <div class="d-flex row">
+                                                    <div class="col-lg-10">
+                                                        <div class="flex-grow-1">
+                                                            DKI05 Kebun Jeruk
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        <div class="flex-shrink-0 text-success me-5">
+                                                            <div class="marker-circle rounded-circle d-block d-flex justify-content-center align-items-center text-white bulat" style="background-color:#10CEF9;">69</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </li>                                        
+                                        <li>
+                                            <a href="/detail_lokasi/?id=LnWH7mX/wsvP2pVI/AG3VNhVMJeXfxZna2eoOvPTzI1j4fgODdYAG6bPyGwt/8DlNv/EE1x44k72eZiqhSVSWYcAmOBr4zhrScqBvjRvCFA=">
+                                                <div class="d-flex row">
+                                                    <div class="col-lg-10">
+                                                        <div class="flex-grow-1">
+                                                            DKI02 Kelapa Gading
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        <div class="flex-shrink-0 text-success me-5">
+                                                            <div class="marker-circle rounded-circle d-block d-flex justify-content-center align-items-center text-white bulat" style="background-color:#10CEF9;">67</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </li>                                        
+                                        <li>
+                                            <a href="/detail_lokasi/?id=twoZGTQgzbrrDq&#x2B;bAieCtOx9KgpC1DNFbKb2oeCPPg5jSziNM0onXJrJrikRLRtSdFmt3zFF5gCPNd2RmxsP6YaqTo0/Lq6cWitcteNduwk=">
+                                                <div class="d-flex row">
+                                                    <div class="col-lg-10">
+                                                        <div class="flex-grow-1">
+                                                            LCS-06 Taman Telur
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        <div class="flex-shrink-0 text-success me-5">
+                                                            <div class="marker-circle rounded-circle d-block d-flex justify-content-center align-items-center text-white bulat" style="background-color:#10CEF9;">66</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </li>                                        
+                                        <li>
+                                            <a href="/detail_lokasi/?id=uSTcrG/3EPKZ2z9BpnFcdTgJQJDKVD6&#x2B;s1/hDFGH49P2sPDN6FGhw0BPXV1CCGfupVb883e31xe4D4Z5BhPnyfPulN6EegO9LTj9gI4myrU=">
+                                                <div class="d-flex row">
+                                                    <div class="col-lg-10">
+                                                        <div class="flex-grow-1">
+                                                            DKI20 Rusunawa Pesakih
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        <div class="flex-shrink-0 text-success me-5">
+                                                            <div class="marker-circle rounded-circle d-block d-flex justify-content-center align-items-center text-white bulat" style="background-color:#10CEF9;">61</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </li>                                        
+                                </ul>
+                                <div class="mt-4">
+                                    <a href="/lokasi_stasiun" class="btn btn-soft-success w-100">
+                                        Klik Lokasi lainnya
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 rounded-4 mb-3" style="background-color : #d2ebff !important;">
+                    <h1 class="mt-4 ff-secondary fw-semibold lh-base text-center mb-3">Berita</h1>
+                    <div class="row" id="post-container"></div>
+                </div>
+                <div class="col-lg-3 mb-3">
+                    <a href="/peringatan_dini_bmkg">
+                        <div class="card plan-box mb-0 rounded-4 text-center h-100 text-dark">
+                            <div class="card-body mb-4 ">
+                                <img src="/images/bmkg/logobmkg.png" height="110" class="mb-5" />
+                                <img src="/images/bmkg/chart.png" height="220" class="mb-5" />
+                                <p style="font-size: 1.11125rem !important; margin-bottom: 0rem  !important;" class="fw-semibold">
+                                    Peringatan Dini
+                                </p>
+                                <p style="font-size: 1.11125rem !important;" class=" fw-semibold mb-5">
+                                    Kualitas Udara Ekstrem
+                                </p>
+                                <p style="font-size: 0.83125rem !important; margin-bottom: 0.3rem  !important;">
+                                    Klik untuk mengecek Informasi
+                                </p>
+                                <p style="font-size: 0.83125rem !important; margin-bottom: 0.3rem  !important;">
+                                   Peringatan Dini (Prediksi)
+                                </p>
+                                <p style="font-size: 0.83125rem !important; margin-bottom: 0.3rem  !important;">Kualitas Udara Ekstrem untuk Wilayah Jakarta</p>
+                                <p style="font-size: 0.83125rem !important;">
+                                    sampai 3 (tiga) hari kedepan
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- end container -->
+</section>
+
+
+
+        <!-- Start footer -->
+        <footer class="custom-footer py-5 position-relative text-white bg-primary" style="padding-top: 2rem !important;" id="kontak">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 mt-2 mb-3">
+                        <div>
+                            <div class="mb-2">
+                               <span> Dinas Lingkungan Hidup DKI Jakarta</span>
+                            </div>
+                            <div class="mt-4 fs-13 mb-3">
+                                <p>
+                                    Jl. Mandala V No.67, RT.1/RW.2 Cililitan, Kramat Jati, Jakarta Timur Provinsi DKI Jakarta
+                                </p>
+                                <p class="ff-secondary">Phone: (021) 8092744</p>
+                                <p class="ff-secondary">Email: dinaslh@jakarta.go.id</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 ms-lg-auto mb-3">
+                        <div class="mt-2 fs-13 d-flex">
+                            <div class="py-2 px-3 mb-4 me-3 w-100" style="background-color: #6478b75c">
+                                <p class="mt-2 font-weight-bold">Realtime Visitor</p>
+                                <h4 id="real" class="text-warning font-weight-bold">0</h4>
+                            </div>
+                            <div class="py-2 px-3 mb-4 me-3 w-100" style="background-color: #6478b75c">
+                                <p class="mt-2 font-weight-bold">Daily Visitor</p>
+                                <h4 id="dailyVisitors" class="text-warning font-weight-bold">0</h4>
+                            </div>
+                            <div class="py-3 px-3 mb-4 w-100" style="background-color: #6478b75c">
+                                <p class="font-weight-bold">Monthly Visitor</p>
+                                <h4 id="monthlyVisitors" class="text-warning font-weight-bold">0</h4>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row text-center text-sm-start align-items-center mt-1">
+                    <div class="col-sm-6">
+                        <div>
+                            <p class="copy-rights mb-0">
+                                <script>document.write(new Date().getFullYear())</script> © Copyright  - DLH Jakarta
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end mt-3 mt-sm-0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- end footer -->
+        <!--start back-to-top-->
+        <button onclick="topFunction()" class="btn btn-danger btn-icon landing-back-top" id="back-to-top">
+            <i class="ri-arrow-up-line"></i>
+        </button>
+        <!--end back-to-top-->
+
+    </div>
+    <!-- end layout wrapper -->
+    <!-- JAVASCRIPT -->
+    <script src="/lib/jquery/dist/jquery.min.js"></script>
+    <script src="/js/site.js?v=BxFAw9RUJ1E4NycpKEjCNDeoSvr4RPHixdBq5wDnkeY"></script>
+    <script src="/dist/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/dist/assets/libs/simplebar/simplebar.min.js"></script>
+    <script src="/dist/assets/libs/node-waves/waves.min.js"></script>
+    <script src="/dist/assets/libs/feather-icons/feather.min.js"></script>
+    <script src="/dist/assets/js/pages/plugins/lord-icon-2.1.0.js"></script>
+    <script src="/dist/assets/js/plugins.js"></script>
+
+    <!--Swiper slider js-->
+    <script src="/dist/assets/libs/swiper/swiper-bundle.min.js"></script>
+
+    <!-- landing init -->
+    <script src="/dist/assets/js/pages/landing.init.js"></script>
+    <script defer src="https://analytics.dinaslhdki.id/script.js" data-website-id="b295fce2-e748-4314-9654-4d801c189f9b"></script>
+
+    <script src="/pages/web/index_v3.js"></script>
+    
+    <!-- leaflet plugin -->
+    <script src="/lib/leaflet/leaflet.js"></script>
+    <script src="/lib/leaflet/leaflet.ajax.js"></script>
+
+
+
+    <!-- App js -->
+    
+    <script src="/pages/web/index_v3.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+        const map = L.map('map', {
+            scrollWheelZoom: false,
+        })
+        .setView([-6.169451590260942, 106.84327788839438], 10.5)
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: ' &ensp;'
+        }).addTo(map);
+        [
+            "jakut",
+            "jaksel",
+            "jakpus",
+            "jaktim",
+            "jakbar",
+            "kep1000",
+        ].map((city) => {
+            $.getJSON(`/StaticFiles/geojson/id-jk-${city}.geojson`, (data) => {
+                L.geoJSON(data, {
+                    color: '#4f9bd9',
+                    fillColor: '#fff',
+                    fillOpacity: 0.1,
+                    radius: 500
+                }).addTo(map);
+            })
+        })
+
+        let markers = [], options
+
+            options = { icon: L.divIcon({ iconSize: 'auto', html: '<a href="/detail_lokasi/?id=q/2USb0UtorXGSad2RsM7UutjIPIN4THV8LlN5l&#x2B;NMiTlNJOV/Xvhg1PhyKFiMWSrVUla2qZawa4HQHLVGIWkEbJQzfty1oDhJUgv8ndaYQ=" data-toggle="tooltip" data-placement="top" title="DKI19 Pondok Rangon - ( PM25 )"><div style = "width: 5rem; margin-left:-2.4rem; margin-right:-2.4rem; wrap:wrap;margin-top:-0.2rem; background:transparent; gap:0.5rem" class="d-flex flex-column align-items-center justify-content-center"><div title = "" class="marker-circle rounded-circle d-block d-flex justify-content-center align-items-center" style="background-color:#10CEF9; color: #fff !important; transition: 0.5s;width:2rem;height:2rem; border-width:0.1rem; border-style:solid; border-color:rgba(255,255,255,0.5)">76</div></div></a>' }) };
+            markers[100] = L.marker([-6.3415380, 106.9179900], options).addTo(map)
+            options = { icon: L.divIcon({ iconSize: 'auto', html: '<a href="/detail_lokasi/?id=QRjNX2e8mcdNfzKa2wxC/vOfvaiUIjlD7NgQVoVnvrYBlIb4wmoCGs6iq31mFQJIoOW1eo9PvwJrCJSBEmOnA9scpHgAx4&#x2B;IgQ2eNgRa8bY=" data-toggle="tooltip" data-placement="top" title="DKI16 Ancol - ( PM25 )"><div style = "width: 5rem; margin-left:-2.4rem; margin-right:-2.4rem; wrap:wrap;margin-top:-0.2rem; background:transparent; gap:0.5rem" class="d-flex flex-column align-items-center justify-content-center"><div title = "" class="marker-circle rounded-circle d-block d-flex justify-content-center align-items-center" style="background-color:#10CEF9; color: #fff !important; transition: 0.5s;width:2rem;height:2rem; border-width:0.1rem; border-style:solid; border-color:rgba(255,255,255,0.5)">55</div></div></a>' }) };
+            markers[100] = L.marker([-6.12244299, 106.8376502], options).addTo(map)
+            options = { icon: L.divIcon({ iconSize: 'auto', html: '<a href="/detail_lokasi/?id=uSTcrG/3EPKZ2z9BpnFcdTgJQJDKVD6&#x2B;s1/hDFGH49P2sPDN6FGhw0BPXV1CCGfupVb883e31xe4D4Z5BhPnyfPulN6EegO9LTj9gI4myrU=" data-toggle="tooltip" data-placement="top" title="DKI20 Rusunawa Pesakih - ( PM25 )"><div style = "width: 5rem; margin-left:-2.4rem; margin-right:-2.4rem; wrap:wrap;margin-top:-0.2rem; background:transparent; gap:0.5rem" class="d-flex flex-column align-items-center justify-content-center"><div title = "" class="marker-circle rounded-circle d-block d-flex justify-content-center align-items-center" style="background-color:#10CEF9; color: #fff !important; transition: 0.5s;width:2rem;height:2rem; border-width:0.1rem; border-style:solid; border-color:rgba(255,255,255,0.5)">61</div></div></a>' }) };
+            markers[100] = L.marker([-6.1619740, 106.7167690], options).addTo(map)
+            options = { icon: L.divIcon({ iconSize: 'auto', html: '<a href="/detail_lokasi/?id=q/Ncym1cz9FoO0Hyk1E&#x2B;LldyvRfL8qIhaOblpcursScxXqZgKKO7bg5EKRr5hrPXqYGcG77QXMuVIFnxKxtwnsBFkYhy/jlKQZXaxG91ROU=" data-toggle="tooltip" data-placement="top" title="LCS-03 Hutan Kota Srengseng - ( PM25 )"><div style = "width: 5rem; margin-left:-2.4rem; margin-right:-2.4rem; wrap:wrap;margin-top:-0.2rem; background:transparent; gap:0.5rem" class="d-flex flex-column align-items-center justify-content-center"><div title = "" class="marker-circle rounded-circle d-block d-flex justify-content-center align-items-center" style="background-color:#10CEF9; color: #fff !important; transition: 0.5s;width:2rem;height:2rem; border-width:0.1rem; border-style:solid; border-color:rgba(255,255,255,0.5)">79</div></div></a>' }) };
+            markers[100] = L.marker([-6.21177, 106.76376], options).addTo(map)
+            options = { icon: L.divIcon({ iconSize: 'auto', html: '<a href="/detail_lokasi/?id=lBjNJYcj1RtBOhhgK2HZQ1GlKB61HsK7KFkHAVuvFnozCIVeVAZVwuAv7alsmn&#x2B;KqOfWQBkGnWVJgrB2WmqspQi5ssE5K7ZRv7a7maM74aE=" data-toggle="tooltip" data-placement="top" title="DKI18 Lebak Bulus - ( PM25 )"><div style = "width: 5rem; margin-left:-2.4rem; margin-right:-2.4rem; wrap:wrap;margin-top:-0.2rem; background:transparent; gap:0.5rem" class="d-flex flex-column align-items-center justify-content-center"><div title = "" class="marker-circle rounded-circle d-block d-flex justify-content-center align-items-center" style="background-color:#10CEF9; color: #fff !important; transition: 0.5s;width:2rem;height:2rem; border-width:0.1rem; border-style:solid; border-color:rgba(255,255,255,0.5)">69</div></div></a>' }) };
+            markers[100] = L.marker([-6.3010710, 106.7892060], options).addTo(map)
+            options = { icon: L.divIcon({ iconSize: 'auto', html: '<a href="/detail_lokasi/?id=twoZGTQgzbrrDq&#x2B;bAieCtOx9KgpC1DNFbKb2oeCPPg5jSziNM0onXJrJrikRLRtSdFmt3zFF5gCPNd2RmxsP6YaqTo0/Lq6cWitcteNduwk=" data-toggle="tooltip" data-placement="top" title="LCS-06 Taman Telur - ( PM25 )"><div style = "width: 5rem; margin-left:-2.4rem; margin-right:-2.4rem; wrap:wrap;margin-top:-0.2rem; background:transparent; gap:0.5rem" class="d-flex flex-column align-items-center justify-content-center"><div title = "" class="marker-circle rounded-circle d-block d-flex justify-content-center align-items-center" style="background-color:#10CEF9; color: #fff !important; transition: 0.5s;width:2rem;height:2rem; border-width:0.1rem; border-style:solid; border-color:rgba(255,255,255,0.5)">66</div></div></a>' }) };
+            markers[100] = L.marker([-6.250400, 106.815230], options).addTo(map)
+            options = { icon: L.divIcon({ iconSize: 'auto', html: '<a href="/detail_lokasi/?id=Ui&#x2B;cU/HWQjZ504xiYTtenMB/iZRBJgDByiaVLmOEtUwJ3Xormo8PXIVP9hbs9HRq5yK4s4t9gExTrsPjn2VtM5yjKnbvPlMPQFEQmAy/XO4=" data-toggle="tooltip" data-placement="top" title="DKI06 RPTRA Manggala Bisma, Papanggo - ( PM25 )"><div style = "width: 5rem; margin-left:-2.4rem; margin-right:-2.4rem; wrap:wrap;margin-top:-0.2rem; background:transparent; gap:0.5rem" class="d-flex flex-column align-items-center justify-content-center"><div title = "" class="marker-circle rounded-circle d-block d-flex justify-content-center align-items-center" style="background-color:#10CEF9; color: #fff !important; transition: 0.5s;width:2rem;height:2rem; border-width:0.1rem; border-style:solid; border-color:rgba(255,255,255,0.5)">73</div></div></a>' }) };
+            markers[100] = L.marker([-6.127813057843073, 106.86804428721646], options).addTo(map)
+            options = { icon: L.divIcon({ iconSize: 'auto', html: '<a href="/detail_lokasi/?id=9yrQL/sr4aNd6FxA5NrgCCtCrJSg2Rw1J2H8QNoJKrRl4p1x9AIhHB4Jy3SJWnZ3KzJvOeaB5xiLwKi2dBooXAb9/IV&#x2B;P1lSdlNwDLBg53I=" data-toggle="tooltip" data-placement="top" title="DKI05 Kebun Jeruk - ( PM25 )"><div style = "width: 5rem; margin-left:-2.4rem; margin-right:-2.4rem; wrap:wrap;margin-top:-0.2rem; background:transparent; gap:0.5rem" class="d-flex flex-column align-items-center justify-content-center"><div title = "" class="marker-circle rounded-circle d-block d-flex justify-content-center align-items-center" style="background-color:#10CEF9; color: #fff !important; transition: 0.5s;width:2rem;height:2rem; border-width:0.1rem; border-style:solid; border-color:rgba(255,255,255,0.5)">69</div></div></a>' }) };
+            markers[100] = L.marker([-6.207255, 106.75256], options).addTo(map)
+            options = { icon: L.divIcon({ iconSize: 'auto', html: '<a href="/detail_lokasi/?id=g&#x2B;6Fnd8/6rvRIzqutijRV&#x2B;Df5XvWoymQqLubmm5&#x2B;&#x2B;Rn/o1uSlb0ZEtZ9TiSyQA3Pfr9h88qKZZGclRxbGCTetNpA8EBj9OzVwC1lbSN3Fk0=" data-toggle="tooltip" data-placement="top" title="DKI03 Jagakarsa - ( PM25 )"><div style = "width: 5rem; margin-left:-2.4rem; margin-right:-2.4rem; wrap:wrap;margin-top:-0.2rem; background:transparent; gap:0.5rem" class="d-flex flex-column align-items-center justify-content-center"><div title = "" class="marker-circle rounded-circle d-block d-flex justify-content-center align-items-center" style="background-color:#10CEF9; color: #fff !important; transition: 0.5s;width:2rem;height:2rem; border-width:0.1rem; border-style:solid; border-color:rgba(255,255,255,0.5)">56</div></div></a>' }) };
+            markers[100] = L.marker([-6.336216, 106.818082], options).addTo(map)
+            options = { icon: L.divIcon({ iconSize: 'auto', html: '<a href="/detail_lokasi/?id=LnWH7mX/wsvP2pVI/AG3VNhVMJeXfxZna2eoOvPTzI1j4fgODdYAG6bPyGwt/8DlNv/EE1x44k72eZiqhSVSWYcAmOBr4zhrScqBvjRvCFA=" data-toggle="tooltip" data-placement="top" title="DKI02 Kelapa Gading - ( PM25 )"><div style = "width: 5rem; margin-left:-2.4rem; margin-right:-2.4rem; wrap:wrap;margin-top:-0.2rem; background:transparent; gap:0.5rem" class="d-flex flex-column align-items-center justify-content-center"><div title = "" class="marker-circle rounded-circle d-block d-flex justify-content-center align-items-center" style="background-color:#10CEF9; color: #fff !important; transition: 0.5s;width:2rem;height:2rem; border-width:0.1rem; border-style:solid; border-color:rgba(255,255,255,0.5)">67</div></div></a>' }) };
+            markers[100] = L.marker([-6.154085, 106.908249], options).addTo(map)
+            options = { icon: L.divIcon({ iconSize: 'auto', html: '<a href="/detail_lokasi/?id=SGnSGERxIlUbK4xcu2STiBfju7XRFXbZcjA/VdxUIdacx0qgVfkP9sDOxiSKiTBfgih2ozxybfTJAiMTVScRu20bEQIulzTHoX7OtAEe3SY=" data-toggle="tooltip" data-placement="top" title="DKI96 Taman Sungai Kendal - ( PM25 )"><div style = "width: 5rem; margin-left:-2.4rem; margin-right:-2.4rem; wrap:wrap;margin-top:-0.2rem; background:transparent; gap:0.5rem" class="d-flex flex-column align-items-center justify-content-center"><div title = "" class="marker-circle rounded-circle d-block d-flex justify-content-center align-items-center" style="background-color:#10CEF9; color: #fff !important; transition: 0.5s;width:2rem;height:2rem; border-width:0.1rem; border-style:solid; border-color:rgba(255,255,255,0.5)">61</div></div></a>' }) };
+            markers[100] = L.marker([-6.138291, 106.968288], options).addTo(map)
+            options = { icon: L.divIcon({ iconSize: 'auto', html: '<a href="/detail_lokasi/?id=42rFMJBqtAQe9hV&#x2B;9ma0ZVsA&#x2B;aZ/ai0UKI1R0wrILhbiVB5BDTuQHdVxDkKeclucqCJg9PaufLd5Ud9pPO2G7TK2AHtrsR05dTPoc4skV2Y=" data-toggle="tooltip" data-placement="top" title="DKI04 Lubang Buaya - ( PM25 )"><div style = "width: 5rem; margin-left:-2.4rem; margin-right:-2.4rem; wrap:wrap;margin-top:-0.2rem; background:transparent; gap:0.5rem" class="d-flex flex-column align-items-center justify-content-center"><div title = "" class="marker-circle rounded-circle d-block d-flex justify-content-center align-items-center" style="background-color:#10CEF9; color: #fff !important; transition: 0.5s;width:2rem;height:2rem; border-width:0.1rem; border-style:solid; border-color:rgba(255,255,255,0.5)">85</div></div></a>' }) };
+            markers[100] = L.marker([-6.290800, 106.908501], options).addTo(map)
+            options = { icon: L.divIcon({ iconSize: 'auto', html: '<a href="/detail_lokasi/?id=5KgvZCbMowDCOAQNPV47AKYGAy8wK0sddkFEehmIlzgxtkyUSMr2H8LkIIjeGnKqIK44/TsgF&#x2B;PsAhrH7BwGp1GWeMA&#x2B;DtCzu2/eFPv6//c=" data-toggle="tooltip" data-placement="top" title="DKI01 Bundaran HI - ( PM25 )"><div style = "width: 5rem; margin-left:-2.4rem; margin-right:-2.4rem; wrap:wrap;margin-top:-0.2rem; background:transparent; gap:0.5rem" class="d-flex flex-column align-items-center justify-content-center"><div title = "" class="marker-circle rounded-circle d-block d-flex justify-content-center align-items-center" style="background-color:#10CEF9; color: #fff !important; transition: 0.5s;width:2rem;height:2rem; border-width:0.1rem; border-style:solid; border-color:rgba(255,255,255,0.5)">72</div></div></a>' }) };
+            markers[100] = L.marker([-6.195459, 106.822731], options).addTo(map)
+            options = { icon: L.divIcon({ iconSize: 'auto', html: '<a href="/detail_lokasi/?id=3oZwIOih9U8AGdNu8PYhX/89HvMUvyLiu9w72xVpaup1OW1C6FTMKClWSEIHRQUmJ8WpVAaRN9mNY4PIhF9Z46tRUfvdaaJRE8t4fmcudwc=" data-toggle="tooltip" data-placement="top" title="DKI08 PPOP Ragunan - ( PM25 )"><div style = "width: 5rem; margin-left:-2.4rem; margin-right:-2.4rem; wrap:wrap;margin-top:-0.2rem; background:transparent; gap:0.5rem" class="d-flex flex-column align-items-center justify-content-center"><div title = "" class="marker-circle rounded-circle d-block d-flex justify-content-center align-items-center" style="background-color:#499F68; color: #fff !important; transition: 0.5s;width:2rem;height:2rem; border-width:0.1rem; border-style:solid; border-color:rgba(255,255,255,0.5)">6</div></div></a>' }) };
+            markers[100] = L.marker([-6.304420728716271, 106.8289196394899], options).addTo(map)
+
+                        var legend = L.control({ position: "bottomleft" });
+
+        legend.onAdd = function (map) {
+            var div = L.DomUtil.create("div", "legend");
+            div.innerHTML += "<h4>Keterangan</h4>";
+            div.innerHTML += '<i style="background: #499F68"></i><span>Baik</span><br>';
+            div.innerHTML += '<i style="background: #10CEF9"></i><span>Sedang</span><br>';
+            div.innerHTML += '<i style="background: #F0C808"></i><span>Tidak Sehat</span><br>';
+            div.innerHTML += '<i style="background: #DD1C1A"></i><span>Sangat Tidak Sehat</span><br>';
+            div.innerHTML += '<i style="background: #000"></i><span>Berbahaya</span><br>';
+            return div;
+        };
+
+        legend.addTo(map);
+
+    </script>
+
+</body>
+
+</html>

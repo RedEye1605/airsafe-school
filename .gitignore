@@ -1,0 +1,79 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Data files
+*.csv
+*.zip
+*.gz
+*.tar
+*.tar.gz
+*.parquet
+*.feather
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+*.npy
+*.npz
+
+# Large media
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.wav
+*.mp3
+
+# Models (large binary)
+*.pt
+*.pth
+*.onnx
+*.bin
+*.safetensors
+*.ckpt
+models/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.local
+
+# Logs
+*.log
+logs/
+
+# Face recognition specific
+known_faces/
+audio/
+images/
+presence-state.json
+openclaw_events.jsonl
+# Airsafe specific
+airsafe_*_data*.zip
+airsafe_*_final*.zip
+data/raw/
+*.pdf

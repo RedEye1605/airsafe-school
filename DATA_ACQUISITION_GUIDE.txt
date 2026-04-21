@@ -1,0 +1,55 @@
+
+AirSafe School - Data Acquisition Quick Reference
+==============================================
+
+SPKU Air Quality Data
+---------------------
+Current Status: API structure changed
+Alternative Sources:
+1. Kaggle: derryderajat/indeks-pencemaran-udara-dki
+   - Historical ISPU data (2010-2021)
+   - 5 stations
+   - Good for EDA and baseline
+
+2. Manual scraping: udara.jakarta.go.id
+   - Requires Selenium/Playwright
+   - JavaScript-heavy site
+   - Real-time data available
+
+3. BMKG API: data.bmkg.go.id
+   - Weather data available
+   - May combine with ISPU for features
+
+
+School Registry Data
+--------------------
+Current Status: Automated access blocked
+Alternative Sources:
+1. Kemendikbud Dapodik: dapo.kemendikdasmen.go.id
+   - Manual login required
+   - Navigate to Prov. DKI Jakarta (010000)
+   - Download by level (SD, SMP, SMA, SMK)
+
+2. GitHub repositories:
+   - Search: "sekolah dki jakarta csv"
+   - May have geocoded data
+
+3. Manual creation:
+   - Start with known schools
+   - Geocode using Nominatim
+   - Expand gradually
+
+
+Priority Actions
+----------------
+1. Download Kaggle ISPU dataset (manual)
+2. Download school data from Dapodik (manual)
+3. Set up geocoding pipeline with Nominatim
+4. Create baseline EDA with downloaded data
+
+
+Risk Mitigation
+---------------
+- If real-time API unavailable: use historical data with time-shift
+- If geocoding fails: use nearest-sensor assignment (fallback)
+- If dataset incomplete: focus on subset of schools for MVP

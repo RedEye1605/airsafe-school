@@ -1,0 +1,22 @@
+{
+  "run_at": "2026-04-21T00:19:20.962929",
+  "status": "completed",
+  "files": [
+    "/home/rclaw/airsafe-school/data/raw/spku/snapshots/spku_etl_2026-04-21_001920.json",
+    "/home/rclaw/airsafe-school/data/processed/daily/spku_pm25_2026-04-21.csv",
+    "/home/rclaw/airsafe-school/data/processed/daily/spku_pm25_latest.csv",
+    "/home/rclaw/airsafe-school/data/raw/weather/weather_hourly_2026-04-21.csv",
+    "/home/rclaw/airsafe-school/data/raw/weather/weather_hourly_latest.csv",
+    "/home/rclaw/airsafe-school/data/raw/weather/weather_daily_2026-04-21.csv",
+    "/home/rclaw/airsafe-school/data/raw/weather/weather_forecast_2026-04-21.csv"
+  ],
+  "spku": {
+    "total_stations": 105,
+    "active_stations": 25,
+    "active_pm25": 21,
+    "valid_readings": 98
+  },
+  "weather_hourly_records": 192,
+  "weather_daily_records": 8,
+  "forecast_records": 72
+}

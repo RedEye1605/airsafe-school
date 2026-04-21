@@ -1,3 +1,7 @@
+# =============================================================================
+# AirSafe School — Python .gitignore
+# =============================================================================
+
 # Python
 __pycache__/
 *.py[cod]
@@ -13,7 +17,7 @@ build/
 venv/
 env/
 
-# Data files
+# Data files (large, downloaded/generated)
 *.csv
 *.zip
 *.gz
@@ -27,6 +31,11 @@ env/
 *.pickle
 *.npy
 *.npz
+data/raw/
+data/processed/
+
+# Keep directory structure with .gitkeep
+!**/.gitkeep
 
 # Large media
 *.mp4
@@ -35,6 +44,9 @@ env/
 *.mkv
 *.wav
 *.mp3
+
+# Generated HTML reports
+data/*.html
 
 # Models (large binary)
 *.pt
@@ -58,22 +70,21 @@ models/
 .DS_Store
 Thumbs.db
 
-# Env
+# Environment / secrets
 .env
 .env.local
+.env.production
 
 # Logs
 *.log
 logs/
 
-# Face recognition specific
-known_faces/
-audio/
-images/
-presence-state.json
-openclaw_events.jsonl
-# Airsafe specific
-airsafe_*_data*.zip
-airsafe_*_final*.zip
-data/raw/
-*.pdf
+# Azure Functions local settings (may contain secrets)
+azure-functions/local.settings.json
+
+# Output (keep .gitkeep)
+output/**
+!output/.gitkeep
+
+# Tracker files (temp)
+TRACKER_UPDATE_SUMMARY.txt

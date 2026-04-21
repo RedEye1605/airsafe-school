@@ -1,0 +1,1592 @@
+{
+  "Pulau Untung Jawa, Kepulauan Seribu Selatan, DKI Jakarta, Indonesia": {
+    "lat": -5.977648,
+    "lon": 106.7073814,
+    "display_name": "Pulau Untung Jawa, Kepulauan Seribu Selatan, Kepulauan Seribu, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Pulau Pari, Kepulauan Seribu Selatan, DKI Jakarta, Indonesia": {
+    "lat": -5.9439273,
+    "lon": 106.6309315,
+    "display_name": "Pulau Pari, Kepulauan Seribu Selatan, Kepulauan Seribu, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Pulau Tidung, Kepulauan Seribu Selatan, DKI Jakarta, Indonesia": {
+    "lat": -5.8038872,
+    "lon": 106.5253063,
+    "display_name": "Pulau Tidung, Kepulauan Seribu Selatan, Kepulauan Seribu, Daerah Khusus Ibukota Jakarta, Jawa, 14520, Indonesia",
+    "source": "nominatim"
+  },
+  "Pulau Harapan, Kepulauan Seribu Utara, DKI Jakarta, Indonesia": {
+    "lat": -5.6522079,
+    "lon": 106.5765106,
+    "display_name": "Pulau Harapan, Kepulauan Seribu Utara, Kepulauan Seribu, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Pulau Kelapa, Kepulauan Seribu Utara, DKI Jakarta, Indonesia": {
+    "lat": -5.655169,
+    "lon": 106.5670469,
+    "display_name": "Pulau Kelapa, Kepulauan Seribu Utara, Kepulauan Seribu, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Pulau Panggang, Kepulauan Seribu Utara, DKI Jakarta, Indonesia": {
+    "lat": -5.7349672,
+    "lon": 106.6012013,
+    "display_name": "Pulau Panggang, Kepulauan Seribu Utara, Kepulauan Seribu, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Cengkareng Timur, Cengkareng, DKI Jakarta, Indonesia": {
+    "lat": -6.1383694,
+    "lon": 106.7359895,
+    "display_name": "Cengkareng Timur, Cengkareng, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Kapuk, Cengkareng, DKI Jakarta, Indonesia": {
+    "lat": -6.139831,
+    "lon": 106.7539417,
+    "display_name": "Kapuk, Cengkareng, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11720, Indonesia",
+    "source": "nominatim"
+  },
+  "Rawa Buaya, Cengkareng, DKI Jakarta, Indonesia": {
+    "lat": -6.1627437,
+    "lon": 106.7227543,
+    "display_name": "Rawa Buaya, Jalan Dharma Karya, RW 11, Duri Kosambi, Cengkareng, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11850, Indonesia",
+    "source": "nominatim"
+  },
+  "Cengkareng Barat, Cengkareng, DKI Jakarta, Indonesia": {
+    "lat": -6.138481,
+    "lon": 106.7233794,
+    "display_name": "Cengkareng Barat, Cengkareng, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Duri Kosambi, Cengkareng, DKI Jakarta, Indonesia": {
+    "lat": -6.1688734,
+    "lon": 106.7207928,
+    "display_name": "Duri Kosambi, Cengkareng, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Kedaung Kali Angke, Cengkareng, DKI Jakarta, Indonesia": {
+    "lat": -6.1505967,
+    "lon": 106.7609486,
+    "display_name": "Kedaung Kali Angke, Cengkareng, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11710, Indonesia",
+    "source": "nominatim"
+  },
+  "Jelambar Baru, Grogol Petamburan, DKI Jakarta, Indonesia": {
+    "lat": -6.1495137,
+    "lon": 106.7867168,
+    "display_name": "Jelambar Baru, Grogol Petamburan, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11465, Indonesia",
+    "source": "nominatim"
+  },
+  "Grogol, Grogol Petamburan, DKI Jakarta, Indonesia": {
+    "lat": -6.162035,
+    "lon": 106.7896101,
+    "display_name": "Grogol, Jalan Profesor Dokter Latumeten I, RW 05, Jelambar, Grogol Petamburan, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11450, Indonesia",
+    "source": "nominatim"
+  },
+  "Jelambar, Grogol Petamburan, DKI Jakarta, Indonesia": {
+    "lat": -6.1598968,
+    "lon": 106.7854878,
+    "display_name": "Jelambar, Grogol Petamburan, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Tomang, Grogol Petamburan, DKI Jakarta, Indonesia": {
+    "lat": -6.1727245,
+    "lon": 106.7973014,
+    "display_name": "Tomang, Grogol Petamburan, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11440, Indonesia",
+    "source": "nominatim"
+  },
+  "Tanjung Duren Selatan, Grogol Petamburan, DKI Jakarta, Indonesia": {
+    "lat": -6.1791855,
+    "lon": 106.7894993,
+    "display_name": "Tanjung Duren Selatan, Grogol Petamburan, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11430, Indonesia",
+    "source": "nominatim"
+  },
+  "Tanjung Duren Utara, Grogol Petamburan, DKI Jakarta, Indonesia": {
+    "lat": -6.1751537,
+    "lon": 106.781658,
+    "display_name": "Tanjung Duren Utara, Grogol Petamburan, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11470, Indonesia",
+    "source": "nominatim"
+  },
+  "Wijaya Kesuma, Grogol Petamburan, DKI Jakarta, Indonesia": {
+    "lat": -6.1624387,
+    "lon": 106.7751149,
+    "display_name": "Pos Indonesia, Jalan Karya Raya, RW 03, Wijaya Kusuma, Grogol Petamburan, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11460, Indonesia",
+    "source": "nominatim"
+  },
+  "Pegadungan, Kali Deres, DKI Jakarta, Indonesia": {
+    "lat": null,
+    "lon": null,
+    "display_name": "",
+    "source": "not_found"
+  },
+  "Kamal, Kali Deres, DKI Jakarta, Indonesia": {
+    "lat": null,
+    "lon": null,
+    "display_name": "",
+    "source": "not_found"
+  },
+  "Kalideres, Kali Deres, DKI Jakarta, Indonesia": {
+    "lat": null,
+    "lon": null,
+    "display_name": "",
+    "source": "not_found"
+  },
+  "Tegal Alur, Kali Deres, DKI Jakarta, Indonesia": {
+    "lat": null,
+    "lon": null,
+    "display_name": "",
+    "source": "not_found"
+  },
+  "Semanan, Kali Deres, DKI Jakarta, Indonesia": {
+    "lat": null,
+    "lon": null,
+    "display_name": "",
+    "source": "not_found"
+  },
+  "Kedoya Selatan, Kebon Jeruk, DKI Jakarta, Indonesia": {
+    "lat": -6.1820225,
+    "lon": 106.75942,
+    "display_name": "Kedoya Selatan, Kebon Jeruk, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Sukabumi Selatan, Kebon Jeruk, DKI Jakarta, Indonesia": {
+    "lat": -6.2215483,
+    "lon": 106.7721536,
+    "display_name": "Sukabumi Selatan, Kebon Jeruk, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11560, Indonesia",
+    "source": "nominatim"
+  },
+  "Sukabumi Utara, Kebon Jeruk, DKI Jakarta, Indonesia": {
+    "lat": -6.2087582,
+    "lon": 106.7778493,
+    "display_name": "Sukabumi Utara, Kebon Jeruk, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11540, Indonesia",
+    "source": "nominatim"
+  },
+  "Kebon Jeruk, Kebon Jeruk, DKI Jakarta, Indonesia": {
+    "lat": -6.192572,
+    "lon": 106.7697255,
+    "display_name": "Kebon Jeruk, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Duri Kepa, Kebon Jeruk, DKI Jakarta, Indonesia": {
+    "lat": -6.1763875,
+    "lon": 106.7736932,
+    "display_name": "Duri Kepa, Kebon Jeruk, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11510, Indonesia",
+    "source": "nominatim"
+  },
+  "Kedoya Utara, Kebon Jeruk, DKI Jakarta, Indonesia": {
+    "lat": -6.1678202,
+    "lon": 106.7606384,
+    "display_name": "Kedoya Utara, Kebon Jeruk, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11520, Indonesia",
+    "source": "nominatim"
+  },
+  "Kelapa Dua, Kebon Jeruk, DKI Jakarta, Indonesia": {
+    "lat": -6.2095281,
+    "lon": 106.7688125,
+    "display_name": "Kelapa Dua, Kebon Jeruk, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11550, Indonesia",
+    "source": "nominatim"
+  },
+  "Srengseng, Kembangan, DKI Jakarta, Indonesia": {
+    "lat": -6.2064995,
+    "lon": 106.7541059,
+    "display_name": "Srengseng, Kembangan, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Joglo, Kembangan, DKI Jakarta, Indonesia": {
+    "lat": -6.219017,
+    "lon": 106.7383023,
+    "display_name": "Joglo, Kembangan, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11640, Indonesia",
+    "source": "nominatim"
+  },
+  "Kembangan Selatan, Kembangan, DKI Jakarta, Indonesia": {
+    "lat": -6.1885306,
+    "lon": 106.739284,
+    "display_name": "Kembangan Selatan, Kembangan, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11610, Indonesia",
+    "source": "nominatim"
+  },
+  "Meruya Utara, Kembangan, DKI Jakarta, Indonesia": {
+    "lat": -6.1958612,
+    "lon": 106.742505,
+    "display_name": "Meruya Utara, Kembangan, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Meruya Selatan, Kembangan, DKI Jakarta, Indonesia": {
+    "lat": -6.2101635,
+    "lon": 106.7329989,
+    "display_name": "Meruya Selatan, Kembangan, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11650, Indonesia",
+    "source": "nominatim"
+  },
+  "Kembangan Utara, Kembangan, DKI Jakarta, Indonesia": {
+    "lat": -6.1732667,
+    "lon": 106.7427257,
+    "display_name": "Kembangan Utara, Kembangan, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Slipi, Palmerah, DKI Jakarta, Indonesia": {
+    "lat": -6.195084,
+    "lon": 106.8012441,
+    "display_name": "Slipi, Palmerah, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 10260, Indonesia",
+    "source": "nominatim"
+  },
+  "Kemanggisan, Palmerah, DKI Jakarta, Indonesia": {
+    "lat": -6.1896703,
+    "lon": 106.7908831,
+    "display_name": "Kemanggisan, Palmerah, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11420, Indonesia",
+    "source": "nominatim"
+  },
+  "Jati Pulo, Palmerah, DKI Jakarta, Indonesia": {
+    "lat": -6.17825,
+    "lon": 106.8035875,
+    "display_name": "Jati Pulo, Palmerah, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Palmerah, Palmerah, DKI Jakarta, Indonesia": {
+    "lat": -6.1910017,
+    "lon": 106.7943633,
+    "display_name": "Palmerah, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Kota Bambu Utara, Palmerah, DKI Jakarta, Indonesia": {
+    "lat": -6.1837155,
+    "lon": 106.8035543,
+    "display_name": "Kota Bambu Utara, Palmerah, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Kota Bambu Selatan, Palmerah, DKI Jakarta, Indonesia": {
+    "lat": -6.187458,
+    "lon": 106.8037735,
+    "display_name": "Kota Bambu Selatan, Palmerah, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Keagungan, Taman Sari, DKI Jakarta, Indonesia": {
+    "lat": -6.1507326,
+    "lon": 106.8145501,
+    "display_name": "Keagungan, Taman Sari, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11130, Indonesia",
+    "source": "nominatim"
+  },
+  "Glodok, Taman Sari, DKI Jakarta, Indonesia": {
+    "lat": -6.1447085,
+    "lon": 106.8130921,
+    "display_name": "Glodok, Taman Sari, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11120, Indonesia",
+    "source": "nominatim"
+  },
+  "Pinangsia, Taman Sari, DKI Jakarta, Indonesia": {
+    "lat": -6.1355846,
+    "lon": 106.8146408,
+    "display_name": "Pinangsia, Taman Sari, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11110, Indonesia",
+    "source": "nominatim"
+  },
+  "Tangki, Taman Sari, DKI Jakarta, Indonesia": {
+    "lat": -6.1465657,
+    "lon": 106.8233031,
+    "display_name": "Tangki, Taman Sari, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Taman Sari, Taman Sari, DKI Jakarta, Indonesia": {
+    "lat": -6.154194,
+    "lon": 106.8244893,
+    "display_name": "Taman Sari, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Krukut, Taman Sari, DKI Jakarta, Indonesia": {
+    "lat": -6.1569812,
+    "lon": 106.8154894,
+    "display_name": "Krukut, Taman Sari, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11140, Indonesia",
+    "source": "nominatim"
+  },
+  "Mangga Besar, Taman Sari, DKI Jakarta, Indonesia": {
+    "lat": -6.1498037,
+    "lon": 106.8269826,
+    "display_name": "Mangga Besar, Jalan Tamansari Raya, RW 01, Taman Sari, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 10740, Indonesia",
+    "source": "nominatim"
+  },
+  "Maphar, Taman Sari, DKI Jakarta, Indonesia": {
+    "lat": -6.1558405,
+    "lon": 106.8197615,
+    "display_name": "Maphar, Taman Sari, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11160, Indonesia",
+    "source": "nominatim"
+  },
+  "Krendang, Tambora, DKI Jakarta, Indonesia": {
+    "lat": -6.1508189,
+    "lon": 106.8043637,
+    "display_name": "Krendang, Tambora, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Tanah Sereal, Tambora, DKI Jakarta, Indonesia": {
+    "lat": -6.154279,
+    "lon": 106.8095048,
+    "display_name": "Tanah Sereal, Tambora, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11210, Indonesia",
+    "source": "nominatim"
+  },
+  "Duri Utara, Tambora, DKI Jakarta, Indonesia": {
+    "lat": -6.1539172,
+    "lon": 106.8050298,
+    "display_name": "Duri Utara, Tambora, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Duri Selatan, Tambora, DKI Jakarta, Indonesia": {
+    "lat": -6.1587842,
+    "lon": 106.8046704,
+    "display_name": "Duri Selatan, Tambora, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Kalianyar, Tambora, DKI Jakarta, Indonesia": {
+    "lat": -6.157834,
+    "lon": 106.7990462,
+    "display_name": "Kalianyar, Tambora, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Tambora, Tambora, DKI Jakarta, Indonesia": {
+    "lat": -6.1466142,
+    "lon": 106.8010456,
+    "display_name": "Tambora, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Angke, Tambora, DKI Jakarta, Indonesia": {
+    "lat": -6.1447372,
+    "lon": 106.8007792,
+    "display_name": "Angke, Jalan Angke Barat, RW 01, Angke, Tambora, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11250, Indonesia",
+    "source": "nominatim"
+  },
+  "Pekojan, Tambora, DKI Jakarta, Indonesia": {
+    "lat": -6.1369666,
+    "lon": 106.8040238,
+    "display_name": "Pekojan, Tambora, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11240, Indonesia",
+    "source": "nominatim"
+  },
+  "Jembatan Besi, Tambora, DKI Jakarta, Indonesia": {
+    "lat": -6.1516382,
+    "lon": 106.7975286,
+    "display_name": "Jembatan Besi, Tambora, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11320, Indonesia",
+    "source": "nominatim"
+  },
+  "Jembatan Lima, Tambora, DKI Jakarta, Indonesia": {
+    "lat": -6.1445905,
+    "lon": 106.8039276,
+    "display_name": "Jembatan Lima, Tambora, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, 11250, Indonesia",
+    "source": "nominatim"
+  },
+  "Roa Malaka, Tambora, DKI Jakarta, Indonesia": {
+    "lat": -6.1360918,
+    "lon": 106.8096756,
+    "display_name": "Roa Malaka, Tambora, Jakarta Barat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Cempaka Putih Timur, Cempaka Putih, DKI Jakarta, Indonesia": {
+    "lat": -6.177633,
+    "lon": 106.8704491,
+    "display_name": "Cempaka Putih Timur, Cempaka Putih, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10540, Indonesia",
+    "source": "nominatim"
+  },
+  "Rawasari, Cempaka Putih, DKI Jakarta, Indonesia": {
+    "lat": -6.1900838,
+    "lon": 106.864429,
+    "display_name": "Rawasari, Cempaka Putih, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Cempaka Putih Barat, Cempaka Putih, DKI Jakarta, Indonesia": {
+    "lat": -6.178733,
+    "lon": 106.8624855,
+    "display_name": "Cempaka Putih Barat, Cempaka Putih, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Cideng, Gambir, DKI Jakarta, Indonesia": {
+    "lat": -6.1736811,
+    "lon": 106.8092825,
+    "display_name": "Cideng, Gambir, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10150, Indonesia",
+    "source": "nominatim"
+  },
+  "Duri Pulo, Gambir, DKI Jakarta, Indonesia": {
+    "lat": -6.1636195,
+    "lon": 106.8044806,
+    "display_name": "Duri Pulo, Gambir, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10140, Indonesia",
+    "source": "nominatim"
+  },
+  "Petojo Selatan, Gambir, DKI Jakarta, Indonesia": {
+    "lat": -6.1750093,
+    "lon": 106.816434,
+    "display_name": "Petojo Selatan, Gambir, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10160, Indonesia",
+    "source": "nominatim"
+  },
+  "Petojo Utara, Gambir, DKI Jakarta, Indonesia": {
+    "lat": -6.1655438,
+    "lon": 106.8153732,
+    "display_name": "Petojo Utara, Gambir, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10160, Indonesia",
+    "source": "nominatim"
+  },
+  "Kebon Kelapa, Gambir, DKI Jakarta, Indonesia": {
+    "lat": -6.1642923,
+    "lon": 106.8247393,
+    "display_name": "Kebon Kelapa, Gambir, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10120, Indonesia",
+    "source": "nominatim"
+  },
+  "Gambir, Gambir, DKI Jakarta, Indonesia": {
+    "lat": -6.1766553,
+    "lon": 106.8306473,
+    "display_name": "Gambir, Jalan Medan Merdeka Timur, RW 02, Gambir, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10110, Indonesia",
+    "source": "nominatim"
+  },
+  "Tanah Tinggi, Johar Baru, DKI Jakarta, Indonesia": {
+    "lat": -6.179939,
+    "lon": 106.8491612,
+    "display_name": "Tanah Tinggi, Johar Baru, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Galur, Johar Baru, DKI Jakarta, Indonesia": {
+    "lat": -6.1761462,
+    "lon": 106.8550723,
+    "display_name": "Galur, Johar Baru, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10530, Indonesia",
+    "source": "nominatim"
+  },
+  "Johar Baru, Johar Baru, DKI Jakarta, Indonesia": {
+    "lat": -6.1831251,
+    "lon": 106.8553323,
+    "display_name": "Johar Baru, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Kampung Rawa, Johar Baru, DKI Jakarta, Indonesia": {
+    "lat": -6.1796485,
+    "lon": 106.8555866,
+    "display_name": "Kampung Rawa, Johar Baru, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10550, Indonesia",
+    "source": "nominatim"
+  },
+  "Gunung Sahari Selatan, Kemayoran, DKI Jakarta, Indonesia": {
+    "lat": -6.1570118,
+    "lon": 106.84439,
+    "display_name": "Gunung Sahari Selatan, Kemayoran, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Harapan Mulya, Kemayoran, DKI Jakarta, Indonesia": {
+    "lat": -6.1702433,
+    "lon": 106.8558313,
+    "display_name": "Harapan Mulya, Kemayoran, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Cempaka Baru, Kemayoran, DKI Jakarta, Indonesia": {
+    "lat": -6.1677049,
+    "lon": 106.8619785,
+    "display_name": "Cempaka Baru, Kemayoran, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10640, Indonesia",
+    "source": "nominatim"
+  },
+  "Serdang, Kemayoran, DKI Jakarta, Indonesia": {
+    "lat": -6.1589157,
+    "lon": 106.8610356,
+    "display_name": "Serdang, Kemayoran, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Utan Panjang, Kemayoran, DKI Jakarta, Indonesia": {
+    "lat": -6.165001,
+    "lon": 106.8548049,
+    "display_name": "Utan Panjang, Kemayoran, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Kebon Kosong, Kemayoran, DKI Jakarta, Indonesia": {
+    "lat": -6.158496,
+    "lon": 106.8538351,
+    "display_name": "Kebon Kosong, Kemayoran, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10630, Indonesia",
+    "source": "nominatim"
+  },
+  "Kemayoran, Kemayoran, DKI Jakarta, Indonesia": {
+    "lat": -6.1617033,
+    "lon": 106.8414012,
+    "display_name": "Kemayoran, Jalan Bungur Besar 17, RW 01, Gunung Sahari Selatan, Kemayoran, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10620, Indonesia",
+    "source": "nominatim"
+  },
+  "Sumur Batu, Kemayoran, DKI Jakarta, Indonesia": {
+    "lat": -6.1628613,
+    "lon": 106.87001,
+    "display_name": "Sumur Batu, Kemayoran, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Gondangdia, Menteng, DKI Jakarta, Indonesia": {
+    "lat": -6.1859109,
+    "lon": 106.8325657,
+    "display_name": "Gondangdia, Jalan Srikaya I, RW 06, Kebon Sirih, Menteng, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10340, Indonesia",
+    "source": "nominatim"
+  },
+  "Cikini, Menteng, DKI Jakarta, Indonesia": {
+    "lat": -6.1985052,
+    "lon": 106.8412799,
+    "display_name": "Cikini, Jalan Pegangsaan Timur, RW 05, Menteng, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10320, Indonesia",
+    "source": "nominatim"
+  },
+  "Menteng, Menteng, DKI Jakarta, Indonesia": {
+    "lat": -6.2010459,
+    "lon": 106.8352111,
+    "display_name": "Menteng, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10310, Indonesia",
+    "source": "nominatim"
+  },
+  "Pegangsaan, Menteng, DKI Jakarta, Indonesia": {
+    "lat": -6.2019499,
+    "lon": 106.8474914,
+    "display_name": "Pegangsaan, Menteng, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10320, Indonesia",
+    "source": "nominatim"
+  },
+  "Kebon Sirih, Menteng, DKI Jakarta, Indonesia": {
+    "lat": -6.1850822,
+    "lon": 106.8311054,
+    "display_name": "Kebon Sirih, Menteng, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10340, Indonesia",
+    "source": "nominatim"
+  },
+  "Gunung Sahari Utara, Sawah Besar, DKI Jakarta, Indonesia": {
+    "lat": -6.150479,
+    "lon": 106.8382246,
+    "display_name": "Gunung Sahari Utara, Sawah Besar, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10720, Indonesia",
+    "source": "nominatim"
+  },
+  "Mangga Dua Selatan, Sawah Besar, DKI Jakarta, Indonesia": {
+    "lat": -6.1419015,
+    "lon": 106.8284203,
+    "display_name": "Mangga Dua Selatan, Sawah Besar, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10730, Indonesia",
+    "source": "nominatim"
+  },
+  "Pasar Baru, Sawah Besar, DKI Jakarta, Indonesia": {
+    "lat": -6.165709,
+    "lon": 106.8346417,
+    "display_name": "Pasar Baru, Sawah Besar, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Karang Anyar, Sawah Besar, DKI Jakarta, Indonesia": {
+    "lat": -6.1539045,
+    "lon": 106.8292447,
+    "display_name": "Karang Anyar, Sawah Besar, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10740, Indonesia",
+    "source": "nominatim"
+  },
+  "Kartini, Sawah Besar, DKI Jakarta, Indonesia": {
+    "lat": -6.1530853,
+    "lon": 106.8334481,
+    "display_name": "Kartini, Sawah Besar, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Paseban, Senen, DKI Jakarta, Indonesia": {
+    "lat": -6.1934034,
+    "lon": 106.8526922,
+    "display_name": "Paseban, Senen, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10440, Indonesia",
+    "source": "nominatim"
+  },
+  "Bungur, Senen, DKI Jakarta, Indonesia": {
+    "lat": -6.1716401,
+    "lon": 106.8480958,
+    "display_name": "Bungur, Senen, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10460, Indonesia",
+    "source": "nominatim"
+  },
+  "Kramat, Senen, DKI Jakarta, Indonesia": {
+    "lat": -6.1827391,
+    "lon": 106.8456421,
+    "display_name": "Kramat, Senen, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Kenari, Senen, DKI Jakarta, Indonesia": {
+    "lat": -6.1926888,
+    "lon": 106.8465703,
+    "display_name": "Kenari, Senen, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10430, Indonesia",
+    "source": "nominatim"
+  },
+  "Kwitang, Senen, DKI Jakarta, Indonesia": {
+    "lat": -6.1830735,
+    "lon": 106.8398635,
+    "display_name": "Kwitang, Senen, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Senen, Senen, DKI Jakarta, Indonesia": {
+    "lat": -6.1744233,
+    "lon": 106.8445744,
+    "display_name": "Pasar Senen, Jalan Bungur Besar Raya, RW 04, Senen, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10410, Indonesia",
+    "source": "nominatim"
+  },
+  "Bendungan Hilir, Tanah Abang, DKI Jakarta, Indonesia": {
+    "lat": -6.2087254,
+    "lon": 106.8086398,
+    "display_name": "Bendungan Hilir, Tanah Abang, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10210, Indonesia",
+    "source": "nominatim"
+  },
+  "Kebon Kacang, Tanah Abang, DKI Jakarta, Indonesia": {
+    "lat": -6.1902407,
+    "lon": 106.8166009,
+    "display_name": "Kebon Kacang, Tanah Abang, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10240, Indonesia",
+    "source": "nominatim"
+  },
+  "Karet Tengsin, Tanah Abang, DKI Jakarta, Indonesia": {
+    "lat": -6.2074731,
+    "lon": 106.8164889,
+    "display_name": "Karet Tengsin, Tanah Abang, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10220, Indonesia",
+    "source": "nominatim"
+  },
+  "Kebon Melati, Tanah Abang, DKI Jakarta, Indonesia": {
+    "lat": -6.1974872,
+    "lon": 106.8165458,
+    "display_name": "Kebon Melati, Tanah Abang, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10230, Indonesia",
+    "source": "nominatim"
+  },
+  "Petamburan, Tanah Abang, DKI Jakarta, Indonesia": {
+    "lat": -6.1953983,
+    "lon": 106.8068864,
+    "display_name": "Petamburan, Tanah Abang, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10260, Indonesia",
+    "source": "nominatim"
+  },
+  "Kampung Bali, Tanah Abang, DKI Jakarta, Indonesia": {
+    "lat": -6.1849724,
+    "lon": 106.8160095,
+    "display_name": "Kampung Bali, Tanah Abang, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10250, Indonesia",
+    "source": "nominatim"
+  },
+  "Lebak Bulus, Cilandak, DKI Jakarta, Indonesia": {
+    "lat": -6.3016717,
+    "lon": 106.779691,
+    "display_name": "Lebak Bulus, Cilandak, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Cilandak Barat, Cilandak, DKI Jakarta, Indonesia": {
+    "lat": -6.288078,
+    "lon": 106.7968651,
+    "display_name": "Cilandak Barat, Cilandak, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12430, Indonesia",
+    "source": "nominatim"
+  },
+  "Pondok Labu, Cilandak, DKI Jakarta, Indonesia": {
+    "lat": -6.3087725,
+    "lon": 106.7978563,
+    "display_name": "Pondok Labu, Cilandak, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12450, Indonesia",
+    "source": "nominatim"
+  },
+  "Cipete Selatan, Cilandak, DKI Jakarta, Indonesia": {
+    "lat": -6.2717196,
+    "lon": 106.8049209,
+    "display_name": "Cipete Selatan, Cilandak, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12410, Indonesia",
+    "source": "nominatim"
+  },
+  "Gandaria Selatan, Cilandak, DKI Jakarta, Indonesia": {
+    "lat": -6.272484,
+    "lon": 106.7948165,
+    "display_name": "Gandaria Selatan, Cilandak, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12420, Indonesia",
+    "source": "nominatim"
+  },
+  "Tanjung Barat, Jagakarsa, DKI Jakarta, Indonesia": {
+    "lat": -6.3080407,
+    "lon": 106.8389492,
+    "display_name": "Tanjung Barat, Jalan Lenteng Agung Raya, RW 01, Tanjung Barat, Jagakarsa, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12530, Indonesia",
+    "source": "nominatim"
+  },
+  "Cipedak, Jagakarsa, DKI Jakarta, Indonesia": {
+    "lat": -6.3518261,
+    "lon": 106.8016288,
+    "display_name": "Cipedak, Jagakarsa, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Jagakarsa, Jagakarsa, DKI Jakarta, Indonesia": {
+    "lat": -6.3301011,
+    "lon": 106.8222371,
+    "display_name": "Jagakarsa, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Ciganjur, Jagakarsa, DKI Jakarta, Indonesia": {
+    "lat": -6.3355851,
+    "lon": 106.8070616,
+    "display_name": "Ciganjur, Jagakarsa, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 16431, Indonesia",
+    "source": "nominatim"
+  },
+  "Srengseng Sawah, Jagakarsa, DKI Jakarta, Indonesia": {
+    "lat": -6.3449388,
+    "lon": 106.8262052,
+    "display_name": "Srengseng Sawah, Jagakarsa, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12640, Indonesia",
+    "source": "nominatim"
+  },
+  "Lenteng Agung, Jagakarsa, DKI Jakarta, Indonesia": {
+    "lat": -6.3303079,
+    "lon": 106.8346791,
+    "display_name": "Lenteng Agung, Jalan Lenteng Agung Raya, RW 05, Lenteng Agung, Jagakarsa, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12620, Indonesia",
+    "source": "nominatim"
+  },
+  "Petogogan, Kebayoran Baru, DKI Jakarta, Indonesia": {
+    "lat": -6.2432098,
+    "lon": 106.8114672,
+    "display_name": "Petogogan, Kebayoran Baru, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12170, Indonesia",
+    "source": "nominatim"
+  },
+  "Selong, Kebayoran Baru, DKI Jakarta, Indonesia": {
+    "lat": -6.2346188,
+    "lon": 106.803819,
+    "display_name": "Selong, Kebayoran Baru, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Cipete Utara, Kebayoran Baru, DKI Jakarta, Indonesia": {
+    "lat": -6.2618041,
+    "lon": 106.8041214,
+    "display_name": "Cipete Utara, Kebayoran Baru, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12150, Indonesia",
+    "source": "nominatim"
+  },
+  "Gandaria Utara, Kebayoran Baru, DKI Jakarta, Indonesia": {
+    "lat": -6.2566117,
+    "lon": 106.7903387,
+    "display_name": "Gandaria Utara, Kebayoran Baru, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12140, Indonesia",
+    "source": "nominatim"
+  },
+  "Gunung, Kebayoran Baru, DKI Jakarta, Indonesia": {
+    "lat": -6.2364246,
+    "lon": 106.7914922,
+    "display_name": "Gunung, Kebayoran Baru, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12120, Indonesia",
+    "source": "nominatim"
+  },
+  "Kramat Pela, Kebayoran Baru, DKI Jakarta, Indonesia": {
+    "lat": -6.2453477,
+    "lon": 106.7924628,
+    "display_name": "Kramat Pela, Kebayoran Baru, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12130, Indonesia",
+    "source": "nominatim"
+  },
+  "Pulo, Kebayoran Baru, DKI Jakarta, Indonesia": {
+    "lat": -6.2540311,
+    "lon": 106.8025524,
+    "display_name": "Pulo, Kebayoran Baru, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Rawa Barat, Kebayoran Baru, DKI Jakarta, Indonesia": {
+    "lat": -6.2361238,
+    "lon": 106.8133271,
+    "display_name": "Rawa Barat, Kebayoran Baru, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Melawai, Kebayoran Baru, DKI Jakarta, Indonesia": {
+    "lat": -6.2451217,
+    "lon": 106.8023344,
+    "display_name": "Melawai, Kebayoran Baru, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12160, Indonesia",
+    "source": "nominatim"
+  },
+  "Grogol Utara, Kebayoran Lama, DKI Jakarta, Indonesia": {
+    "lat": -6.2169919,
+    "lon": 106.7866091,
+    "display_name": "Grogol Utara, Kebayoran Lama, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12210, Indonesia",
+    "source": "nominatim"
+  },
+  "Pondok Pinang, Kebayoran Lama, DKI Jakarta, Indonesia": {
+    "lat": -6.2736372,
+    "lon": 106.7789504,
+    "display_name": "Pondok Pinang, Kebayoran Lama, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12310, Indonesia",
+    "source": "nominatim"
+  },
+  "Grogol Selatan, Kebayoran Lama, DKI Jakarta, Indonesia": {
+    "lat": -6.2308999,
+    "lon": 106.7803086,
+    "display_name": "Grogol Selatan, Kebayoran Lama, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12220, Indonesia",
+    "source": "nominatim"
+  },
+  "Cipulir, Kebayoran Lama, DKI Jakarta, Indonesia": {
+    "lat": -6.2385664,
+    "lon": 106.7734378,
+    "display_name": "Cipulir, Kebayoran Lama, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12230, Indonesia",
+    "source": "nominatim"
+  },
+  "Kebayoran Lama Selatan, Kebayoran Lama, DKI Jakarta, Indonesia": {
+    "lat": -6.2553149,
+    "lon": 106.7790703,
+    "display_name": "Kebayoran Lama Selatan, Kebayoran Lama, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12240, Indonesia",
+    "source": "nominatim"
+  },
+  "Kebayoran Lama Utara, Kebayoran Lama, DKI Jakarta, Indonesia": {
+    "lat": -6.2448215,
+    "lon": 106.7782383,
+    "display_name": "Kebayoran Lama Utara, Kebayoran Lama, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Bangka, Mampang Prapatan, DKI Jakarta, Indonesia": {
+    "lat": -6.2630889,
+    "lon": 106.8184883,
+    "display_name": "Bangka, Mampang Prapatan, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12730, Indonesia",
+    "source": "nominatim"
+  },
+  "Pela Mampang, Mampang Prapatan, DKI Jakarta, Indonesia": {
+    "lat": -6.2482363,
+    "lon": 106.8176031,
+    "display_name": "Pela Mampang, Mampang Prapatan, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Kuningan Barat, Mampang Prapatan, DKI Jakarta, Indonesia": {
+    "lat": -6.2364893,
+    "lon": 106.8218724,
+    "display_name": "Kuningan Barat, Mampang Prapatan, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Mampang Prapatan, Mampang Prapatan, DKI Jakarta, Indonesia": {
+    "lat": -6.2508944,
+    "lon": 106.8230222,
+    "display_name": "Mampang Prapatan, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Tegal Parang, Mampang Prapatan, DKI Jakarta, Indonesia": {
+    "lat": -6.2489089,
+    "lon": 106.8296061,
+    "display_name": "Tegal Parang, Mampang Prapatan, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12790, Indonesia",
+    "source": "nominatim"
+  },
+  "Rawajati, Pancoran, DKI Jakarta, Indonesia": {
+    "lat": -6.2580249,
+    "lon": 106.854993,
+    "display_name": "Rawajati, Pancoran, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12750, Indonesia",
+    "source": "nominatim"
+  },
+  "Duren Tiga, Pancoran, DKI Jakarta, Indonesia": {
+    "lat": -6.2559452,
+    "lon": 106.8341575,
+    "display_name": "Duren Tiga, Pancoran, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12760, Indonesia",
+    "source": "nominatim"
+  },
+  "Kalibata, Pancoran, DKI Jakarta, Indonesia": {
+    "lat": -6.2623624,
+    "lon": 106.8402824,
+    "display_name": "Kalibata, Pancoran, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Pancoran, Pancoran, DKI Jakarta, Indonesia": {
+    "lat": -6.2580853,
+    "lon": 106.8427326,
+    "display_name": "Pancoran, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Pengadegan, Pancoran, DKI Jakarta, Indonesia": {
+    "lat": -6.2489143,
+    "lon": 106.8543495,
+    "display_name": "Pengadegan, Pancoran, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12770, Indonesia",
+    "source": "nominatim"
+  },
+  "Cikoko, Pancoran, DKI Jakarta, Indonesia": {
+    "lat": -6.2434846,
+    "lon": 106.8570718,
+    "display_name": "Cikoko, Jalan Letnan Jenderal MT Haryono, RW 02, Cikoko, Pancoran, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12770, Indonesia",
+    "source": "nominatim"
+  },
+  "Cilandak Timur, Pasar Minggu, DKI Jakarta, Indonesia": {
+    "lat": -6.2894658,
+    "lon": 106.8124767,
+    "display_name": "Cilandak Timur, Pasar Minggu, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Kebagusan, Pasar Minggu, DKI Jakarta, Indonesia": {
+    "lat": -6.309105,
+    "lon": 106.831976,
+    "display_name": "Kebagusan, Pasar Minggu, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12520, Indonesia",
+    "source": "nominatim"
+  },
+  "Pasar Minggu, Pasar Minggu, DKI Jakarta, Indonesia": {
+    "lat": -6.2833322,
+    "lon": 106.8448558,
+    "display_name": "Pasar Minggu, Jalan Pasar Minggu Raya, RW 07, Pejaten Timur, Pasar Minggu, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 13530, Indonesia",
+    "source": "nominatim"
+  },
+  "Pejaten Timur, Pasar Minggu, DKI Jakarta, Indonesia": {
+    "lat": -6.2808809,
+    "lon": 106.8469064,
+    "display_name": "Pejaten Timur, Pasar Minggu, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Ragunan, Pasar Minggu, DKI Jakarta, Indonesia": {
+    "lat": -6.2968821,
+    "lon": 106.8210113,
+    "display_name": "Ragunan, Pasar Minggu, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12550, Indonesia",
+    "source": "nominatim"
+  },
+  "Jati Padang, Pasar Minggu, DKI Jakarta, Indonesia": {
+    "lat": -6.2872405,
+    "lon": 106.8305449,
+    "display_name": "Jati Padang, Pasar Minggu, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12540, Indonesia",
+    "source": "nominatim"
+  },
+  "Pejaten Barat, Pasar Minggu, DKI Jakarta, Indonesia": {
+    "lat": -6.2726502,
+    "lon": 106.8393437,
+    "display_name": "Pejaten Barat, Pasar Minggu, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12510, Indonesia",
+    "source": "nominatim"
+  },
+  "Bintaro, Pesanggrahan, DKI Jakarta, Indonesia": {
+    "lat": -6.2682262,
+    "lon": 106.7648364,
+    "display_name": "Bintaro, Pesanggrahan, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12330, Indonesia",
+    "source": "nominatim"
+  },
+  "Petukangan Utara, Pesanggrahan, DKI Jakarta, Indonesia": {
+    "lat": -6.2296276,
+    "lon": 106.7510906,
+    "display_name": "Petukangan Utara, Pesanggrahan, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Petukangan Selatan, Pesanggrahan, DKI Jakarta, Indonesia": {
+    "lat": -6.243428,
+    "lon": 106.7536421,
+    "display_name": "Petukangan Selatan, Pesanggrahan, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Ulujami, Pesanggrahan, DKI Jakarta, Indonesia": {
+    "lat": -6.234164,
+    "lon": 106.7626018,
+    "display_name": "Ulujami, Pesanggrahan, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12270, Indonesia",
+    "source": "nominatim"
+  },
+  "Pesanggrahan, Pesanggrahan, DKI Jakarta, Indonesia": {
+    "lat": -6.2554579,
+    "lon": 106.763112,
+    "display_name": "Pesanggrahan, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Setia Budi, Setia Budi, DKI Jakarta, Indonesia": {
+    "lat": -6.204501,
+    "lon": 106.8262786,
+    "display_name": "Setia Budi, Jakarta Selatan",
+    "source": "nominatim"
+  },
+  "Pasar Manggis, Setia Budi, DKI Jakarta, Indonesia": {
+    "lat": -6.2117701,
+    "lon": 106.8403245,
+    "display_name": "SDN Pasar Manggis 01 Pagi 02 Petang, Jalan Menteng Granit, RW 07, Pasar Manggis, Setiabudi, Pasar Manggis, Daerah Khusus Ibukota Jakarta, Jawa, 12970, Indonesia",
+    "source": "nominatim"
+  },
+  "Karet, Setia Budi, DKI Jakarta, Indonesia": {
+    "lat": null,
+    "lon": null,
+    "display_name": "",
+    "source": "not_found"
+  },
+  "Guntur, Setia Budi, DKI Jakarta, Indonesia": {
+    "lat": -6.2051807,
+    "lon": 106.8339046,
+    "display_name": "Guntur, Setia Budi",
+    "source": "nominatim"
+  },
+  "Karet Kuningan, Setia Budi, DKI Jakarta, Indonesia": {
+    "lat": -6.2209099,
+    "lon": 106.8287267,
+    "display_name": "Karet Kuningan, Setiabudi, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Kuningan Timur, Setia Budi, DKI Jakarta, Indonesia": {
+    "lat": -6.232337,
+    "lon": 106.8289389,
+    "display_name": "Kuningan Timur, Setiabudi, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Menteng Atas, Setia Budi, DKI Jakarta, Indonesia": {
+    "lat": -6.2177143,
+    "lon": 106.840277,
+    "display_name": "Menteng Atas, Setiabudi, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12960, Indonesia",
+    "source": "nominatim"
+  },
+  "Manggarai Selatan, Tebet, DKI Jakarta, Indonesia": {
+    "lat": -6.2213445,
+    "lon": 106.8496177,
+    "display_name": "Manggarai Selatan, Tebet, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12860, Indonesia",
+    "source": "nominatim"
+  },
+  "Tebet Barat, Tebet, DKI Jakarta, Indonesia": {
+    "lat": -6.2339315,
+    "lon": 106.8489052,
+    "display_name": "Tebet Barat, Tebet, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12810, Indonesia",
+    "source": "nominatim"
+  },
+  "Bukit Duri, Tebet, DKI Jakarta, Indonesia": {
+    "lat": -6.2210945,
+    "lon": 106.8584257,
+    "display_name": "Bukit Duri, Tebet, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12840, Indonesia",
+    "source": "nominatim"
+  },
+  "Kebon Baru, Tebet, DKI Jakarta, Indonesia": {
+    "lat": -6.2329499,
+    "lon": 106.8614867,
+    "display_name": "Kebon Baru, Tebet, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12830, Indonesia",
+    "source": "nominatim"
+  },
+  "Manggarai, Tebet, DKI Jakarta, Indonesia": {
+    "lat": -6.2101704,
+    "lon": 106.849935,
+    "display_name": "Manggarai, Jalan Manggarai Utara I, RW 04, Manggarai, Tebet, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12850, Indonesia",
+    "source": "nominatim"
+  },
+  "Menteng Dalam, Tebet, DKI Jakarta, Indonesia": {
+    "lat": -6.230139,
+    "lon": 106.8418824,
+    "display_name": "Menteng Dalam, Tebet, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12870, Indonesia",
+    "source": "nominatim"
+  },
+  "Tebet Timur, Tebet, DKI Jakarta, Indonesia": {
+    "lat": -6.2328614,
+    "lon": 106.8549546,
+    "display_name": "Tebet Timur, Tebet, Jakarta Selatan, Daerah Khusus Ibukota Jakarta, Jawa, 12820, Indonesia",
+    "source": "nominatim"
+  },
+  "Cakung Timur, Cakung, DKI Jakarta, Indonesia": {
+    "lat": -6.1728853,
+    "lon": 106.956719,
+    "display_name": "Cakung Timur, Cakung, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13910, Indonesia",
+    "source": "nominatim"
+  },
+  "Penggilingan, Cakung, DKI Jakarta, Indonesia": {
+    "lat": -6.2050399,
+    "lon": 106.9358877,
+    "display_name": "Penggilingan, Cakung, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13940, Indonesia",
+    "source": "nominatim"
+  },
+  "Pulo Gebang, Cakung, DKI Jakarta, Indonesia": {
+    "lat": -6.2051221,
+    "lon": 106.9522403,
+    "display_name": "Pulo Gebang, Cakung, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Cakung Barat, Cakung, DKI Jakarta, Indonesia": {
+    "lat": -6.172541,
+    "lon": 106.9346036,
+    "display_name": "Cakung Barat, Cakung, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Jatinegara, Cakung, DKI Jakarta, Indonesia": {
+    "lat": -6.2032345,
+    "lon": 106.91593,
+    "display_name": "Jatinegara, Cakung, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Ujung Menteng, Cakung, DKI Jakarta, Indonesia": {
+    "lat": -6.1834535,
+    "lon": 106.9648598,
+    "display_name": "Ujung Menteng, Cakung, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13960, Indonesia",
+    "source": "nominatim"
+  },
+  "Rawa Terate, Cakung, DKI Jakarta, Indonesia": {
+    "lat": -6.1869376,
+    "lon": 106.9215512,
+    "display_name": "Rawa Terate, Cakung, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13920, Indonesia",
+    "source": "nominatim"
+  },
+  "Pondok Ranggon, Cipayung, DKI Jakarta, Indonesia": {
+    "lat": -6.3567077,
+    "lon": 106.905687,
+    "display_name": "Pondok Ranggon, Cipayung, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13860, Indonesia",
+    "source": "nominatim"
+  },
+  "Cipayung, Cipayung, DKI Jakarta, Indonesia": {
+    "lat": -6.3293992,
+    "lon": 106.9037389,
+    "display_name": "Cipayung, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Setu, Cipayung, DKI Jakarta, Indonesia": {
+    "lat": -6.3133915,
+    "lon": 106.9142946,
+    "display_name": "Setu, Cipayung, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13880, Indonesia",
+    "source": "nominatim"
+  },
+  "Bambu Apus, Cipayung, DKI Jakarta, Indonesia": {
+    "lat": -6.3137921,
+    "lon": 106.9001301,
+    "display_name": "Bambu Apus, Cipayung, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13890, Indonesia",
+    "source": "nominatim"
+  },
+  "Cilangkap, Cipayung, DKI Jakarta, Indonesia": {
+    "lat": -6.3337625,
+    "lon": 106.9080579,
+    "display_name": "Cilangkap, Cipayung, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13870, Indonesia",
+    "source": "nominatim"
+  },
+  "Lubang Buaya, Cipayung, DKI Jakarta, Indonesia": {
+    "lat": -6.2928737,
+    "lon": 106.9030865,
+    "display_name": "Lubang Buaya, Cipayung, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13810, Indonesia",
+    "source": "nominatim"
+  },
+  "Ceger, Cipayung, DKI Jakarta, Indonesia": {
+    "lat": -6.3130259,
+    "lon": 106.8905229,
+    "display_name": "Ceger, Cipayung, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13820, Indonesia",
+    "source": "nominatim"
+  },
+  "Munjul, Cipayung, DKI Jakarta, Indonesia": {
+    "lat": -6.3478538,
+    "lon": 106.8955892,
+    "display_name": "Munjul, Cipayung, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13850, Indonesia",
+    "source": "nominatim"
+  },
+  "Kelapa Dua Wetan, Ciracas, DKI Jakarta, Indonesia": {
+    "lat": -6.3401627,
+    "lon": 106.8840948,
+    "display_name": "Kelapa Dua Wetan, Ciracas, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 16340, Indonesia",
+    "source": "nominatim"
+  },
+  "Cibubur, Ciracas, DKI Jakarta, Indonesia": {
+    "lat": -6.355161,
+    "lon": 106.8807665,
+    "display_name": "Cibubur, Ciracas, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Ciracas, Ciracas, DKI Jakarta, Indonesia": {
+    "lat": -6.3296346,
+    "lon": 106.8766039,
+    "display_name": "Ciracas, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Susukan, Ciracas, DKI Jakarta, Indonesia": {
+    "lat": -6.3134121,
+    "lon": 106.8689417,
+    "display_name": "Susukan, Ciracas, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Rambutan, Ciracas, DKI Jakarta, Indonesia": {
+    "lat": -6.3031181,
+    "lon": 106.8722738,
+    "display_name": "Rambutan, Ciracas, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13830, Indonesia",
+    "source": "nominatim"
+  },
+  "Duren Sawit, Duren Sawit, DKI Jakarta, Indonesia": {
+    "lat": -6.2341378,
+    "lon": 106.9192472,
+    "display_name": "Duren Sawit, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Pondok Kelapa, Duren Sawit, DKI Jakarta, Indonesia": {
+    "lat": -6.2422972,
+    "lon": 106.9333134,
+    "display_name": "Pondok Kelapa, Duren Sawit, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Pondok Bambu, Duren Sawit, DKI Jakarta, Indonesia": {
+    "lat": -6.2353305,
+    "lon": 106.9014511,
+    "display_name": "Pondok Bambu, Duren Sawit, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13430, Indonesia",
+    "source": "nominatim"
+  },
+  "Pondok Kopi, Duren Sawit, DKI Jakarta, Indonesia": {
+    "lat": -6.2176591,
+    "lon": 106.9401833,
+    "display_name": "Klender Baru, Jalan I Gusti Ngurah Rai, RW 04, Penggilingan, Cakung, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13460, Indonesia",
+    "source": "nominatim"
+  },
+  "Malaka Jaya, Duren Sawit, DKI Jakarta, Indonesia": {
+    "lat": -6.224824,
+    "lon": 106.9355781,
+    "display_name": "Malaka Jaya, Duren Sawit, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Klender, Duren Sawit, DKI Jakarta, Indonesia": {
+    "lat": -6.2133188,
+    "lon": 106.8994133,
+    "display_name": "Klender, Jalan I Gusti Ngurah Rai, RW 02, Klender, Duren Sawit, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13470, Indonesia",
+    "source": "nominatim"
+  },
+  "Malaka Sari, Duren Sawit, DKI Jakarta, Indonesia": {
+    "lat": -6.224299,
+    "lon": 106.9284449,
+    "display_name": "Malaka Sari, Duren Sawit, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Cipinang Besar Utara, Jatinegara, DKI Jakarta, Indonesia": {
+    "lat": -6.220258,
+    "lon": 106.878419,
+    "display_name": "Cipinang Besar Utara, Jatinegara, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Kampung Melayu, Jatinegara, DKI Jakarta, Indonesia": {
+    "lat": -6.2184933,
+    "lon": 106.8629903,
+    "display_name": "Kampung Melayu, Jatinegara, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13320, Indonesia",
+    "source": "nominatim"
+  },
+  "Cipinang Besar Selatan, Jatinegara, DKI Jakarta, Indonesia": {
+    "lat": -6.229193,
+    "lon": 106.8793625,
+    "display_name": "Cipinang Besar Selatan, Jatinegara, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13410, Indonesia",
+    "source": "nominatim"
+  },
+  "Bali Mester, Jatinegara, DKI Jakarta, Indonesia": {
+    "lat": -6.219198,
+    "lon": 106.8665638,
+    "display_name": "Bali Mester, Jatinegara, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13310, Indonesia",
+    "source": "nominatim"
+  },
+  "Bidara Cina, Jatinegara, DKI Jakarta, Indonesia": {
+    "lat": -6.2347457,
+    "lon": 106.8680942,
+    "display_name": "Bidara Cina, Jatinegara, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13330, Indonesia",
+    "source": "nominatim"
+  },
+  "Cipinang Cempedak, Jatinegara, DKI Jakarta, Indonesia": {
+    "lat": -6.2367005,
+    "lon": 106.8738228,
+    "display_name": "Cipinang Cempedak, Jatinegara, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13930, Indonesia",
+    "source": "nominatim"
+  },
+  "Cipinang Muara, Jatinegara, DKI Jakarta, Indonesia": {
+    "lat": -6.2263455,
+    "lon": 106.8884283,
+    "display_name": "Cipinang Muara, Jatinegara, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13420, Indonesia",
+    "source": "nominatim"
+  },
+  "Rawa Bunga, Jatinegara, DKI Jakarta, Indonesia": {
+    "lat": -6.2191685,
+    "lon": 106.8715574,
+    "display_name": "Rawa Bunga, Jatinegara, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13350, Indonesia",
+    "source": "nominatim"
+  },
+  "Batu Ampar, Kramat Jati, DKI Jakarta, Indonesia": {
+    "lat": -6.2785032,
+    "lon": 106.8623521,
+    "display_name": "Batu Ampar, Kramat Jati, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Cililitan, Kramat Jati, DKI Jakarta, Indonesia": {
+    "lat": -6.2622027,
+    "lon": 106.8662674,
+    "display_name": "Cililitan, Kramat Jati, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13640, Indonesia",
+    "source": "nominatim"
+  },
+  "Kampung Tengah, Kramat Jati, DKI Jakarta, Indonesia": {
+    "lat": -6.2903459,
+    "lon": 106.8662671,
+    "display_name": "Tengah, Kramat Jati, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13540, Indonesia",
+    "source": "nominatim"
+  },
+  "Bale Kambang, Kramat Jati, DKI Jakarta, Indonesia": {
+    "lat": -6.2813188,
+    "lon": 106.8520264,
+    "display_name": "Bale Kambang, Kramat Jati, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13530, Indonesia",
+    "source": "nominatim"
+  },
+  "Cawang, Kramat Jati, DKI Jakarta, Indonesia": {
+    "lat": -6.245907,
+    "lon": 106.8712296,
+    "display_name": "Cawang, Jalan Letnan Jenderal MT Haryono, RW 06, Cawang, Kramat Jati, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13340, Indonesia",
+    "source": "nominatim"
+  },
+  "Dukuh, Kramat Jati, DKI Jakarta, Indonesia": {
+    "lat": -6.2932913,
+    "lon": 106.8770452,
+    "display_name": "Dukuh, Kramat Jati, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13550, Indonesia",
+    "source": "nominatim"
+  },
+  "Kramat Jati, Kramat Jati, DKI Jakarta, Indonesia": {
+    "lat": -6.2749122,
+    "lon": 106.8624912,
+    "display_name": "Kramat Jati, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Halim Perdana Kusumah, Makasar, DKI Jakarta, Indonesia": {
+    "lat": -6.2627374,
+    "lon": 106.8867733,
+    "display_name": "Gereja Oikoumene Halim Perdana Kusuma, No.101, Jalan Angkasa, RW 09, Halim Perdana Kusuma, Makasar, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13610, Indonesia",
+    "source": "nominatim"
+  },
+  "Cipinang Melayu, Makasar, DKI Jakarta, Indonesia": {
+    "lat": -6.2483449,
+    "lon": 106.9037747,
+    "display_name": "Cipinang Melayu, Makasar, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Kebon Pala, Makasar, DKI Jakarta, Indonesia": {
+    "lat": -6.2538239,
+    "lon": 106.8766666,
+    "display_name": "Kebon Pala, Makasar, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Makasar, Makasar, DKI Jakarta, Indonesia": {
+    "lat": -6.275002,
+    "lon": 106.8774146,
+    "display_name": "Makasar, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13570, Indonesia",
+    "source": "nominatim"
+  },
+  "Pinang Ranti, Makasar, DKI Jakarta, Indonesia": {
+    "lat": -6.2860869,
+    "lon": 106.8818251,
+    "display_name": "Pinang Ranti, Makasar, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13560, Indonesia",
+    "source": "nominatim"
+  },
+  "Kebon Manggis, Matraman, DKI Jakarta, Indonesia": {
+    "lat": -6.2063482,
+    "lon": 106.8563741,
+    "display_name": "Kebon Manggis, Matraman, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Pal Meriem, Matraman, DKI Jakarta, Indonesia": {
+    "lat": null,
+    "lon": null,
+    "display_name": "",
+    "source": "not_found"
+  },
+  "Utan Kayu Selatan, Matraman, DKI Jakarta, Indonesia": {
+    "lat": -6.2037185,
+    "lon": 106.8688374,
+    "display_name": "Utan Kayu Selatan, Matraman, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13130, Indonesia",
+    "source": "nominatim"
+  },
+  "Utan Kayu Utara, Matraman, DKI Jakarta, Indonesia": {
+    "lat": -6.1960481,
+    "lon": 106.8677498,
+    "display_name": "Utan Kayu Utara, Matraman, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13120, Indonesia",
+    "source": "nominatim"
+  },
+  "Kayu Manis, Matraman, DKI Jakarta, Indonesia": {
+    "lat": -6.2018835,
+    "lon": 106.8619995,
+    "display_name": "Kayu Manis, Matraman, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Pisangan Baru, Matraman, DKI Jakarta, Indonesia": {
+    "lat": -6.2120258,
+    "lon": 106.868954,
+    "display_name": "Pisangan Baru, Matraman, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13110, Indonesia",
+    "source": "nominatim"
+  },
+  "Pekayon, Pasar Rebo, DKI Jakarta, Indonesia": {
+    "lat": -6.3447406,
+    "lon": 106.8642328,
+    "display_name": "Pekayon, Pasar Rebo, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Cijantung, Pasar Rebo, DKI Jakarta, Indonesia": {
+    "lat": -6.3220385,
+    "lon": 106.8581623,
+    "display_name": "Cijantung, Pasar Rebo, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13770, Indonesia",
+    "source": "nominatim"
+  },
+  "Kalisari, Pasar Rebo, DKI Jakarta, Indonesia": {
+    "lat": -6.3360796,
+    "lon": 106.8529734,
+    "display_name": "Kalisari, Pasar Rebo, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13790, Indonesia",
+    "source": "nominatim"
+  },
+  "Baru, Pasar Rebo, DKI Jakarta, Indonesia": {
+    "lat": -6.3235068,
+    "lon": 106.8469824,
+    "display_name": "Baru, Pasar Rebo, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Gedong, Pasar Rebo, DKI Jakarta, Indonesia": {
+    "lat": -6.3038933,
+    "lon": 106.861094,
+    "display_name": "Gedong, Pasar Rebo, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Pisangan Timur, Pulo Gadung, DKI Jakarta, Indonesia": {
+    "lat": -6.208459,
+    "lon": 106.8793966,
+    "display_name": "Pisangan Timur, Pulo Gadung, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13230, Indonesia",
+    "source": "nominatim"
+  },
+  "Kayu Putih, Pulo Gadung, DKI Jakarta, Indonesia": {
+    "lat": -6.1781625,
+    "lon": 106.884318,
+    "display_name": "Kayu Putih, Pulo Gadung, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13210, Indonesia",
+    "source": "nominatim"
+  },
+  "Rawamangun, Pulo Gadung, DKI Jakarta, Indonesia": {
+    "lat": -6.1948971,
+    "lon": 106.8828642,
+    "display_name": "Rawamangun, Pulo Gadung, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, 13220, Indonesia",
+    "source": "nominatim"
+  },
+  "Jati, Pulo Gadung, DKI Jakarta, Indonesia": {
+    "lat": -6.1942505,
+    "lon": 106.8966023,
+    "display_name": "Jati, Pulo Gadung, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Jatinegara Kaum, Pulo Gadung, DKI Jakarta, Indonesia": {
+    "lat": -6.20113,
+    "lon": 106.9027609,
+    "display_name": "Jatinegara Kaum, Pulo Gadung, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Pulo Gadung, Pulo Gadung, DKI Jakarta, Indonesia": {
+    "lat": -6.1911085,
+    "lon": 106.8906053,
+    "display_name": "Pulo Gadung, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Cipinang, Pulo Gadung, DKI Jakarta, Indonesia": {
+    "lat": -6.2078645,
+    "lon": 106.8909249,
+    "display_name": "Cipinang, Pulo Gadung, Jakarta Timur, Daerah Khusus Ibukota Jakarta, Jawa, Indonesia",
+    "source": "nominatim"
+  },
+  "Marunda, Cilincing, DKI Jakarta, Indonesia": {
+    "lat": -6.1231575,
+    "lon": 106.9601716,
+    "display_name": "Marunda, Cilincing, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14150, Indonesia",
+    "source": "nominatim"
+  },
+  "Rorotan, Cilincing, DKI Jakarta, Indonesia": {
+    "lat": -6.1457207,
+    "lon": 106.9567014,
+    "display_name": "Rorotan, Cilincing, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14140, Indonesia",
+    "source": "nominatim"
+  },
+  "Cilincing, Cilincing, DKI Jakarta, Indonesia": {
+    "lat": -6.1090904,
+    "lon": 106.9428098,
+    "display_name": "Cilincing, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14120, Indonesia",
+    "source": "nominatim"
+  },
+  "Semper Timur, Cilincing, DKI Jakarta, Indonesia": {
+    "lat": -6.1207571,
+    "lon": 106.9349781,
+    "display_name": "Semper Timur, Cilincing, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14130, Indonesia",
+    "source": "nominatim"
+  },
+  "Semper Barat, Cilincing, DKI Jakarta, Indonesia": {
+    "lat": -6.1238539,
+    "lon": 106.9243509,
+    "display_name": "Semper Barat, Cilincing, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14130, Indonesia",
+    "source": "nominatim"
+  },
+  "Kali Baru, Cilincing, DKI Jakarta, Indonesia": {
+    "lat": -6.1040448,
+    "lon": 106.9232529,
+    "display_name": "Kalibaru, Cilincing, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14110, Indonesia",
+    "source": "nominatim"
+  },
+  "Suka Pura, Cilincing, DKI Jakarta, Indonesia": {
+    "lat": -6.1476246,
+    "lon": 106.9303862,
+    "display_name": "Sukapura, Cilincing, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14140, Indonesia",
+    "source": "nominatim"
+  },
+  "Kelapa Gading Barat, Kelapa Gading, DKI Jakarta, Indonesia": {
+    "lat": -6.1556025,
+    "lon": 106.8951708,
+    "display_name": "Kelapa Gading Barat, Kelapa Gading, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14240, Indonesia",
+    "source": "nominatim"
+  },
+  "Pegangsaan Dua, Kelapa Gading, DKI Jakarta, Indonesia": {
+    "lat": -6.1572135,
+    "lon": 106.9142091,
+    "display_name": "Pegangsaan Dua, Jalan Gading Grande, RW 03, Pegangsaan Dua, Kelapa Gading, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14250, Indonesia",
+    "source": "nominatim"
+  },
+  "Kelapa Gading Timur, Kelapa Gading, DKI Jakarta, Indonesia": {
+    "lat": -6.1682935,
+    "lon": 106.9042145,
+    "display_name": "Kelapa Gading Timur, Kelapa Gading, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14240, Indonesia",
+    "source": "nominatim"
+  },
+  "Rawabadak Utara, Koja, DKI Jakarta, Indonesia": {
+    "lat": -6.1263435,
+    "lon": 106.8976846,
+    "display_name": "Kolam Renang Rawabadak, Jalan Pembangunan I, RW 05, Rawa Badak Selatan, Koja, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14230, Indonesia",
+    "source": "nominatim"
+  },
+  "Lagoa, Koja, DKI Jakarta, Indonesia": {
+    "lat": -6.1140999,
+    "lon": 106.911646,
+    "display_name": "Lagoa, Koja, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14270, Indonesia",
+    "source": "nominatim"
+  },
+  "Rawabadak Selatan, Koja, DKI Jakarta, Indonesia": {
+    "lat": -6.1263435,
+    "lon": 106.8976846,
+    "display_name": "Kolam Renang Rawabadak, Jalan Pembangunan I, RW 05, Rawa Badak Selatan, Koja, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14230, Indonesia",
+    "source": "nominatim"
+  },
+  "Tugu Utara, Koja, DKI Jakarta, Indonesia": {
+    "lat": -6.1224924,
+    "lon": 106.9121406,
+    "display_name": "Tugu Utara, Koja, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14260, Indonesia",
+    "source": "nominatim"
+  },
+  "Tugu Selatan, Koja, DKI Jakarta, Indonesia": {
+    "lat": -6.1363199,
+    "lon": 106.9107847,
+    "display_name": "Tugu Selatan, Koja, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14260, Indonesia",
+    "source": "nominatim"
+  },
+  "Koja, Koja, DKI Jakarta, Indonesia": {
+    "lat": -6.1052638,
+    "lon": 106.8999006,
+    "display_name": "Koja, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14220, Indonesia",
+    "source": "nominatim"
+  },
+  "Ancol, Pademangan, DKI Jakarta, Indonesia": {
+    "lat": -6.128115,
+    "lon": 106.8451374,
+    "display_name": "Ancol, Laksamana RE Martadinata, RW 10, Ancol, Pademangan, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14430, Indonesia",
+    "source": "nominatim"
+  },
+  "Pademangan Barat, Pademangan, DKI Jakarta, Indonesia": {
+    "lat": -6.134204,
+    "lon": 106.8361018,
+    "display_name": "Pademangan Barat, Pademangan, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14420, Indonesia",
+    "source": "nominatim"
+  },
+  "Pademangan Timur, Pademangan, DKI Jakarta, Indonesia": {
+    "lat": -6.1382734,
+    "lon": 106.8473205,
+    "display_name": "Pademangan Timur, Pademangan, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14410, Indonesia",
+    "source": "nominatim"
+  },
+  "Pluit, Penjaringan, DKI Jakarta, Indonesia": {
+    "lat": -6.1150307,
+    "lon": 106.7873624,
+    "display_name": "Pluit, Penjaringan, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14440, Indonesia",
+    "source": "nominatim"
+  },
+  "Kapuk Muara, Penjaringan, DKI Jakarta, Indonesia": {
+    "lat": -6.1229723,
+    "lon": 106.7613232,
+    "display_name": "Kapuk Muara, Penjaringan, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14460, Indonesia",
+    "source": "nominatim"
+  },
+  "Pejagalan, Penjaringan, DKI Jakarta, Indonesia": {
+    "lat": -6.1373464,
+    "lon": 106.7840286,
+    "display_name": "Pejagalan, Penjaringan, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14450, Indonesia",
+    "source": "nominatim"
+  },
+  "Penjaringan, Penjaringan, DKI Jakarta, Indonesia": {
+    "lat": -6.1289041,
+    "lon": 106.7992012,
+    "display_name": "Penjaringan, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14430, Indonesia",
+    "source": "nominatim"
+  },
+  "Kamal Muara, Penjaringan, DKI Jakarta, Indonesia": {
+    "lat": -6.1098554,
+    "lon": 106.7337392,
+    "display_name": "Kamal Muara, Penjaringan, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14470, Indonesia",
+    "source": "nominatim"
+  },
+  "Papango, Tanjung Priok, DKI Jakarta, Indonesia": {
+    "lat": -6.1305971,
+    "lon": 106.8788703,
+    "display_name": "Papango 1, RW 03, Papanggo, Tanjung Priok, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14340, Indonesia",
+    "source": "nominatim"
+  },
+  "Warakas, Tanjung Priok, DKI Jakarta, Indonesia": {
+    "lat": -6.122001,
+    "lon": 106.8769662,
+    "display_name": "Warakas, Tanjung Priok, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14340, Indonesia",
+    "source": "nominatim"
+  },
+  "Tanjung Priuk, Tanjung Priok, DKI Jakarta, Indonesia": {
+    "lat": -6.1106914,
+    "lon": 106.8814984,
+    "display_name": "Tanjung Priuk, Jalan Stasiun Tanjung Priok, RW 11, Tanjung Priok, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14310, Indonesia",
+    "source": "nominatim"
+  },
+  "Kebon Bawang, Tanjung Priok, DKI Jakarta, Indonesia": {
+    "lat": -6.1198964,
+    "lon": 106.8885581,
+    "display_name": "Kebon Bawang, Tanjung Priok, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14320, Indonesia",
+    "source": "nominatim"
+  },
+  "Sunter Agung, Tanjung Priok, DKI Jakarta, Indonesia": {
+    "lat": -6.138604,
+    "lon": 106.8643448,
+    "display_name": "Sunter Agung, Tanjung Priok, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14350, Indonesia",
+    "source": "nominatim"
+  },
+  "Sunter Jaya, Tanjung Priok, DKI Jakarta, Indonesia": {
+    "lat": -6.151857,
+    "lon": 106.8781723,
+    "display_name": "Sunter Jaya, Tanjung Priok, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14350, Indonesia",
+    "source": "nominatim"
+  },
+  "Sungai Bambu, Tanjung Priok, DKI Jakarta, Indonesia": {
+    "lat": -6.1290163,
+    "lon": 106.8853888,
+    "display_name": "Sungai Bambu, Tanjung Priok, Jakarta Utara, Daerah Khusus Ibukota Jakarta, Jawa, 14330, Indonesia",
+    "source": "nominatim"
+  },
+  "Gelora, Tanah Abang, DKI Jakarta, Indonesia": {
+    "lat": -6.2149918,
+    "lon": 106.8005721,
+    "display_name": "Gelora, Tanah Abang, Jakarta Pusat, Daerah Khusus Ibukota Jakarta, Jawa, 10270, Indonesia",
+    "source": "nominatim"
+  }
+}

@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="disable">
+
+<head>
+
+    <meta charset="utf-8" />
+    <title>Lokasi SPKU | Kualitas Udara di Wilayah  Jakarta</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Dinas Lingkungan Hidup Jakarta" name="description" />
+    <meta content="Themesbrand" name="author" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="/logo-dinas.ico">
+
+    
+
+
+    <!--Swiper slider css-->
+    <link href="/dist/assets/libs/swiper/swiper-bundle.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Layout config Js -->
+    <script src="/dist/assets/js/layout.js"></script>
+    <!-- Bootstrap Css -->
+    <link href="/dist/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    
+    <link rel="stylesheet" href="/lib/datatables/datatables.min.css" />
+
+    <link rel="stylesheet" href="/css/addon.css" />
+
+
+    <!-- Icons Css -->
+    <link href="/dist/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <!-- App Css-->
+    <link href="/dist/assets/css/app.min.css" rel="stylesheet" type="text/css" />
+    <!-- custom Css-->
+    <link href="/dist/assets/css/custom.min.css" rel="stylesheet" type="text/css" />
+    <link href="/css/landing.css" rel="stylesheet" />
+
+</head>
+
+<body data-bs-spy="scroll" data-bs-target="#navbar-example">
+
+    <!-- Begin page -->
+    <div class="layout-wrapper landing">
+        <nav class="navbar navbar-expand-lg navbar-landing fixed-top" id="navbar">
+            <div class="container">
+                <a class="navbar-brand" href="/">
+                    <img src="/images/logo/logo_udara.png" class="card-logo card-logo-dark" alt="Udara Jakarta" height="28" />
+                    <img src="/images/logo/logo_udara.png" class="card-logo card-logo-light" alt="Udara Jakarta" height="28" />
+                </a>
+                <button class="navbar-toggler py-0 fs-20 text-body" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="mdi mdi-menu"></i>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mx-auto mt-2 mt-lg-0" id="navbar-example">
+                        <li class="nav-item">
+                            <a class='nav-link ' href="/">Beranda</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class='nav-link' href="/#berita">Berita</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class='nav-link ' href="/tentang">Tentang Ispu</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class='nav-link active' href="/lokasi_stasiun">Lokasi SPKU</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class='nav-link ' href="/regulasi">Regulasi </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class='nav-link ' href="/faq">FAQ </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class='nav-link ' href="/kontak">Kontak</a>
+                        </li>
+                    </ul>
+
+                        <div class="">
+                            <a href="/login" class="btn btn-primary">Login</a>
+                        </div>
+                   
+                </div>
+
+            </div>
+        </nav>
+        <!-- end navbar -->
+        <div class="vertical-overlay" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent.show"></div>
+        
+
+<!-- start hero section -->
+<section class="section pb-0 hero-section" id="beranda">
+    <div class="bg-overlay bg-overlay-pattern"></div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-12 col-sm-12">
+                <div class="text-center mt-lg-5 pt-5 mb-5">
+                    <h1 class="mb-3 ff-secondary fw-semibold lh-base mb-3">Kualitas Udara di Seluruh Wilayah<span class="text-primary"> Jakarta </span></h1>
+                    <h5 class="mb-3 ff-secondary fw-semibold lh-base mb-2">Senin, 20 April 2026</h5>
+                </div>
+                <div class="row justify-content-center mb-5">
+                    <div class="col-lg-12 col-sm-12 mb-5">
+                        <div class="dataTables_wrapper dt-bootstrap5 no-footer">
+                            <table id="tblData" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Nama Lokasi</th>
+                                        <th>ISPU</th>
+                                        <th>Parameter</th>
+                                        <th>Tanggal</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row justify-content-center mb-5">
+                    <div class="col-lg-12 col-sm-12 mb-5">
+                        <h2 class="text-center mb-3">Penjelasan Nilai ISPU</h2>
+                        <div class="dataTables_wrapper dt-bootstrap5 no-footer">
+                            <table class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Nilai ISPU</th>
+                                        <th class="bg-success text-white">Baik 0-50</th>
+                                        <th class="bg-secondary text-white">Sedang 51-100</th>
+                                        <th class="bg-warning">Tidak Sehat 101-200</th>
+                                        <th class="bg-danger text-white">Sangat Tidak Sehat 201-300</th>
+                                        <th class="bg-dark text-white">Berbahaya &ge; 301</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Keterangan ISPU</td>
+                                        <td>Tingkat kualitas udara sangat baik, tidak memberikan efek negatif terhadap manusia, hewan, tumbuhan.</td>
+                                        <td>Tingkat kualitas udara masih dapat diterima pada kesehatan manusia, hewan dan tumbuhan.</td>
+                                        <td>Tingkat kualitas udara yang bersifat merugikan pada manusia, hewan dan tumbuhan.</td>
+                                        <td>Tingkat kualitas udara yang dapat meningkatkan resiko kesehatan pada sejumlah segmen populasi yang terpapar.</td>
+                                        <td>Tingkat kualitas udara yang dapat merugikan kesehatan serius pada populasi dan perlu penanganan cepat.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Rekomendasi Aktifitas</td>
+                                        <td>Sangat baik melakukan kegiatan di luar</td>
+                                        <td>
+                                            <b>Setiap orang:</b>
+                                            Masih dapat beraktivitas di luar.
+                                            <br />
+                                            <b>Kelompok sensitif:</b> Kurangi aktivitas fisik yang terlalu lama atau berat.
+                                        </td>
+                                        <td>
+                                            <b>Setiap orang:</b>
+                                            Mengurangi aktivitas fisik yang terlalu lama di luar ruangan.
+                                            <br />
+                                            <b>Kelompok sensitif:</b>
+                                            Boleh melakukan aktivitas di luar, tetapi mengambil rehat lebih sering dan melakukan aktivitas ringan serta membawa obat pribadi selama aktifitas.
+                                        </td>
+                                        <td>
+                                            <b>Setiap orang:</b>
+                                            Pertimbangkan untuk melakukan aktivitas di dalam ruangan, hindari aktivitas fisik yang terlalu lama di luar ruangan.
+                                            <br />
+                                            <b> Kelompok sensitif:</b>
+                                            Hindari semua aktivitas di luar.
+                                        </td>
+                                        <td>
+                                            <b>Setiap orang:</b>
+                                            Hindari semua aktivitas di luar.
+                                            <br />
+                                            <b> Kelompok sensitif:</b>
+                                            Tetap di dalam ruangan dan lakukan sedikit aktivitas.
+
+                                        </td>
+                                    </tr>
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- end row -->
+    </div>
+
+</section>
+<!-- end hero section -->
+
+        <!-- Start footer -->
+        <footer class="custom-footer py-5 position-relative text-white bg-primary" style="padding-top: 2rem !important;" id="kontak">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 mt-2 mb-3">
+                        <div>
+                            <div class="mb-2">
+                               <span> Dinas Lingkungan Hidup DKI Jakarta</span>
+                            </div>
+                            <div class="mt-4 fs-13 mb-3">
+                                <p>
+                                    Jl. Mandala V No.67, RT.1/RW.2 Cililitan, Kramat Jati, Jakarta Timur Provinsi DKI Jakarta
+                                </p>
+                                <p class="ff-secondary">Phone: (021) 8092744</p>
+                                <p class="ff-secondary">Email: dinaslh@jakarta.go.id</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 ms-lg-auto mb-3">
+                        <div class="mt-2 fs-13 d-flex">
+                            <div class="py-2 px-3 mb-4 me-3 w-100" style="background-color: #6478b75c">
+                                <p class="mt-2 font-weight-bold">Realtime Visitor</p>
+                                <h4 id="real" class="text-warning font-weight-bold">0</h4>
+                            </div>
+                            <div class="py-2 px-3 mb-4 me-3 w-100" style="background-color: #6478b75c">
+                                <p class="mt-2 font-weight-bold">Daily Visitor</p>
+                                <h4 id="dailyVisitors" class="text-warning font-weight-bold">0</h4>
+                            </div>
+                            <div class="py-3 px-3 mb-4 w-100" style="background-color: #6478b75c">
+                                <p class="font-weight-bold">Monthly Visitor</p>
+                                <h4 id="monthlyVisitors" class="text-warning font-weight-bold">0</h4>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row text-center text-sm-start align-items-center mt-1">
+                    <div class="col-sm-6">
+                        <div>
+                            <p class="copy-rights mb-0">
+                                <script>document.write(new Date().getFullYear())</script> © Copyright  - DLH Jakarta
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end mt-3 mt-sm-0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- end footer -->
+        <!--start back-to-top-->
+        <button onclick="topFunction()" class="btn btn-danger btn-icon landing-back-top" id="back-to-top">
+            <i class="ri-arrow-up-line"></i>
+        </button>
+        <!--end back-to-top-->
+
+    </div>
+    <!-- end layout wrapper -->
+    <!-- JAVASCRIPT -->
+    <script src="/lib/jquery/dist/jquery.min.js"></script>
+    <script src="/js/site.js?v=BxFAw9RUJ1E4NycpKEjCNDeoSvr4RPHixdBq5wDnkeY"></script>
+    <script src="/dist/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/dist/assets/libs/simplebar/simplebar.min.js"></script>
+    <script src="/dist/assets/libs/node-waves/waves.min.js"></script>
+    <script src="/dist/assets/libs/feather-icons/feather.min.js"></script>
+    <script src="/dist/assets/js/pages/plugins/lord-icon-2.1.0.js"></script>
+    <script src="/dist/assets/js/plugins.js"></script>
+
+    <!--Swiper slider js-->
+    <script src="/dist/assets/libs/swiper/swiper-bundle.min.js"></script>
+
+    <!-- landing init -->
+    <script src="/dist/assets/js/pages/landing.init.js"></script>
+    <script defer src="https://analytics.dinaslhdki.id/script.js" data-website-id="b295fce2-e748-4314-9654-4d801c189f9b"></script>
+
+    <script src="/pages/web/index_v3.js"></script>
+    
+
+
+
+    <!-- App js -->
+    
+    <script src="/lib/datatables/datatables.min.js" defer></script>
+
+    <script src="/pages/web/lokasistasiun-v.1.0.5.js"></script>
+
+</body>
+
+</html>

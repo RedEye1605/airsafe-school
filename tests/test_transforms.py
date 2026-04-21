@@ -141,7 +141,7 @@ class TestEnrichSpkuWithRisk:
     """Tests for SPKU DataFrame enrichment."""
 
     def test_adds_risk_columns(self) -> None:
-        df = pd.DataFrame({"pm25": [30, 60, 120]})
+        df = pd.DataFrame({"pm25": [30, 60, 90]})
         result = enrich_spku_with_risk(df)
         assert "risk_level" in result.columns
         assert "risk_color" in result.columns

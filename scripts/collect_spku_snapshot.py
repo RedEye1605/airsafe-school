@@ -1,109 +1,87 @@
 #!/usr/bin/env python3
+"""Collect an SPKU snapshot and append to the time-series CSV.
+
+Designed to be called from cron (hourly). Reads configuration from
+environment variables — see ``src/config.py`` for defaults.
 """
-SPKU Daily Snapshot Collector (with active station filter).
-Run via cron hourly.
-"""
-import os, sys, json, time, requests, pandas as pd
+
+import json
+import logging
+import sys
 from datetime import datetime, timedelta
+from pathlib import Path
 
-OUTPUT_DIR = os.path.expanduser("~/airsafe-school/data/raw/spku")
-TIMESERIES_PATH = os.path.join(OUTPUT_DIR, "spku_timeseries.csv")
-SNAP_DIR = os.path.join(OUTPUT_DIR, "snapshots")
-STALE_DAYS = 7
+import pandas as pd
 
-os.makedirs(SNAP_DIR, exist_ok=True)
+from src.config import DATA_DIR, SPKU_STALE_DAYS
+from src.data.spku_client import fetch_all_stations
+from src.utils import setup_logging
 
-HEADERS = {
-    'User-Agent': 'Mozilla/5.0',
-    'X-Requested-With': 'XMLHttpRequest',
-    'Content-Type': 'application/x-www-form-urlencoded'
-}
+logger = logging.getLogger(__name__)
 
-API_URL = "https://udara.jakarta.go.id/api/lokasi_stasiun_udara"
 
-def fetch_snapshot():
-    data = {
-        'draw': '1', 'start': '0', 'length': '500',
-        'columns[0][data]': 'tgl', 'columns[0][name]': 'tgl',
-        'columns[0][searchable]': 'true', 'columns[0][search][value]': '',
-        'columns[0][search][regex]': 'false',
-        'order[0][column]': '0', 'order[0][dir]': 'desc',
-        'search[value]': '', 'search[regex]': 'false',
-    }
-    r = requests.post(API_URL, headers=HEADERS, data=data, timeout=30)
-    r.raise_for_status()
-    return r.json()
+def main() -> None:
+    """Entry point for the SPKU snapshot collector."""
+    setup_logging()
 
-def main():
+    output_dir = Path(DATA_DIR) / "raw" / "spku"
+    snap_dir = output_dir / "snapshots"
+    snap_dir.mkdir(parents=True, exist_ok=True)
+    timeseries_path = output_dir / "spku_timeseries.csv"
+
     now = datetime.now()
-    cutoff = now - timedelta(days=STALE_DAYS)
-    
-    result = fetch_snapshot()
-    stations = result.get('data', [])
-    
-    # Filter to active stations (reported within STALE_DAYS)
-    active = []
-    stale = []
-    for s in stations:
-        try:
-            ts = datetime.strptime(s.get('tgl', ''), '%m/%d/%Y %H:%M:%S')
-            if ts >= cutoff:
-                s['_is_active'] = True
-                active.append(s)
-            else:
-                s['_is_active'] = False
-                stale.append(s)
-        except:
-            s['_is_active'] = False
-            stale.append(s)
-    
-    print(f"[{now.isoformat()}] Fetched {len(stations)} stations, {len(active)} active (within {STALE_DAYS}d), {len(stale)} stale")
-    
-    # Save raw snapshot
-    ts_str = now.strftime('%Y%m%d_%H%M%S')
-    snap_path = os.path.join(SNAP_DIR, f"spku_{ts_str}.json")
-    with open(snap_path, 'w') as f:
-        json.dump({'collected_at': now.isoformat(), 'active': len(active), 'stale': len(stale), 'data': stations}, f, indent=2)
-    
-    # Append to time-series CSV (active only)
-    rows = []
-    for s in active:
-        rows.append({
-            'collection_time': now.strftime('%Y-%m-%d %H:%M:%S'),
-            'station_name': s.get('dataSourceName', ''),
-            'station_id': s.get('dataSourceID', ''),
-            'latitude': float(s.get('latitude', 0)),
-            'longitude': float(s.get('longitude', 0)),
-            'parameter': s.get('matricName', ''),
-            'value': s.get('value'),
-            'status': s.get('status', ''),
-            'station_timestamp': s.get('tgl', ''),
-            'is_active': True,
-        })
-    for s in stale:
-        rows.append({
-            'collection_time': now.strftime('%Y-%m-%d %H:%M:%S'),
-            'station_name': s.get('dataSourceName', ''),
-            'station_id': s.get('dataSourceID', ''),
-            'latitude': float(s.get('latitude', 0)),
-            'longitude': float(s.get('longitude', 0)),
-            'parameter': s.get('matricName', ''),
-            'value': s.get('value'),
-            'status': s.get('status', ''),
-            'station_timestamp': s.get('tgl', ''),
-            'is_active': False,
-        })
-    
-    df = pd.DataFrame(rows)
-    
-    if os.path.exists(TIMESERIES_PATH):
-        existing = pd.read_csv(TIMESERIES_PATH)
-        df = pd.concat([existing, df], ignore_index=True)
-    
-    df.to_csv(TIMESERIES_PATH, index=False)
-    
-    active_pm25 = len([s for s in active if s.get('matricName') == 'PM25'])
-    print(f"  Active PM25: {active_pm25} | Stale: {len(stale)} | Total rows: {len(df)}")
+    cutoff = now - timedelta(days=SPKU_STALE_DAYS)
 
-if __name__ == '__main__':
+    result = fetch_all_stations()
+    stations = result["stations"]
+
+    active = [s for s in stations if s["is_active"]]
+    stale = [s for s in stations if not s["is_active"]]
+
+    logger.info(
+        "[%s] %d stations, %d active, %d stale",
+        now.isoformat(), len(stations), len(active), len(stale),
+    )
+
+    # Save raw snapshot
+    ts_str = now.strftime("%Y%m%d_%H%M%S")
+    snap_path = snap_dir / f"spku_{ts_str}.json"
+    with open(snap_path, "w") as fh:
+        json.dump({
+            "collected_at": now.isoformat(),
+            "active": len(active),
+            "stale": len(stale),
+            "data": stations,
+        }, fh, indent=2)
+
+    # Build time-series rows
+    rows = []
+    for s in stations:
+        rows.append({
+            "collection_time": now.strftime("%Y-%m-%d %H:%M:%S"),
+            "station_name": s["station_name"],
+            "station_id": s["station_id"],
+            "latitude": s["latitude"],
+            "longitude": s["longitude"],
+            "parameter": s["parameter"],
+            "value": s["value"],
+            "status": s["status"],
+            "station_timestamp": s["timestamp"],
+            "is_active": s["is_active"],
+        })
+
+    df = pd.DataFrame(rows)
+    if timeseries_path.exists():
+        existing = pd.read_csv(timeseries_path)
+        df = pd.concat([existing, df], ignore_index=True)
+    df.to_csv(timeseries_path, index=False)
+
+    active_pm25 = sum(1 for s in active if s["parameter"] == "PM25")
+    logger.info(
+        "Active PM25: %d | Stale: %d | Total rows: %d",
+        active_pm25, len(stale), len(df),
+    )
+
+
+if __name__ == "__main__":
     main()

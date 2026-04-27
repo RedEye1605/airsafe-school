@@ -1,0 +1,30 @@
+{
+  "n_samples": 98,
+  "n_estimators": 100,
+  "max_depth": 2,
+  "learning_rate": 0.05,
+  "cv_mae_mean": 19.586,
+  "cv_mae_std": 6.457,
+  "in_sample_mae_before": 25.313,
+  "in_sample_mae_after": 12.216,
+  "in_sample_rmse_before": 28.891,
+  "in_sample_rmse_after": 14.958,
+  "in_sample_r2_before": -0.0534,
+  "in_sample_r2_after": 0.7176,
+  "feature_importances": {
+    "kriging_prediction": 67,
+    "kriging_std": 43,
+    "n_sensors": 0,
+    "dist_nearest": 0,
+    "dist_2nd_nearest": 28,
+    "sensor_density_5km": 31,
+    "sensor_density_10km": 27,
+    "latitude": 37,
+    "longitude": 23,
+    "lat_x_lon": 15,
+    "variogram_spherical": 0,
+    "variogram_exponential": 0,
+    "variogram_gaussian": 0,
+    "variogram_linear": 0
+  }
+}

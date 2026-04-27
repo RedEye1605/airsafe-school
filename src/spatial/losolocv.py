@@ -124,6 +124,9 @@ def losocv_validate(
             )
             predicted = float(result.iloc[0][f"{value_col}_kriging"])
             model_used = str(result.iloc[0]["variogram_model"])
+            kriging_var = result.iloc[0].get("kriging_variance", np.nan)
+            kriging_std = result.iloc[0].get("kriging_std", np.nan)
+            fold_n_sensors = int(result.iloc[0].get("n_sensors", len(remaining)))
         except Exception as exc:
             logger.warning(
                 "LOSOCV failed for sensor %s: %s",
@@ -131,6 +134,9 @@ def losocv_validate(
             )
             predicted = np.nan
             model_used = "error"
+            kriging_var = np.nan
+            kriging_std = np.nan
+            fold_n_sensors = 0
 
         actual = float(held[value_col].iloc[0])
         records.append({
@@ -142,6 +148,9 @@ def losocv_validate(
             "abs_error": abs(actual - predicted) if not np.isnan(predicted) else np.nan,
             "squared_error": (actual - predicted) ** 2 if not np.isnan(predicted) else np.nan,
             "variogram_used": model_used,
+            "kriging_variance": kriging_var,
+            "kriging_std": kriging_std,
+            "n_sensors_fold": fold_n_sensors,
         })
 
         logger.debug(

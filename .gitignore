@@ -60,6 +60,10 @@ models/
 # Jupyter
 .ipynb_checkpoints/
 
+# Test/cache
+cache/
+.pytest_cache/
+
 # IDE
 .vscode/
 .idea/

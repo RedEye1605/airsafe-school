@@ -1,6 +1,8 @@
 """
 Feature engineering sub-package.
 
-Placeholder for ML feature construction modules such as temporal
-features, lag variables, and spatial aggregations.
+Modules for school context features (elevation, road proximity,
+land use, building density) and spatial aggregations.
 """
+
+from src.features.school_features import compute_all_features, get_feature_columns

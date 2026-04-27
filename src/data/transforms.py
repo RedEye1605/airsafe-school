@@ -160,6 +160,13 @@ def compute_daily_summary(hourly_df: pd.DataFrame) -> pd.DataFrame:
 def classify_pm25_risk(pm25: float) -> str:
     """Classify a PM2.5 value into an ISPU risk category.
 
+    Uses ISPU daily thresholds (24-hour averaging period):
+    BAIK: 0-35, SEDANG: 36-75, TIDAK SEHAT: 76-115,
+    SANGAT TIDAK SEHAT: 116-150, BERBAHAYA: >150.
+
+    For hourly PM2.5 data, prefer :func:`classify_pm25_hourly` which uses
+    BMKG hourly thresholds.
+
     Args:
         pm25: PM2.5 concentration in µg/m³.
 
@@ -175,6 +182,36 @@ def classify_pm25_risk(pm25: float) -> str:
     if pm25 <= 115:
         return "TIDAK SEHAT"
     if pm25 <= 150:
+        return "SANGAT TIDAK SEHAT"
+    return "BERBAHAYA"
+
+
+def classify_pm25_hourly(pm25: float) -> str:
+    """Classify hourly PM2.5 using BMKG thresholds.
+
+    BMKG defines hourly PM2.5 categories for Indonesia
+    (source: cews.bmkg.go.id/dashboard_pm2p5.html):
+    Baik: 0-15.5, Sedang: 15.6-55.4, Tidak Sehat: 55.5-150.4,
+    Sangat Tidak Sehat: 150.5-250.4, Berbahaya: >250.4.
+
+    These differ from ISPU daily thresholds because hourly
+    concentrations fluctuate more than 24-hour averages.
+
+    Args:
+        pm25: Hourly PM2.5 concentration in µg/m³.
+
+    Returns:
+        Risk category string in Indonesian.
+    """
+    if pd.isna(pm25):
+        return "TIDAK ADA DATA"
+    if pm25 <= 15.5:
+        return "BAIK"
+    if pm25 <= 55.4:
+        return "SEDANG"
+    if pm25 <= 150.4:
+        return "TIDAK SEHAT"
+    if pm25 <= 250.4:
         return "SANGAT TIDAK SEHAT"
     return "BERBAHAYA"
 

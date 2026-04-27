@@ -61,6 +61,7 @@ def compute_features(
     sensor_df: pd.DataFrame,
     lat_col: str = "latitude",
     lon_col: str = "longitude",
+    feature_columns: Optional[list[str]] = None,
 ) -> pd.DataFrame:
     """Compute feature matrix for residual correction.
 
@@ -81,7 +82,9 @@ def compute_features(
     feats = pd.DataFrame(index=range(n))
 
     feats["kriging_prediction"] = kriging_prediction
-    # NaN std → -1 sentinel (distinct from real values, signals IDW fallback)
+    # NaN kriging_std occurs when IDW fallback is used (no variance estimate).
+    # Encode as -1.0 so LightGBM can distinguish fallback from real Kriging
+    # uncertainty without a separate missing-flag column.
     feats["kriging_std"] = np.where(np.isnan(kriging_std), -1.0, kriging_std)
     feats["n_sensors"] = n_sensors
 
@@ -127,7 +130,7 @@ def compute_features(
     feats["sensor_density_5km"] = density_5
     feats["sensor_density_10km"] = density_10
 
-    return feats[_FEATURE_COLUMNS]
+    return feats[feature_columns or _FEATURE_COLUMNS]
 
 
 class ResidualCorrector:
@@ -157,9 +160,15 @@ class ResidualCorrector:
         "verbose": -1,
     }
 
-    def __init__(self, random_state: int = 42) -> None:
+    def __init__(
+        self,
+        random_state: int = 42,
+        lgbm_params: Optional[dict] = None,
+        feature_columns: Optional[list[str]] = None,
+    ) -> None:
         self.scaler = StandardScaler()
-        params = {**self._LGBM_PARAMS, "random_state": random_state}
+        self.feature_columns = feature_columns or list(_FEATURE_COLUMNS)
+        params = {**(lgbm_params or self._LGBM_PARAMS), "random_state": random_state}
         self.model = lgb.LGBMRegressor(**params)
         self.is_trained = False
         self.train_metrics: dict = {}
@@ -221,6 +230,7 @@ class ResidualCorrector:
                 np.array([variogram_val]),
                 held_sensors,
                 lat_col=lat_col, lon_col=lon_col,
+                feature_columns=self.feature_columns,
             )
             all_features.append(feats.iloc[0])
 
@@ -254,7 +264,7 @@ class ResidualCorrector:
 
         # Feature importances from LightGBM
         importances = dict(zip(
-            _FEATURE_COLUMNS,
+            self.feature_columns,
             self.model.feature_importances_.tolist(),
         ))
 
@@ -331,6 +341,7 @@ class ResidualCorrector:
         X = compute_features(
             result, kriging_pred, kriging_std, n_sensors, variogram,
             sensor_df, lat_col=lat_col, lon_col=lon_col,
+            feature_columns=self.feature_columns,
         )
 
         X_scaled = self.scaler.transform(X)

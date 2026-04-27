@@ -1,39 +1,75 @@
-name: Deploy Azure Functions ETL
+name: Build and deploy Python project to Azure Function App - func-airsafe-dev-01
 
 on:
   push:
-    branches: [main]
-    paths:
-      - "azure-functions/**"
-      - "src/**"
-      - ".github/workflows/deploy-azure-functions.yml"
+    branches:
+      - main
   workflow_dispatch:
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+env:
+  PYTHON_VERSION: '3.12'
 
-      - name: Setup Python
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python version
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Build deployment package
+      - name: Create and start virtual environment
         run: |
-          mkdir -p deploy
-          cp azure-functions/function_app.py deploy/
-          cp azure-functions/host.json deploy/
-          cp azure-functions/requirements.txt deploy/
-          cp -r azure-functions/etl deploy/
-          cp -r src deploy/
+          python -m venv venv
+          source venv/bin/activate
+
+      - name: Install dependencies
+        run: pip install -r azure-functions/requirements.txt
+
+      - name: Zip artifact for deployment
+        run: |
+          mkdir -p staging
+          cp azure-functions/function_app.py staging/
+          cp azure-functions/host.json staging/
+          cp azure-functions/requirements.txt staging/
+          cp -r azure-functions/etl staging/
+          cp -r src staging/
+          cd staging && zip -r ../release.zip . && cd ..
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-app
+          path: release.zip
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: read
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: python-app
+
+      - name: Unzip artifact for deployment
+        run: unzip release.zip
 
       - name: Deploy to Azure Functions
         uses: Azure/functions-action@v1
+        id: deploy-to-function
         with:
-          app-name: ${{ secrets.AZURE_FUNCTION_APP_NAME }}
-          package: deploy
+          app-name: 'func-airsafe-dev-01'
+          slot-name: 'Production'
+          package: .
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
           scm-do-build-during-deployment: true
           enable-oryx-build: true

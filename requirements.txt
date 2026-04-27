@@ -8,6 +8,9 @@ folium>=0.14
 azure-storage-blob>=12.19.0
 # azure-functions  # only needed in Function App
 
+# Spatial
+pykrige>=1.7
+
 # Dev (optional)
 # pytest>=7.0
 # ruff>=0.1

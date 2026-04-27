@@ -17,10 +17,11 @@ import logging
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
-# Allow imports from project src/
-_PROJECT_ROOT = Path(__file__).resolve().parent.parent
+# Locate project root (repo: two levels up; deployed zip: one level up)
+_here = Path(__file__).resolve().parent
+_PROJECT_ROOT = _here.parent if (_here.parent / "src").is_dir() else _here
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
@@ -83,7 +84,7 @@ def _ts_utc() -> tuple[str, str, str]:
     )
 
 
-def run_etl_pipeline(data_root: Path | None = None) -> dict[str, Any]:
+def run_etl_pipeline(data_root: Optional[Path] = None) -> dict[str, Any]:
     """Core ETL — pulls SPKU + BMKG + weather, transforms, saves to Blob.
 
     Args:

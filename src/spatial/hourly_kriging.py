@@ -102,8 +102,12 @@ def load_hourly_data(
     if end_date:
         df = df[df["datetime"] <= pd.Timestamp(end_date)]
 
-    # Keep only rows with valid PM2.5
+    # Keep only rows with valid PM2.5 and clip sensor malfunctions
     df = df.dropna(subset=["pm25"]).copy()
+    n_extreme = int((df["pm25"] > 300).sum())
+    df["pm25"] = df["pm25"].clip(upper=300.0)
+    if n_extreme:
+        logger.info("Clipped %d PM2.5 values > 300 µg/m³ (sensor malfunctions)", n_extreme)
 
     select_cols = [
         "datetime", "station_name", "latitude", "longitude", "pm25",
@@ -159,11 +163,20 @@ def _interpolate_one_hour(
         except Exception as exc:
             logger.warning("Correction failed for %s: %s", dt, exc)
 
-    result["datetime"] = dt
-    for wc in _WEATHER_COLUMNS:
-        if wc in hour_data.columns:
-            result[wc] = hour_data[wc].mean()
+    # Keep only spatial interpolation columns — weather/feature engineering
+    # is the ML engineer's responsibility.
+    keep = [
+        "npsn", "latitude", "longitude",
+        "pm25_kriging", "kriging_std", "kriging_variance",
+        "variogram_model", "n_sensors",
+    ]
+    if "pm25_corrected" in result.columns:
+        keep.append("pm25_corrected")
+    if "residual_pred" in result.columns:
+        keep.append("residual_pred")
 
+    result = result[[c for c in keep if c in result.columns]].copy()
+    result["datetime"] = dt
     return result
 
 
@@ -214,7 +227,7 @@ def hourly_kriging_interpolate(
     if not chunks:
         raise ValueError("No hours produced valid Kriging results.")
 
-    output = _add_temporal_features(pd.concat(chunks, ignore_index=True))
+    output = pd.concat(chunks, ignore_index=True)
 
     logger.info("Hourly Kriging complete: %d rows (%d hours x %d schools)",
                 len(output), n_hours, len(school_df))
@@ -261,21 +274,15 @@ def hourly_kriging_to_file(
     )
 
     is_parquet = output_path.suffix == ".parquet"
-    if is_parquet:
-        # Parquet needs all data before writing; collect in manageable chunks
-        all_chunks: list[pd.DataFrame] = []
-    else:
-        # CSV: append mode, write header on first chunk
-        wrote_header = False
-
+    wrote_header = False
     total_rows = 0
     chunk: list[pd.DataFrame] = []
+    chunk_files: list[Path] = []
 
     for i, dt in enumerate(hours):
         hour_data = hourly_df[hourly_df["datetime"] == dt]
         result = _interpolate_one_hour(dt, hour_data, school_df, config, corrector)
         if result is not None:
-            result = _add_temporal_features(result)
             chunk.append(result)
 
         if len(chunk) >= chunk_hours:
@@ -283,7 +290,11 @@ def hourly_kriging_to_file(
             total_rows += len(batch)
 
             if is_parquet:
-                all_chunks.append(batch)
+                part_path = output_path.with_suffix(
+                    f".part{len(chunk_files)}.parquet"
+                )
+                batch.to_parquet(part_path, index=False)
+                chunk_files.append(part_path)
             else:
                 batch.to_csv(output_path, mode="a", header=not wrote_header, index=False)
                 wrote_header = True
@@ -300,20 +311,32 @@ def hourly_kriging_to_file(
         batch = pd.concat(chunk, ignore_index=True)
         total_rows += len(batch)
         if is_parquet:
-            all_chunks.append(batch)
+            part_path = output_path.with_suffix(
+                f".part{len(chunk_files)}.parquet"
+            )
+            batch.to_parquet(part_path, index=False)
+            chunk_files.append(part_path)
         else:
             batch.to_csv(output_path, mode="a", header=not wrote_header, index=False)
 
-    if is_parquet and all_chunks:
-        full = pd.concat(all_chunks, ignore_index=True)
-        full.to_parquet(output_path, index=False)
+    # Concatenate part files into final Parquet
+    if is_parquet and chunk_files:
+        if len(chunk_files) == 1:
+            chunk_files[0].rename(output_path)
+        else:
+            parts = [pd.read_parquet(f) for f in chunk_files]
+            full = pd.concat(parts, ignore_index=True)
+            full.to_parquet(output_path, index=False)
+            del parts, full
+            for f in chunk_files:
+                f.unlink(missing_ok=True)
 
     logger.info("Output saved: %s (%d rows)", output_path, total_rows)
     return output_path
 
 
 def run_hourly_pipeline(
-    data_path: str | Path = "data/dataset_master_spku_weather.csv",
+    data_path: str | Path = "data/friend_model/Data Lag/dataset_h6.csv",
     school_path: str | Path = "data/processed/schools/schools_geocoded.csv",
     output_path: Optional[str | Path] = None,
     start_date: Optional[str] = None,

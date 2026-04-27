@@ -90,6 +90,24 @@ class TestLoadHourlyData:
         df = load_hourly_data(path)
         assert df["pm25"].notna().all()
 
+    def test_clips_extreme_pm25(self, tmp_path) -> None:
+        path = _make_hourly_csv(tmp_path, n_hours=3)
+        # Inject a sensor malfunction value
+        import csv
+        rows = []
+        with open(path) as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                if row["hour"] == "01:00":
+                    row["pm25"] = "999.0"
+                rows.append(row)
+        with open(path, "w", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=rows[0].keys())
+            writer.writeheader()
+            writer.writerows(rows)
+        df = load_hourly_data(str(path))
+        assert df["pm25"].max() <= 300.0
+
     def test_includes_weather_columns(self, tmp_path) -> None:
         path = _make_hourly_csv(tmp_path)
         df = load_hourly_data(path)
@@ -128,18 +146,19 @@ class TestHourlyKrigingInterpolate:
         hourly_df = load_hourly_data(path)
         schools = _make_schools(3)
         result = hourly_kriging_interpolate(hourly_df, schools)
-        assert "temperature_2m" in result.columns
-        assert "wind_speed_10m" in result.columns
+        # Weather columns are NOT in output — that's the ML engineer's job
+        assert "pm25_kriging" in result.columns
+        assert "datetime" in result.columns
 
-    def test_includes_temporal_features(self, tmp_path) -> None:
+    def test_does_not_include_weather_or_temporal(self, tmp_path) -> None:
         path = _make_hourly_csv(tmp_path, n_hours=3)
         hourly_df = load_hourly_data(path)
         schools = _make_schools(3)
         result = hourly_kriging_interpolate(hourly_df, schools)
-        assert "hour_num" in result.columns
-        assert "dayofweek" in result.columns
-        assert "is_weekend" in result.columns
-        assert "year" in result.columns
+        # Output is minimal spatial layer only — no weather or temporal features
+        assert "temperature_2m" not in result.columns
+        assert "hour_num" not in result.columns
+        assert "dayofweek" not in result.columns
 
     def test_output_has_kriging_columns(self, tmp_path) -> None:
         path = _make_hourly_csv(tmp_path, n_hours=3)

@@ -92,6 +92,10 @@ def load_lag_dataset(
         raise ValueError("No data remaining after filtering.")
 
     df = df.dropna(subset=["pm25"]).copy()
+    n_extreme = int((df["pm25"] > 300).sum())
+    df["pm25"] = df["pm25"].clip(upper=300.0)
+    if n_extreme:
+        logger.info("Clipped %d PM2.5 values > 300 µg/m³ (sensor malfunctions)", n_extreme)
     df = df.sort_values(["datetime", "station_name"]).reset_index(drop=True)
 
     logger.info(
@@ -355,10 +359,10 @@ def lag_kriging_to_file(
     )
 
     is_parquet = output_path.suffix == ".parquet"
-    all_chunks: list[pd.DataFrame] = [] if is_parquet else []
     wrote_header = False
     total_rows = 0
     chunk: list[pd.DataFrame] = []
+    chunk_files: list[Path] = []
 
     for i, dt in enumerate(timestamps):
         station_rows = lag_df[lag_df["datetime"] == dt]
@@ -373,7 +377,12 @@ def lag_kriging_to_file(
             total_rows += len(batch)
 
             if is_parquet:
-                all_chunks.append(batch)
+                part_path = output_path.with_suffix(
+                    f".part{len(chunk_files)}.parquet"
+                )
+                part_path.parent.mkdir(parents=True, exist_ok=True)
+                batch.to_parquet(part_path, index=False)
+                chunk_files.append(part_path)
             else:
                 batch.to_csv(
                     output_path, mode="a", header=not wrote_header, index=False,
@@ -394,15 +403,28 @@ def lag_kriging_to_file(
         batch = pd.concat(chunk, ignore_index=True)
         total_rows += len(batch)
         if is_parquet:
-            all_chunks.append(batch)
+            part_path = output_path.with_suffix(
+                f".part{len(chunk_files)}.parquet"
+            )
+            part_path.parent.mkdir(parents=True, exist_ok=True)
+            batch.to_parquet(part_path, index=False)
+            chunk_files.append(part_path)
         else:
             batch.to_csv(
                 output_path, mode="a", header=not wrote_header, index=False,
             )
 
-    if is_parquet and all_chunks:
-        full = pd.concat(all_chunks, ignore_index=True)
-        full.to_parquet(output_path, index=False)
+    # Concatenate part files into final Parquet (one-at-a-time to save memory)
+    if is_parquet and chunk_files:
+        if len(chunk_files) == 1:
+            chunk_files[0].rename(output_path)
+        else:
+            parts = [pd.read_parquet(f) for f in chunk_files]
+            full = pd.concat(parts, ignore_index=True)
+            full.to_parquet(output_path, index=False)
+            del parts, full
+            for f in chunk_files:
+                f.unlink(missing_ok=True)
 
     logger.info("Output saved: %s (%d rows)", output_path, total_rows)
     return output_path

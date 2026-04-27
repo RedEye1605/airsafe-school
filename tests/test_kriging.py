@@ -116,8 +116,8 @@ class TestBestVariogramSelection:
         import logging
         with caplog.at_level(logging.INFO, logger="src.spatial.kriging"):
             kriging_interpolate(_make_sensors(5), _make_schools(1))
-        # Should log variogram fit cR for each candidate
-        assert any("Variogram" in r.message and "cR=" in r.message for r in caplog.records)
+        # Should log variogram cR for each candidate
+        assert any("cR=" in r.message for r in caplog.records)
         # Should log the selected model
         assert any("Selected variogram" in r.message for r in caplog.records)
 

@@ -5,11 +5,17 @@ Uses Ordinary Kriging via PyKrige to interpolate sensor PM2.5 readings
 to arbitrary target points (schools). Falls back to IDW when too few
 sensors are available.
 
-Notes on units:
+Notes on units and methodology:
     With coordinates_type="geographic" (default), PyKrige computes
     variogram distances in **degrees** (great-circle angular distance).
-    The variogram range parameter is therefore also in degrees. At
-    Jakarta's latitude (~-6.2 deg), 1 degree ≈ 111 km.
+    The variogram range parameter is therefore also in degrees.
+    At Jakarta's latitude (~-6.2 deg), 1 degree ≈ 111 km.
+
+    Variogram model selection uses the **cR** statistic, which is a
+    leave-one-out cross-validation (LOOCV) measure of prediction quality
+    computed by PyKrige (cR = Q2 * geometric_mean(sigma^2)). Lower cR
+    indicates better cross-validated predictions. This is NOT a variogram
+    fit residual — it directly measures interpolation accuracy.
 """
 
 from __future__ import annotations
@@ -51,9 +57,10 @@ class KrigingConfig:
     """Configuration for Kriging interpolation.
 
     Attributes:
-        variogram_models: Candidate models evaluated; the one with lowest
-            variogram-fit residual (cR) is selected.
-        coordinates_type: "geographic" (lat/lon) or "euclidean".
+        variogram_models: Candidate models evaluated via LOOCV; the one
+            with lowest cR (cross-validated prediction quality) is selected.
+        coordinates_type: "geographic" (lat/lon, great-circle distance in
+            degrees) or "euclidean" (flat-plane distance).
         nlags: Number of lag bins for the empirical variogram.
             10-15 is recommended for ~100 sensors.
         weight: If True, weight lag bins inversely by count (recommended).
@@ -127,10 +134,6 @@ def _clean_points(
     out = out[out[lat_col].between(-90, 90) & out[lon_col].between(-180, 180)]
     if value_col and value_col in out.columns:
         out = out[out[value_col] >= 0]
-    # PyKrige geographic mode expects positive longitude in [0, 360]
-    out[lon_col] = np.where(
-        out[lon_col] < 0, out[lon_col] + 360, out[lon_col],
-    )
     out = out.reset_index(drop=True)
     return out
 
@@ -150,7 +153,6 @@ def _dedupe_sensors(
 
 def _idw_interpolate(
     sensor_df: pd.DataFrame,
-    target_df: pd.DataFrame,
     value_col: str,
     lat_col: str,
     lon_col: str,
@@ -160,12 +162,13 @@ def _idw_interpolate(
 ) -> np.ndarray:
     """IDW interpolation using haversine distance (km).
 
-    Uses original (pre-conversion) lat/lon for haversine to avoid
-    artifacts near the antimeridian.
+    Args:
+        lat_orig / lon_orig: Target-point coordinates in original
+            [-180, 180] longitude convention for haversine calculation.
     """
     s_lat = sensor_df[lat_col].to_numpy(dtype=float)
     s_lon = sensor_df[lon_col].to_numpy(dtype=float)
-    # Convert sensor longitudes back to [-180, 180] for haversine
+    # Normalise both sensor and target longitudes to [-180, 180]
     s_lon = np.where(s_lon > 180, s_lon - 360, s_lon)
     values = sensor_df[value_col].to_numpy(dtype=float)
 
@@ -197,10 +200,12 @@ def _pick_best_variogram(
     config: KrigingConfig,
 ) -> tuple[OrdinaryKriging, str]:
     """Fit all candidate variogram models and return the one with lowest
-    variogram-fit residual (cR).
+    leave-one-out cross-validation statistic (cR).
 
-    cR is the sum of squared differences between the empirical
-    semivariogram and the fitted model — lower is better.
+    cR = Q2 * geometric_mean(sigma^2), where Q2 is the mean squared
+    standardised LOOCV residual and sigma is the kriging standard
+    deviation from each LOOCV fold. Lower cR indicates better
+    cross-validated prediction quality.
     """
     candidates: list[tuple[float, OrdinaryKriging, str]] = []
     last_error: Optional[Exception] = None
@@ -220,7 +225,9 @@ def _pick_best_variogram(
             )
             cR = float(ok.cR)
             candidates.append((cR, ok, model))
-            logger.info("Variogram %s: cR=%.4f", model, cR)
+            logger.info(
+                "Variogram %s: cR=%.4f (LOOCV statistic)", model, cR,
+            )
         except Exception as exc:
             logger.warning(
                 "Kriging failed for variogram_model=%s: %s", model, exc,
@@ -251,6 +258,11 @@ def kriging_interpolate(
     config: Optional[KrigingConfig] = None,
 ) -> pd.DataFrame:
     """Estimate PM2.5 at target locations using Ordinary Kriging.
+
+    Fits multiple variogram models, selects the one with lowest LOOCV
+    prediction error (cR), and interpolates PM2.5 at all target points.
+    Falls back to haversine-IDW when fewer than ``min_sensors`` are
+    available or when all variogram fits fail.
 
     Args:
         sensor_df: DataFrame with sensor coordinates and PM2.5 values.
@@ -317,7 +329,7 @@ def kriging_interpolate(
             n_sensors,
         )
         pred = _idw_interpolate(
-            sensors, targets, value_col=value_col,
+            sensors, value_col=value_col,
             lat_col=lat_col, lon_col=lon_col,
             lat_orig=orig_lat, lon_orig=orig_lon,
             power=config.idw_power,
@@ -339,7 +351,7 @@ def kriging_interpolate(
 
     try:
         ok, best_model = _pick_best_variogram(x, y, z, config)
-        pred, var = ok.execute("points", tx, ty, backend="loop")
+        pred, var = ok.execute("points", tx, ty, backend="vectorized")
         pred = np.asarray(pred, dtype=float)
         var = np.asarray(var, dtype=float)
 
@@ -357,7 +369,7 @@ def kriging_interpolate(
     # All Kriging models failed — fall back to IDW
     logger.warning("All Kriging models failed. Falling back to IDW.")
     pred = _idw_interpolate(
-        sensors, targets, value_col=value_col,
+        sensors, value_col=value_col,
         lat_col=lat_col, lon_col=lon_col,
         lat_orig=orig_lat, lon_orig=orig_lon,
         power=config.idw_power,

@@ -8,6 +8,7 @@ statistics overlay.
 
 from __future__ import annotations
 
+import html
 import logging
 from pathlib import Path
 from typing import Optional
@@ -58,26 +59,28 @@ def build_error_map(
     m = folium.Map(location=JAKARTA_CENTER, zoom_start=11, tiles="OpenStreetMap")
 
     sensor_group = folium.FeatureGroup(name="Sensor Error")
+    n_failed = 0
     for _, row in loso_results.iterrows():
         if pd.isna(row.get("abs_error")):
+            n_failed += 1
             continue
         lat = row["latitude"]
         lon = row["longitude"]
         error = row["abs_error"]
         color = _color_for(error)
-
-        radius = max(50, min(error * 40, 800))
+        sensor_id = html.escape(str(row["sensor_id"]))
+        model_used = html.escape(str(row["variogram_used"]))
 
         folium.CircleMarker(
             location=[lat, lon],
             radius=max(5, min(error * 0.8, 18)),
             color=color, fill=True, fill_opacity=0.7, weight=1,
             popup=(
-                f"<b>{row['sensor_id']}</b><br>"
+                f"<b>{sensor_id}</b><br>"
                 f"Actual: {row['actual_pm25']:.1f} µg/m³<br>"
                 f"Predicted: {row['predicted_pm25']:.1f} µg/m³<br>"
                 f"Abs Error: {error:.2f} µg/m³<br>"
-                f"Model: {row['variogram_used']}"
+                f"Model: {model_used}"
             ),
         ).add_to(sensor_group)
 
@@ -89,6 +92,9 @@ def build_error_map(
         f'<span style="color:{color}">&#9679;</span> {label}<br>'
         for _, color, label in _ERROR_COLORS
     )
+    failed_line = ""
+    if n_failed > 0:
+        failed_line = f"Failed: {n_failed}<br>"
     title = (
         f'<div style="position:fixed;top:10px;left:50%;transform:translateX(-50%);'
         f"z-index:9999;font-size:14px;font-weight:bold;background:white;"
@@ -97,7 +103,8 @@ def build_error_map(
         f'<span style="font-size:12px;font-weight:normal;">'
         f"MAE: {metrics.mae:.2f} | RMSE: {metrics.rmse:.2f} | "
         f"R²: {metrics.r_squared:.3f} | Bias: {metrics.bias:.2f}<br>"
-        f"Sensors: {metrics.n_sensors} | Fallback: {metrics.n_fallback}<br><br>"
+        f"Sensors: {metrics.n_sensors} | Fallback: {metrics.n_fallback}<br>"
+        f"{failed_line}<br>"
         f"{legend_items}"
         f"</span></div>"
     )

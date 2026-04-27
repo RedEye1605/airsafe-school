@@ -4,6 +4,11 @@ Leave-One-Sensor-Out Cross-Validation (LOSOCV) for Kriging interpolation.
 For each sensor, holds it out and predicts its PM2.5 using the remaining
 sensors via kriging_interpolate(). Computes per-sensor error metrics and
 aggregate statistics (MAE, RMSE, R², bias).
+
+The variogram is refit from scratch for each fold (using only the
+training sensors) to avoid information leakage. This is the correct
+practice for honest cross-validation but makes the procedure O(N)
+relative to a single kriging run.
 """
 
 from __future__ import annotations
@@ -41,10 +46,15 @@ def _compute_metrics(errors: pd.DataFrame) -> LosoMetrics:
     ss_res = float(np.sum(residuals ** 2))
     ss_tot = float(np.sum((actual - np.mean(actual)) ** 2))
 
+    if ss_tot > 0:
+        r_squared = float(1 - ss_res / ss_tot)
+    else:
+        r_squared = 0.0 if ss_res == 0 else float("nan")
+
     return LosoMetrics(
         mae=float(np.mean(np.abs(residuals))),
         rmse=float(np.sqrt(np.mean(residuals ** 2))),
-        r_squared=float(1 - ss_res / ss_tot) if ss_tot > 0 else 0.0,
+        r_squared=r_squared,
         median_ae=float(np.median(np.abs(residuals))),
         bias=float(np.mean(residuals)),
         n_sensors=len(errors),
@@ -65,6 +75,9 @@ def losocv_validate(
     For each sensor, holds it out and uses the remaining sensors to
     predict PM2.5 at the held-out sensor location via kriging_interpolate().
 
+    The variogram is refit for each fold using only training sensors,
+    ensuring honest cross-validation without information leakage.
+
     Args:
         sensor_df: DataFrame with sensor coordinates and PM2.5 values.
         value_col: Column name for the value to interpolate.
@@ -77,13 +90,25 @@ def losocv_validate(
         Tuple of (per-sensor results DataFrame, aggregate LosoMetrics).
         The DataFrame has columns: sensor_id, latitude, longitude,
         actual_pm25, predicted_pm25, abs_error, squared_error, variogram_used.
+
+    Raises:
+        ValueError: If fewer than 2 valid sensors are provided.
     """
     config = config or KrigingConfig()
+    n = len(sensor_df)
+    if n < 2:
+        raise ValueError(
+            f"Need at least 2 sensors for LOSOCV, got {n}"
+        )
+
     records: list[dict] = []
 
-    for idx in range(len(sensor_df)):
+    for idx in range(n):
+        # Use positional boolean mask to avoid duplicate-index bugs
+        mask = np.ones(n, dtype=bool)
+        mask[idx] = False
         held = sensor_df.iloc[[idx]]
-        remaining = sensor_df.drop(sensor_df.index[idx])
+        remaining = sensor_df.iloc[mask]
 
         target = pd.DataFrame({
             "npsn": [str(held[sensor_id_col].iloc[0])],
@@ -119,7 +144,7 @@ def losocv_validate(
             "variogram_used": model_used,
         })
 
-        logger.info(
+        logger.debug(
             "Sensor %s: actual=%.2f predicted=%.2f error=%.2f (%s)",
             records[-1]["sensor_id"], actual, predicted,
             records[-1]["abs_error"], model_used,
@@ -127,6 +152,12 @@ def losocv_validate(
 
     results = pd.DataFrame(records)
     valid = results.dropna(subset=["predicted_pm25"])
+
+    if valid.empty:
+        raise ValueError(
+            "All LOSOCV folds failed — no valid predictions."
+        )
+
     metrics = _compute_metrics(valid)
 
     logger.info(

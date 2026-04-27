@@ -4,8 +4,9 @@ pandas>=2.0
 numpy>=1.24
 folium>=0.14
 
-# Azure Functions (optional)
-# azure-functions
+# Azure
+azure-storage-blob>=12.19.0
+# azure-functions  # only needed in Function App
 
 # Dev (optional)
 # pytest>=7.0

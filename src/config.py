@@ -91,6 +91,42 @@ ISPU_STATION_COORDS: Final[dict[str, tuple[float, float]]] = {
 JAKARTA_CENTER: Final[tuple[float, float]] = (-6.2088, 106.8456)
 COVERAGE_RADIUS_M: Final[int] = 2000  # 2 km in metres
 
+# ── BMKG Weather API ────────────────────────────────────────────────────────
+
+BMKG_BASE_URL: Final[str] = os.environ.get(
+    "BMKG_BASE_URL",
+    "https://api.bmkg.go.id/publik/prakiraan-cuaca",
+)
+BMKG_ADM4_CODES: Final[str] = os.environ.get(
+    "BMKG_ADM4_CODES",
+    "31.71.03.1001",  # Kemayoran, Jakarta Pusat
+)
+BMKG_REQUEST_TIMEOUT: Final[int] = int(
+    os.environ.get("BMKG_REQUEST_TIMEOUT", "60")
+)
+
+# ── Azure Blob Storage ──────────────────────────────────────────────────────
+
+AIRSAFE_BLOB_CONNECTION_STRING: Final[str] = os.environ.get(
+    "AIRSAFE_BLOB_CONNECTION_STRING", ""
+)
+AIRSAFE_RAW_CONTAINER: Final[str] = os.environ.get(
+    "AIRSAFE_RAW_CONTAINER", "raw"
+)
+AIRSAFE_PROCESSED_CONTAINER: Final[str] = os.environ.get(
+    "AIRSAFE_PROCESSED_CONTAINER", "processed"
+)
+AIRSAFE_LOG_CONTAINER: Final[str] = os.environ.get(
+    "AIRSAFE_LOG_CONTAINER", "logs"
+)
+
+# ── ETL Schedule ────────────────────────────────────────────────────────────
+
+ETL_SCHEDULE: Final[str] = os.environ.get(
+    "ETL_SCHEDULE",
+    "0 5 * * * *",  # every hour at :05 (UTC)
+)
+
 # ── Local / Azure Mode ──────────────────────────────────────────────────────
 
 LOCAL_MODE: Final[bool] = os.environ.get("AIRSAFE_LOCAL_MODE", "0") == "1"

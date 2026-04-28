@@ -64,10 +64,16 @@ def _download_blob_to_temp(container: str, blob_name: str) -> Path:
     bc = svc.get_blob_client(container=container, blob=blob_name)
     suffix = Path(blob_name).suffix
     tmp = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
-    bc.download_blob().readinto(tmp)
-    tmp.close()
-    logger.info("Downloaded blob %s/%s → %s", container, blob_name, tmp.name)
-    return Path(tmp.name)
+    tmp_path = Path(tmp.name)
+    try:
+        bc.download_blob().readinto(tmp)
+        tmp.close()
+        logger.info("Downloaded blob %s/%s → %s", container, blob_name, tmp.name)
+        return tmp_path
+    except Exception:
+        tmp.close()
+        tmp_path.unlink(missing_ok=True)
+        raise
 
 logger = logging.getLogger(__name__)
 
@@ -107,6 +113,7 @@ _WEATHER_VARS = [
 
 def _fetch_openmeteo_hourly(lat: float, lon: float, start_date: str, end_date: str) -> list[dict]:
     import requests
+    import time
 
     url = "https://archive-api.open-meteo.com/v1/archive"
     params = {
@@ -117,10 +124,18 @@ def _fetch_openmeteo_hourly(lat: float, lon: float, start_date: str, end_date: s
         "hourly": ",".join(_WEATHER_VARS),
         "timezone": "Asia/Jakarta",
     }
-    resp = requests.get(url, params=params, timeout=120)
-    resp.raise_for_status()
-    data = resp.json()
-    return data.get("hourly", {})
+    for attempt in range(2):
+        try:
+            resp = requests.get(url, params=params, timeout=120)
+            resp.raise_for_status()
+            return resp.json().get("hourly", {})
+        except requests.exceptions.HTTPError:
+            if attempt == 0 and resp.status_code >= 500:
+                logger.warning("Open-Meteo %d, retrying in 5s", resp.status_code)
+                time.sleep(5)
+                continue
+            raise
+    return {}
 
 
 def _fetch_station_weather(slug: str, start_date: str, end_date: str) -> Optional[list[dict]]:
@@ -309,9 +324,15 @@ def _run_predict_pipeline(data_root: Optional[Path] = None) -> dict[str, Any]:
     models = {}
     for h in [6, 12, 24]:
         model_path = models_dir / f"final_lgbm_h{h}.pkl"
-        with open(model_path, "rb") as f:
-            models[h] = pickle.load(f)
-        logger.info("Loaded model h%d: %d features", h, models[h].n_features_)
+        try:
+            with open(model_path, "rb") as f:
+                models[h] = pickle.load(f)
+            logger.info("Loaded model h%d: %d features", h, models[h].n_features_)
+        except Exception as exc:
+            manifest["status"] = "failed"
+            manifest["error"] = f"Failed to load model h{h}: {exc}"
+            logger.error("Model load failed h%d: %s", h, exc)
+            return manifest
 
     # Load residual corrector
     corrector_path = models_dir / "hourly_residual_corrector.pkl"
@@ -343,7 +364,13 @@ def _run_predict_pipeline(data_root: Optional[Path] = None) -> dict[str, Any]:
         manifest["error"] = f"No master dataset found"
         return manifest
 
-    master = pd.read_csv(master_path)
+    try:
+        master = pd.read_csv(master_path)
+    except Exception as exc:
+        manifest["status"] = "failed"
+        manifest["error"] = f"Failed to read master dataset: {exc}"
+        logger.error("Master dataset read failed: %s", exc)
+        return manifest
     master["datetime"] = pd.to_datetime(master["datetime"])
     cutoff = pd.Timestamp.now() - pd.Timedelta(hours=72)
     historical = master[master["datetime"] >= cutoff].copy()
@@ -356,6 +383,11 @@ def _run_predict_pipeline(data_root: Optional[Path] = None) -> dict[str, Any]:
     for h in [6, 12, 24]:
         logger.info("Predicting horizon h%d...", h)
         features_df = build_prediction_features(historical, horizon=h)
+        if features_df.empty:
+            logger.warning("No features for h%d — skipping", h)
+            school_results[f"pm25_h{h}"] = np.nan
+            school_results[f"risk_h{h}"] = "TIDAK ADA DATA"
+            continue
 
         X, feature_cols = prepare_model_input(
             features_df, f"target_pm25_t_plus_{h}",
@@ -656,6 +688,11 @@ def _build_recommend_response(
     }, 200
 
 
+def _error_json(exc: Exception, status: int = 500) -> "func.HttpResponse":
+    body = json.dumps({"error": str(exc), "type": type(exc).__name__})
+    return func.HttpResponse(body, mimetype="application/json", status_code=status)
+
+
 # ── Azure Function endpoints ─────────────────────────────────────────────
 
 if not LOCAL_MODE and app is not None:
@@ -666,7 +703,6 @@ if not LOCAL_MODE and app is not None:
         run_on_startup=False,
     )
     def etl_timer(myTimer: func.TimerRequest) -> None:
-        """Timer-triggered ETL on configurable schedule."""
         if myTimer.past_due:
             logger.warning("Timer is past due!")
         manifest = run_etl_pipeline()
@@ -675,7 +711,6 @@ if not LOCAL_MODE and app is not None:
     @app.function_name(name="etl_http")
     @app.route(route="etl", methods=["POST"])
     def etl_http(req: func.HttpRequest) -> func.HttpResponse:
-        """HTTP-triggered ETL for manual testing."""
         try:
             manifest = run_etl_pipeline()
             return func.HttpResponse(
@@ -685,11 +720,7 @@ if not LOCAL_MODE and app is not None:
             )
         except Exception as exc:
             logger.exception("ETL HTTP failed")
-            return func.HttpResponse(
-                json.dumps({"error": str(exc)}),
-                mimetype="application/json",
-                status_code=500,
-            )
+            return _error_json(exc)
 
     @app.function_name(name="predict_timer")
     @app.timer_trigger(
@@ -698,7 +729,6 @@ if not LOCAL_MODE and app is not None:
         run_on_startup=False,
     )
     def predict_timer(myTimer: func.TimerRequest) -> None:
-        """Timer-triggered predict at 15:00 UTC = 22:00 WIB daily."""
         if myTimer.past_due:
             logger.warning("Predict timer is past due!")
         manifest = _run_predict_pipeline()
@@ -707,7 +737,6 @@ if not LOCAL_MODE and app is not None:
     @app.function_name(name="predict_http")
     @app.route(route="predict", methods=["POST"])
     def predict_http(req: func.HttpRequest) -> func.HttpResponse:
-        """HTTP-triggered predict for manual testing."""
         try:
             manifest = _run_predict_pipeline()
             return func.HttpResponse(
@@ -717,16 +746,11 @@ if not LOCAL_MODE and app is not None:
             )
         except Exception as exc:
             logger.exception("Predict HTTP failed")
-            return func.HttpResponse(
-                json.dumps({"error": str(exc)}),
-                mimetype="application/json",
-                status_code=500,
-            )
+            return _error_json(exc)
 
     @app.function_name(name="recommend_http")
     @app.route(route="recommend", methods=["GET"])
     def recommend_http(req: func.HttpRequest) -> func.HttpResponse:
-        """Demo API — get school recommendations."""
         try:
             data_root = Path(DATA_DIR)
             npsn = req.params.get("npsn")
@@ -739,11 +763,7 @@ if not LOCAL_MODE and app is not None:
             )
         except Exception as exc:
             logger.exception("Recommend HTTP failed")
-            return func.HttpResponse(
-                json.dumps({"error": str(exc)}),
-                mimetype="application/json",
-                status_code=500,
-            )
+            return _error_json(exc)
 
 
 # ── Local entry point ───────────────────────────────────────────────────

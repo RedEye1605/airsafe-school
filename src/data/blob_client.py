@@ -160,10 +160,13 @@ def save_json_dual(
     local_path.write_text(text, encoding="utf-8")
 
     if is_blob_configured():
-        upload_text(
-            container, blob_path, text, content_type="application/json; charset=utf-8"
-        )
-        return f"blob://{container}/{blob_path}"
+        try:
+            upload_text(
+                container, blob_path, text, content_type="application/json; charset=utf-8"
+            )
+            return f"blob://{container}/{blob_path}"
+        except Exception:
+            logger.exception("Blob upload failed for %s/%s", container, blob_path)
 
     return str(local_path)
 

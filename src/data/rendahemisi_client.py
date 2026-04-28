@@ -79,7 +79,7 @@ def _parse_hourly_table(html: str, station: dict, dt: datetime, url: str) -> Opt
 
     try:
         tables = pd.read_html(StringIO(html))
-    except Exception:
+    except (ValueError, KeyError, IndexError):
         return None
 
     target = None

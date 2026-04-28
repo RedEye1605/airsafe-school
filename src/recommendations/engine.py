@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import pandas as pd
 from dataclasses import asdict, dataclass, field
 
 _BMKG_TO_ACTION: dict[str, str] = {
@@ -145,13 +146,20 @@ def from_prediction_row(
         row.get("risk_h12", ""),
         row.get("risk_h24", ""),
     )
+    def _safe_float(val):
+        try:
+            v = float(val)
+            return v if pd.notna(v) else -1.0
+        except (ValueError, TypeError):
+            return -1.0
+
     return {
         "school_id": str(row.get("npsn", "")),
         "school_name": school_name or str(row.get("npsn", "")),
         "district": district or row.get("district", ""),
-        "pm25_6h": float(row.get("pm25_h6", 0) or 0),
-        "pm25_12h": float(row.get("pm25_h12", 0) or 0),
-        "pm25_24h": float(row.get("pm25_h24", 0) or 0),
+        "pm25_6h": _safe_float(row.get("pm25_h6")),
+        "pm25_12h": _safe_float(row.get("pm25_h12")),
+        "pm25_24h": _safe_float(row.get("pm25_h24")),
         "risk_level": risk,
         "top_shap_factors": row.get("top_shap_factors", []),
     }

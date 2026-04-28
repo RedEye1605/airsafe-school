@@ -1,14 +1,16 @@
 """
 AirSafe School — Azure Function App (Python v2 model).
 
-Two functions:
+Three functions:
     1. etl_timer / etl_http: ETL — scrape rendahemisi + Open-Meteo weather,
        produce dataset_master_spku_weather format, append to Blob.
     2. predict_timer / predict_http: Load LightGBM models, predict PM2.5 at
        5 ISPU stations, Kriging + residual correction to 4,215 schools.
+    3. recommend_http: Demo API — load predictions, generate Bahasa Indonesia
+       recommendations for schools (template fallback).
 
 Local testing:
-    python function_app.py --local
+    python function_app.py --local [etl|predict|recommend]
 """
 
 import json
@@ -46,6 +48,11 @@ from src.data.blob_client import (
 )
 from src.data.rendahemisi_client import STATIONS, fetch_recent_hours
 from src.data.transforms import classify_pm25_hourly
+from src.recommendations.engine import (
+    from_prediction_row,
+    generate_recommendation,
+    worst_risk,
+)
 
 
 def _download_blob_to_temp(container: str, blob_name: str) -> Path:
@@ -442,6 +449,213 @@ def _run_predict_pipeline(data_root: Optional[Path] = None) -> dict[str, Any]:
     return manifest
 
 
+# ── Recommend Pipeline ───────────────────────────────────────────────────
+
+
+def _load_predictions(data_root: Path) -> Optional[dict]:
+    """Load latest predictions from local or Blob."""
+    predict_path = data_root / "processed" / "daily" / "predict_latest.json"
+    if not predict_path.exists() and is_blob_configured():
+        predict_path = _download_blob_to_temp(
+            AIRSAFE_PREDICT_CONTAINER, "daily/predict_latest.json"
+        )
+    if not predict_path.exists():
+        return None
+    with open(predict_path) as f:
+        data = json.load(f)
+    if not data.get("school_predictions"):
+        return None
+    return data
+
+
+def _load_school_meta(data_root: Path) -> dict[str, dict]:
+    """Load school metadata as {npsn_str: {nama_sekolah, kecamatan, jenjang}}."""
+    import pandas as pd
+
+    schools_path = data_root / "processed" / "schools" / "schools_geocoded.csv"
+    if not schools_path.exists() and is_blob_configured():
+        schools_path = _download_blob_to_temp(
+            AIRSAFE_REFERENCE_CONTAINER, "schools/schools_geocoded.csv"
+        )
+    if not schools_path.exists():
+        return {}
+    df = pd.read_csv(schools_path)
+    meta = {}
+    for _, row in df.iterrows():
+        npsn = str(int(row.get("npsn", 0))) if pd.notna(row.get("npsn")) else ""
+        if not npsn:
+            continue
+        meta[npsn] = {
+            "nama_sekolah": str(row.get("nama_sekolah", "")),
+            "kecamatan": str(row.get("kecamatan", "")),
+            "jenjang": str(row.get("jenjang", "")),
+        }
+    return meta
+
+
+def _generate_recommendations(
+    predictions: dict,
+    school_meta: dict[str, dict],
+) -> list[dict]:
+    """Generate recommendations for all schools in predictions."""
+    results = []
+    for school in predictions.get("school_predictions", []):
+        npsn = str(school.get("npsn", ""))
+        meta = school_meta.get(npsn, {})
+        adapted = from_prediction_row(
+            school,
+            school_name=meta.get("nama_sekolah", npsn),
+            district=meta.get("kecamatan", ""),
+        )
+        rec = generate_recommendation(adapted)
+        results.append({
+            "npsn": npsn,
+            "nama_sekolah": meta.get("nama_sekolah", ""),
+            "kecamatan": meta.get("kecamatan", ""),
+            "jenjang": meta.get("jenjang", ""),
+            "latitude": school.get("latitude"),
+            "longitude": school.get("longitude"),
+            "pm25_h6": school.get("pm25_h6"),
+            "pm25_h12": school.get("pm25_h12"),
+            "pm25_h24": school.get("pm25_h24"),
+            "risk_h6": school.get("risk_h6", ""),
+            "risk_h12": school.get("risk_h12", ""),
+            "risk_h24": school.get("risk_h24", ""),
+            "risk_action": rec["risk_level"],
+            "recommendation": rec,
+        })
+    return results
+
+
+def _run_recommend_pipeline(data_root: Optional[Path] = None) -> dict[str, Any]:
+    """Generate recommendations for all schools and save to Blob."""
+    if data_root is None:
+        data_root = Path(DATA_DIR)
+
+    now_utc = datetime.now(timezone.utc)
+    ts_compact = now_utc.strftime("%Y%m%dT%H%M%SZ")
+
+    manifest: dict[str, Any] = {
+        "run_id": f"recommend_{ts_compact}",
+        "started_at_utc": now_utc.isoformat(),
+        "status": "running",
+    }
+
+    predictions = _load_predictions(data_root)
+    if not predictions:
+        manifest["status"] = "failed"
+        manifest["error"] = "No predictions available"
+        return manifest
+
+    school_meta = _load_school_meta(data_root)
+    recommendations = _generate_recommendations(predictions, school_meta)
+
+    # Risk summary
+    risk_counts: dict[str, int] = {}
+    for r in recommendations:
+        action = r["risk_action"]
+        risk_counts[action] = risk_counts.get(action, 0) + 1
+
+    output = {
+        "timestamp_utc": predictions.get("timestamp_utc"),
+        "timestamp_wib": predictions.get("timestamp_wib"),
+        "generated_at_utc": now_utc.isoformat(),
+        "station_predictions": predictions.get("station_predictions", []),
+        "n_schools": len(recommendations),
+        "risk_summary": risk_counts,
+        "recommendations": recommendations,
+    }
+
+    date_str = now_utc.strftime("%Y-%m-%d")
+    rec_blob = f"daily/recommend_{date_str}_{ts_compact}.json"
+    rec_local = data_root / "processed" / "daily" / f"recommend_{date_str}_{ts_compact}.json"
+    save_json_dual(output, rec_blob, rec_local, container=AIRSAFE_PREDICT_CONTAINER)
+
+    latest_local = data_root / "processed" / "daily" / "recommend_latest.json"
+    save_json_dual(output, "daily/recommend_latest.json", latest_local, container=AIRSAFE_PREDICT_CONTAINER)
+
+    manifest["status"] = "completed"
+    manifest["finished_at_utc"] = datetime.now(timezone.utc).isoformat()
+    manifest["n_schools"] = len(recommendations)
+    manifest["risk_summary"] = risk_counts
+    logger.info("Recommend completed. %d schools, risk: %s", len(recommendations), risk_counts)
+    return manifest
+
+
+def _build_recommend_response(
+    data_root: Path,
+    npsn: Optional[str] = None,
+    district: Optional[str] = None,
+) -> tuple[dict, int]:
+    """Build recommendation response, optionally filtered. Returns (data, status_code)."""
+    predictions = _load_predictions(data_root)
+    if not predictions:
+        return {"error": "No predictions available. Run predict pipeline first."}, 503
+
+    school_meta = _load_school_meta(data_root)
+
+    if npsn:
+        npsn_str = str(npsn)
+        schools = predictions.get("school_predictions", [])
+        school = next((s for s in schools if str(s.get("npsn", "")) == npsn_str), None)
+        if not school:
+            return {"error": f"School NPSN {npsn} not found"}, 404
+        meta = school_meta.get(npsn_str, {})
+        adapted = from_prediction_row(
+            school,
+            school_name=meta.get("nama_sekolah", npsn_str),
+            district=meta.get("kecamatan", ""),
+        )
+        rec = generate_recommendation(adapted)
+        return {
+            "school": {
+                "npsn": npsn_str,
+                "nama_sekolah": meta.get("nama_sekolah", ""),
+                "kecamatan": meta.get("kecamatan", ""),
+                "jenjang": meta.get("jenjang", ""),
+                "latitude": school.get("latitude"),
+                "longitude": school.get("longitude"),
+                "pm25_h6": school.get("pm25_h6"),
+                "pm25_h12": school.get("pm25_h12"),
+                "pm25_h24": school.get("pm25_h24"),
+                "risk_h6": school.get("risk_h6", ""),
+                "risk_h12": school.get("risk_h12", ""),
+                "risk_h24": school.get("risk_h24", ""),
+                "risk_action": rec["risk_level"],
+            },
+            "recommendation": rec,
+        }, 200
+
+    recommendations = _generate_recommendations(predictions, school_meta)
+
+    if district:
+        district_lower = district.lower()
+        recommendations = [
+            r for r in recommendations
+            if r.get("kecamatan", "").lower() == district_lower
+        ]
+
+    if district:
+        return {
+            "district": district,
+            "n_schools": len(recommendations),
+            "recommendations": recommendations,
+        }, 200
+
+    risk_counts: dict[str, int] = {}
+    for r in recommendations:
+        action = r["risk_action"]
+        risk_counts[action] = risk_counts.get(action, 0) + 1
+
+    return {
+        "timestamp_utc": predictions.get("timestamp_utc"),
+        "timestamp_wib": predictions.get("timestamp_wib"),
+        "n_schools": len(recommendations),
+        "risk_summary": risk_counts,
+        "station_predictions": predictions.get("station_predictions", []),
+    }, 200
+
+
 # ── Azure Function endpoints ─────────────────────────────────────────────
 
 if not LOCAL_MODE and app is not None:
@@ -509,6 +723,28 @@ if not LOCAL_MODE and app is not None:
                 status_code=500,
             )
 
+    @app.function_name(name="recommend_http")
+    @app.route(route="recommend", methods=["GET"])
+    def recommend_http(req: func.HttpRequest) -> func.HttpResponse:
+        """Demo API — get school recommendations."""
+        try:
+            data_root = Path(DATA_DIR)
+            npsn = req.params.get("npsn")
+            district = req.params.get("district")
+            data, status = _build_recommend_response(data_root, npsn=npsn, district=district)
+            return func.HttpResponse(
+                json.dumps(data, default=str, indent=2),
+                mimetype="application/json",
+                status_code=status,
+            )
+        except Exception as exc:
+            logger.exception("Recommend HTTP failed")
+            return func.HttpResponse(
+                json.dumps({"error": str(exc)}),
+                mimetype="application/json",
+                status_code=500,
+            )
+
 
 # ── Local entry point ───────────────────────────────────────────────────
 
@@ -531,10 +767,12 @@ if __name__ == "__main__":
 
         if mode == "predict":
             manifest = _run_predict_pipeline()
+        elif mode == "recommend":
+            manifest = _run_recommend_pipeline()
         else:
             manifest = run_etl_pipeline()
 
         print(json.dumps(manifest, indent=2, default=str))
     else:
-        print("Usage: python function_app.py --local [etl|predict]")
+        print("Usage: python function_app.py --local [etl|predict|recommend]")
         print("  Or set AIRSAFE_LOCAL_MODE=1")

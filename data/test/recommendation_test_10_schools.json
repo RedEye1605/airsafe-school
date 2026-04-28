@@ -1,0 +1,133 @@
+[
+  {
+    "school_id": "SCH001",
+    "school_name": "SDN Menteng 01",
+    "district": "Menteng",
+    "pm25_6h": 64,
+    "pm25_12h": 72,
+    "pm25_24h": 58,
+    "risk_level": "TIDAK SEHAT",
+    "top_shap_factors": [
+      {"feature": "pm25_lag_1h", "direction": "increase", "reason": "PM2.5 beberapa jam terakhir masih tinggi"},
+      {"feature": "wind_speed", "direction": "increase", "reason": "kecepatan angin rendah"},
+      {"feature": "is_rush_hour", "direction": "increase", "reason": "bertepatan dengan jam sibuk pagi"}
+    ]
+  },
+  {
+    "school_id": "SCH002",
+    "school_name": "SMPN Kemayoran 02",
+    "district": "Kemayoran",
+    "pm25_6h": 48,
+    "pm25_12h": 53,
+    "pm25_24h": 50,
+    "risk_level": "SEDANG",
+    "top_shap_factors": [
+      {"feature": "humidity", "direction": "increase", "reason": "kelembapan tinggi"},
+      {"feature": "pm25_rolling_6h", "direction": "increase", "reason": "rata-rata PM2.5 6 jam terakhir meningkat"}
+    ]
+  },
+  {
+    "school_id": "SCH003",
+    "school_name": "SMAN Tebet 01",
+    "district": "Tebet",
+    "pm25_6h": 20,
+    "pm25_12h": 24,
+    "pm25_24h": 22,
+    "risk_level": "SEDANG",
+    "top_shap_factors": [
+      {"feature": "rain", "direction": "decrease", "reason": "indikasi hujan membantu menurunkan partikel"},
+      {"feature": "wind_speed", "direction": "decrease", "reason": "angin membantu dispersi polutan"}
+    ]
+  },
+  {
+    "school_id": "SCH004",
+    "school_name": "SDN Cilandak Barat 03",
+    "district": "Cilandak",
+    "pm25_6h": 156,
+    "pm25_12h": 162,
+    "pm25_24h": 130,
+    "risk_level": "SANGAT TIDAK SEHAT",
+    "top_shap_factors": [
+      {"feature": "pm25_lag_1h", "direction": "increase", "reason": "PM2.5 sebelumnya sangat tinggi"},
+      {"feature": "wind_speed", "direction": "increase", "reason": "angin rendah sehingga polutan tertahan"}
+    ]
+  },
+  {
+    "school_id": "SCH005",
+    "school_name": "SMKN Tanah Abang 01",
+    "district": "Tanah Abang",
+    "pm25_6h": 57,
+    "pm25_12h": 61,
+    "pm25_24h": 55,
+    "risk_level": "TIDAK SEHAT",
+    "top_shap_factors": [
+      {"feature": "is_rush_hour", "direction": "increase", "reason": "bertepatan dengan jam sibuk pagi"},
+      {"feature": "pm25_rolling_3h", "direction": "increase", "reason": "tren PM2.5 meningkat"}
+    ]
+  },
+  {
+    "school_id": "SCH006",
+    "school_name": "SDN Kelapa Gading 05",
+    "district": "Kelapa Gading",
+    "pm25_6h": 14,
+    "pm25_12h": 16,
+    "pm25_24h": 19,
+    "risk_level": "BAIK",
+    "top_shap_factors": [
+      {"feature": "wind_speed", "direction": "decrease", "reason": "angin cukup membantu dispersi"},
+      {"feature": "rain", "direction": "decrease", "reason": "kondisi basah membantu menurunkan partikel"}
+    ]
+  },
+  {
+    "school_id": "SCH007",
+    "school_name": "SMPN Duren Sawit 04",
+    "district": "Duren Sawit",
+    "pm25_6h": 88,
+    "pm25_12h": 92,
+    "pm25_24h": 75,
+    "risk_level": "TIDAK SEHAT",
+    "top_shap_factors": [
+      {"feature": "pm25_lag_3h", "direction": "increase", "reason": "konsentrasi PM2.5 sebelumnya tinggi"},
+      {"feature": "hour", "direction": "increase", "reason": "waktu pagi rawan peningkatan polusi"}
+    ]
+  },
+  {
+    "school_id": "SCH008",
+    "school_name": "SMA Pademangan 01",
+    "district": "Pademangan",
+    "pm25_6h": 43,
+    "pm25_12h": 47,
+    "pm25_24h": 49,
+    "risk_level": "SEDANG",
+    "top_shap_factors": [
+      {"feature": "humidity", "direction": "increase", "reason": "kelembapan tinggi"},
+      {"feature": "pm25_rolling_6h", "direction": "increase", "reason": "rata-rata 6 jam masih sedang"}
+    ]
+  },
+  {
+    "school_id": "SCH009",
+    "school_name": "SDN Pasar Minggu 02",
+    "district": "Pasar Minggu",
+    "pm25_6h": 151,
+    "pm25_12h": 143,
+    "pm25_24h": 120,
+    "risk_level": "SANGAT TIDAK SEHAT",
+    "top_shap_factors": [
+      {"feature": "pm25_lag_1h", "direction": "increase", "reason": "paparan PM2.5 tinggi berlanjut"},
+      {"feature": "wind_speed", "direction": "increase", "reason": "kecepatan angin rendah"}
+    ]
+  },
+  {
+    "school_id": "SCH010",
+    "school_name": "SMK Jakarta Timur 02",
+    "district": "Jatinegara",
+    "pm25_6h": 32,
+    "pm25_12h": 38,
+    "pm25_24h": 35,
+    "risk_level": "SEDANG",
+    "top_shap_factors": [
+      {"feature": "is_rush_hour", "direction": "increase", "reason": "aktivitas lalu lintas pagi"},
+      {"feature": "temperature", "direction": "increase", "reason": "kondisi meteorologi mendukung akumulasi polutan"}
+    ]
+  }
+]

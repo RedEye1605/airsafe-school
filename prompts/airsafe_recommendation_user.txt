@@ -1,0 +1,31 @@
+Generate one school-level air quality recommendation.
+
+School data:
+- School name: {school_name}
+- District: {district}
+- Forecast PM2.5 6h: {pm25_6h} µg/m³
+- Forecast PM2.5 12h: {pm25_12h} µg/m³
+- Forecast PM2.5 24h: {pm25_24h} µg/m³
+- Risk level: {risk_level}
+- Top model factors: {top_factors}
+
+Risk action guide:
+- Aman: outdoor activities may continue normally.
+- Waspada: reduce long outdoor exposure, monitor sensitive students.
+- Batasi: move sports and long outdoor activities indoors; avoid ceremonies outside.
+- Bahaya: cancel outdoor activities, keep students indoors, recommend masks, notify parents.
+
+Return JSON with this exact schema:
+{
+  "school_id": "...",
+  "school_name": "...",
+  "district": "...",
+  "risk_level": "...",
+  "pm25_summary": "...",
+  "headline": "...",
+  "recommendation": "...",
+  "action_items": ["...", "...", "..."],
+  "reasoning_summary": "...",
+  "parent_message": "...",
+  "generation_mode": "template_fallback"
+}

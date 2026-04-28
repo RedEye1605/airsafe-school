@@ -1,6 +1,5 @@
 """Spatial interpolation sub-package."""
 
-from src.spatial.error_map import build_error_map
 from src.spatial.hourly_kriging import (
     ISPU_STATION_COORDS,
     hourly_kriging_interpolate,
@@ -18,6 +17,13 @@ from src.spatial.lag_kriging import (
     run_lag_pipeline,
 )
 from src.spatial.residual_corrector import ResidualCorrector
+
+
+def build_error_map(*args, **kwargs):
+    """Lazy import — requires folium."""
+    from src.spatial.error_map import build_error_map as _build
+    return _build(*args, **kwargs)
+
 
 __all__ = [
     "HourlyLosoMetrics",

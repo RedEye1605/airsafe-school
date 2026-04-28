@@ -37,8 +37,7 @@ def worst_risk(*labels: str) -> str:
 
 # ── Template policies (fallback when LLM unavailable) ──────────────────────
 
-# ACTION_POLICIES kept for template fallback. When Gemini is available these
-# are not used but remain here for offline/failure scenarios.
+# ACTION_POLICIES kept for template fallback when LLM is unavailable.
 
 ACTION_POLICIES: dict[str, dict[str, list[str] | str]] = {
     "Aman": {
@@ -244,31 +243,7 @@ def _generate_with_openrouter(inp: RecommendationInput) -> dict | None:
         return None
 
 
-# ── Gemini LLM backend ────────────────────────────────────────────────────
-
-_gemini_client = None
-
-
-def _get_gemini_client():
-    """Lazy-init Gemini client singleton using google-genai SDK."""
-    global _gemini_client
-    if _gemini_client is not None:
-        return _gemini_client
-
-    from src.config import GEMINI_API_KEY
-
-    if not GEMINI_API_KEY:
-        return None
-
-    try:
-        from google import genai
-        _gemini_client = genai.Client(api_key=GEMINI_API_KEY)
-        logger.info("Gemini client initialized")
-        return _gemini_client
-    except Exception as exc:
-        logger.error("Gemini init failed: %s", exc)
-        return None
-
+# ── Prompt loading ──────────────────────────────────────────────────────────
 
 def _load_prompt(filename: str) -> str:
     path = _PROMPTS_DIR / filename
@@ -305,52 +280,6 @@ def _build_user_prompt(inp: RecommendationInput) -> str:
         risk_level=risk,
         top_factors=factors_str,
     )
-
-
-def _generate_with_gemini(inp: RecommendationInput) -> dict | None:
-    """Try Gemini generation. Returns parsed dict or None on failure."""
-    client = _get_gemini_client()
-    if client is None:
-        return None
-
-    from src.config import GEMINI_MODEL
-
-    try:
-        system_prompt = _get_system_prompt()
-        user_prompt = _build_user_prompt(inp)
-
-        response = client.models.generate_content(
-            model=GEMINI_MODEL,
-            contents=system_prompt + "\n\n" + user_prompt,
-            config={"temperature": 0.3, "max_output_tokens": 2048,
-                    "response_mime_type": "application/json"},
-        )
-
-        text = response.text.strip()
-        # Strip markdown code fences if present
-        if text.startswith("```"):
-            text = text.split("\n", 1)[1] if "\n" in text else text[3:]
-        if text.endswith("```"):
-            text = text[:-3]
-        text = text.strip()
-        parsed = json.loads(text)
-
-        # Ensure required fields present
-        parsed.setdefault("school_id", inp.school_id)
-        parsed.setdefault("school_name", inp.school_name)
-        parsed.setdefault("district", inp.district)
-        parsed.setdefault("risk_level", bmkg_to_action(inp.risk_level))
-        parsed.setdefault("pm25_summary", _build_pm25_summary(inp))
-        parsed["generation_mode"] = "gemini_flash"
-
-        return parsed
-
-    except json.JSONDecodeError as exc:
-        logger.warning("Gemini returned invalid JSON for %s: %s", inp.school_id, exc)
-        return None
-    except Exception as exc:
-        logger.warning("Gemini generation failed for %s: %s", inp.school_id, exc)
-        return None
 
 
 # ── Template fallback ──────────────────────────────────────────────────────
@@ -401,7 +330,7 @@ def _generate_with_template(inp: RecommendationInput) -> dict:
 # ── Main entry point ───────────────────────────────────────────────────────
 
 def generate_recommendation(input_data: RecommendationInput | dict) -> dict:
-    """Generate recommendation using OpenRouter > Gemini > template fallback."""
+    """Generate recommendation using OpenRouter LLM, with template fallback."""
     if isinstance(input_data, dict):
         inp = RecommendationInput(**input_data)
     else:
@@ -411,11 +340,6 @@ def generate_recommendation(input_data: RecommendationInput | dict) -> dict:
     openrouter_result = _generate_with_openrouter(inp)
     if openrouter_result is not None:
         return openrouter_result
-
-    # Try Gemini as secondary
-    gemini_result = _generate_with_gemini(inp)
-    if gemini_result is not None:
-        return gemini_result
 
     # Fallback to template
     return _generate_with_template(inp)

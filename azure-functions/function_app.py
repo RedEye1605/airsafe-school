@@ -6,8 +6,8 @@ Three functions:
        produce dataset_master_spku_weather format, append to Blob.
     2. predict_timer / predict_http: Load LightGBM models, predict PM2.5 at
        5 ISPU stations, Kriging + residual correction to 4,215 schools.
-    3. recommend_http: Demo API — load predictions, generate Bahasa Indonesia
-       recommendations for schools (template fallback).
+    3. recommend_http: API — load predictions, generate Bahasa Indonesia
+       recommendations for schools via OpenRouter LLM (template fallback).
 
 Local testing:
     python function_app.py --local [etl|predict|recommend]
@@ -38,7 +38,6 @@ from src.config import (
     AIRSAFE_RAW_CONTAINER,
     AIRSAFE_REFERENCE_CONTAINER,
     DATA_DIR,
-    ETL_SCHEDULE,
     LOCAL_MODE,
 )
 from src.data.blob_client import (
@@ -49,6 +48,7 @@ from src.data.blob_client import (
 from src.data.rendahemisi_client import STATIONS, fetch_recent_hours
 from src.data.transforms import classify_pm25_hourly
 from src.recommendations.engine import (
+    bmkg_to_action,
     from_prediction_row,
     generate_recommendation,
     worst_risk,
@@ -678,39 +678,68 @@ def _build_recommend_response(
             "recommendation": rec,
         }, 200
 
-    recommendations = _generate_recommendations(predictions, school_meta)
-
+    # District filter — uses template fallback to avoid LLM timeout
     if district:
+        from src.recommendations.engine import RecommendationInput, _generate_with_template
         district_lower = district.lower()
-        recommendations = [
-            r for r in recommendations
-            if r.get("kecamatan", "").lower() == district_lower
-        ]
-
-    if district:
+        recommendations = []
+        for school in predictions.get("school_predictions", []):
+            npsn_val = str(school.get("npsn", ""))
+            meta = school_meta.get(npsn_val, {})
+            if meta.get("kecamatan", "").lower() != district_lower:
+                continue
+            adapted = from_prediction_row(
+                school,
+                school_name=meta.get("nama_sekolah", npsn_val),
+                district=meta.get("kecamatan", ""),
+            )
+            inp_obj = RecommendationInput(**adapted)
+            rec = _generate_with_template(inp_obj)
+            recommendations.append({
+                "npsn": npsn_val,
+                "nama_sekolah": meta.get("nama_sekolah", ""),
+                "kecamatan": meta.get("kecamatan", ""),
+                "pm25_h6": school.get("pm25_h6"),
+                "pm25_h12": school.get("pm25_h12"),
+                "pm25_h24": school.get("pm25_h24"),
+                "risk_action": rec["risk_level"],
+                "recommendation": rec,
+            })
         return {
             "district": district,
             "n_schools": len(recommendations),
             "recommendations": recommendations,
         }, 200
 
+    # Summary — compute risk counts directly from predictions (no LLM)
+    schools = predictions.get("school_predictions", [])
     risk_counts: dict[str, int] = {}
-    for r in recommendations:
-        action = r["risk_action"]
+    for school in schools:
+        action = bmkg_to_action(worst_risk(
+            school.get("risk_h6", ""),
+            school.get("risk_h12", ""),
+            school.get("risk_h24", ""),
+        ))
         risk_counts[action] = risk_counts.get(action, 0) + 1
 
     return {
         "timestamp_utc": predictions.get("timestamp_utc"),
         "timestamp_wib": predictions.get("timestamp_wib"),
-        "n_schools": len(recommendations),
+        "n_schools": len(schools),
         "risk_summary": risk_counts,
         "station_predictions": predictions.get("station_predictions", []),
     }, 200
 
 
-def _error_json(exc: Exception, status: int = 500) -> "func.HttpResponse":
-    body = json.dumps({"error": str(exc), "type": type(exc).__name__})
-    return func.HttpResponse(body, mimetype="application/json", status_code=status)
+def _error_response(data: dict, status: int = 500) -> "func.HttpResponse":
+    """Build a JSON error response (Azure Functions only)."""
+    if LOCAL_MODE or app is None:
+        return data  # type: ignore[return-value]
+    return func.HttpResponse(
+        json.dumps(data, default=str),
+        mimetype="application/json",
+        status_code=status,
+    )
 
 
 # ── Azure Function endpoints ─────────────────────────────────────────────
@@ -740,7 +769,7 @@ if not LOCAL_MODE and app is not None:
             )
         except Exception as exc:
             logger.exception("ETL HTTP failed")
-            return _error_json(exc)
+            return _error_response({"error": str(exc), "type": type(exc).__name__})
 
     @app.function_name(name="predict_timer")
     @app.timer_trigger(
@@ -766,7 +795,7 @@ if not LOCAL_MODE and app is not None:
             )
         except Exception as exc:
             logger.exception("Predict HTTP failed")
-            return _error_json(exc)
+            return _error_response({"error": str(exc), "type": type(exc).__name__})
 
     @app.function_name(name="recommend_http")
     @app.route(route="recommend", methods=["GET"])
@@ -783,7 +812,7 @@ if not LOCAL_MODE and app is not None:
             )
         except Exception as exc:
             logger.exception("Recommend HTTP failed")
-            return _error_json(exc)
+            return _error_response({"error": str(exc), "type": type(exc).__name__})
 
 
 # ── Local entry point ───────────────────────────────────────────────────

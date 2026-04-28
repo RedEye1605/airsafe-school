@@ -14,4 +14,3 @@ folium>=0.16.0
 scikit-learn>=1.4.0
 geopandas>=0.14.0
 shapely>=2.0.0
-google-genai>=1.0.0

@@ -177,6 +177,73 @@ def from_prediction_row(
     }
 
 
+# ── OpenRouter LLM backend ────────────────────────────────────────────────
+
+_OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+
+
+def _generate_with_openrouter(inp: RecommendationInput) -> dict | None:
+    """Try OpenRouter generation. Returns parsed dict or None on failure."""
+    from src.config import OPENROUTER_API_KEY, OPENROUTER_MODEL
+
+    if not OPENROUTER_API_KEY:
+        return None
+
+    import requests
+
+    system_prompt = _get_system_prompt()
+    user_prompt = _build_user_prompt(inp)
+
+    try:
+        resp = requests.post(
+            _OPENROUTER_URL,
+            headers={
+                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": OPENROUTER_MODEL,
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                "temperature": 0.3,
+                "max_tokens": 2048,
+                "response_format": {"type": "json_object"},
+            },
+            timeout=30,
+        )
+        resp.raise_for_status()
+
+        data = resp.json()
+        text = data["choices"][0]["message"]["content"].strip()
+
+        # Strip markdown code fences if present
+        if text.startswith("```"):
+            text = text.split("\n", 1)[1] if "\n" in text else text[3:]
+        if text.endswith("```"):
+            text = text[:-3]
+        text = text.strip()
+        parsed = json.loads(text)
+
+        # Ensure required fields present
+        parsed.setdefault("school_id", inp.school_id)
+        parsed.setdefault("school_name", inp.school_name)
+        parsed.setdefault("district", inp.district)
+        parsed.setdefault("risk_level", bmkg_to_action(inp.risk_level))
+        parsed.setdefault("pm25_summary", _build_pm25_summary(inp))
+        parsed["generation_mode"] = "openrouter"
+
+        return parsed
+
+    except json.JSONDecodeError as exc:
+        logger.warning("OpenRouter returned invalid JSON for %s: %s", inp.school_id, exc)
+        return None
+    except Exception as exc:
+        logger.warning("OpenRouter generation failed for %s: %s", inp.school_id, exc)
+        return None
+
+
 # ── Gemini LLM backend ────────────────────────────────────────────────────
 
 _gemini_client = None
@@ -334,13 +401,18 @@ def _generate_with_template(inp: RecommendationInput) -> dict:
 # ── Main entry point ───────────────────────────────────────────────────────
 
 def generate_recommendation(input_data: RecommendationInput | dict) -> dict:
-    """Generate recommendation using Gemini, with template fallback."""
+    """Generate recommendation using OpenRouter > Gemini > template fallback."""
     if isinstance(input_data, dict):
         inp = RecommendationInput(**input_data)
     else:
         inp = input_data
 
-    # Try Gemini first
+    # Try OpenRouter first
+    openrouter_result = _generate_with_openrouter(inp)
+    if openrouter_result is not None:
+        return openrouter_result
+
+    # Try Gemini as secondary
     gemini_result = _generate_with_gemini(inp)
     if gemini_result is not None:
         return gemini_result

@@ -16,7 +16,7 @@ Risk action guide:
 - Bahaya: cancel outdoor activities, keep students indoors, recommend masks, notify parents.
 
 Return JSON with this exact schema:
-{
+{{
   "school_id": "...",
   "school_name": "...",
   "district": "...",
@@ -28,4 +28,4 @@ Return JSON with this exact schema:
   "reasoning_summary": "...",
   "parent_message": "...",
   "generation_mode": "template_fallback"
-}
+}}

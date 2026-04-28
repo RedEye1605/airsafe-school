@@ -150,3 +150,10 @@ LOCAL_MODE: Final[bool] = os.environ.get("AIRSAFE_LOCAL_MODE", "0") == "1"
 
 GEMINI_API_KEY: Final[str] = os.environ.get("GEMINI_API_KEY", "")
 GEMINI_MODEL: Final[str] = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+
+# ── OpenRouter API ──────────────────────────────────────────────────────────
+
+OPENROUTER_API_KEY: Final[str] = os.environ.get("OPENROUTER_API_KEY", "")
+OPENROUTER_MODEL: Final[str] = os.environ.get(
+    "OPENROUTER_MODEL", "nvidia/nemotron-3-super-120b-a12b:free"
+)

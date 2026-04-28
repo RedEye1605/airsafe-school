@@ -149,4 +149,4 @@ LOCAL_MODE: Final[bool] = os.environ.get("AIRSAFE_LOCAL_MODE", "0") == "1"
 # ── Gemini API ──────────────────────────────────────────────────────────────
 
 GEMINI_API_KEY: Final[str] = os.environ.get("GEMINI_API_KEY", "")
-GEMINI_MODEL: Final[str] = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash")
+GEMINI_MODEL: Final[str] = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")

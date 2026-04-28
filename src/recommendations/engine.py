@@ -255,11 +255,17 @@ def _generate_with_gemini(inp: RecommendationInput) -> dict | None:
         response = client.models.generate_content(
             model=GEMINI_MODEL,
             contents=system_prompt + "\n\n" + user_prompt,
-            config={"temperature": 0.3, "max_output_tokens": 1024,
+            config={"temperature": 0.3, "max_output_tokens": 2048,
                     "response_mime_type": "application/json"},
         )
 
         text = response.text.strip()
+        # Strip markdown code fences if present
+        if text.startswith("```"):
+            text = text.split("\n", 1)[1] if "\n" in text else text[3:]
+        if text.endswith("```"):
+            text = text[:-3]
+        text = text.strip()
         parsed = json.loads(text)
 
         # Ensure required fields present

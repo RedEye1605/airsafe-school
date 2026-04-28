@@ -1,7 +1,15 @@
 from __future__ import annotations
 
+import json
+import logging
+from pathlib import Path
+
 import pandas as pd
 from dataclasses import asdict, dataclass, field
+
+logger = logging.getLogger(__name__)
+
+# ── Risk mapping ───────────────────────────────────────────────────────────
 
 _BMKG_TO_ACTION: dict[str, str] = {
     "BAIK": "Aman",
@@ -26,6 +34,11 @@ def worst_risk(*labels: str) -> str:
         return "Tidak Ada Data"
     return max(action_labels, key=lambda l: _RISK_PRIORITY.get(l, 0))
 
+
+# ── Template policies (fallback when LLM unavailable) ──────────────────────
+
+# ACTION_POLICIES kept for template fallback. When Gemini is available these
+# are not used but remain here for offline/failure scenarios.
 
 ACTION_POLICIES: dict[str, dict[str, list[str] | str]] = {
     "Aman": {
@@ -88,6 +101,8 @@ ACTION_POLICIES: dict[str, dict[str, list[str] | str]] = {
 }
 
 
+# ── Data schemas ───────────────────────────────────────────────────────────
+
 @dataclass
 class RecommendationInput:
     school_id: str
@@ -124,18 +139,17 @@ REQUIRED_OUTPUT_KEYS = [
 
 _MISSING = float("nan")
 
+_PROMPTS_DIR = Path(__file__).resolve().parent.parent.parent / "prompts"
+
+
+# ── Input adapter ──────────────────────────────────────────────────────────
 
 def from_prediction_row(
     row: dict,
     school_name: str = "",
     district: str = "",
 ) -> dict:
-    """Adapt a predict-pipeline school row to recommendation input format.
-
-    The predict pipeline outputs rows with keys like npsn, pm25_h6,
-    risk_h6, etc. This normalizes them and picks the worst risk
-    across all horizons.
-    """
+    """Adapt a predict-pipeline school row to recommendation input format."""
     risk = worst_risk(
         row.get("risk_h6", ""),
         row.get("risk_h12", ""),
@@ -163,6 +177,111 @@ def from_prediction_row(
     }
 
 
+# ── Gemini LLM backend ────────────────────────────────────────────────────
+
+_gemini_client = None
+
+
+def _get_gemini_client():
+    """Lazy-init Gemini client singleton using google-genai SDK."""
+    global _gemini_client
+    if _gemini_client is not None:
+        return _gemini_client
+
+    from src.config import GEMINI_API_KEY
+
+    if not GEMINI_API_KEY:
+        return None
+
+    try:
+        from google import genai
+        _gemini_client = genai.Client(api_key=GEMINI_API_KEY)
+        logger.info("Gemini client initialized")
+        return _gemini_client
+    except Exception as exc:
+        logger.error("Gemini init failed: %s", exc)
+        return None
+
+
+def _load_prompt(filename: str) -> str:
+    path = _PROMPTS_DIR / filename
+    if path.exists():
+        return path.read_text(encoding="utf-8")
+    return ""
+
+
+_SYSTEM_PROMPT = None
+
+
+def _get_system_prompt() -> str:
+    global _SYSTEM_PROMPT
+    if _SYSTEM_PROMPT is None:
+        _SYSTEM_PROMPT = _load_prompt("airsafe_recommendation_system.txt")
+    return _SYSTEM_PROMPT
+
+
+def _build_user_prompt(inp: RecommendationInput) -> str:
+    template = _load_prompt("airsafe_recommendation_user.txt")
+    risk = bmkg_to_action(inp.risk_level)
+    factors = inp.top_shap_factors[:3] if inp.top_shap_factors else []
+    factors_str = ", ".join(
+        f"{f.get('feature', '?')} ({f.get('direction', '?')}): {f.get('reason', '')}"
+        for f in factors
+    ) if factors else "Tidak ada data faktor"
+
+    return template.format(
+        school_name=inp.school_name,
+        district=inp.district,
+        pm25_6h=_fmt_pm25(inp.pm25_6h),
+        pm25_12h=_fmt_pm25(inp.pm25_12h),
+        pm25_24h=_fmt_pm25(inp.pm25_24h),
+        risk_level=risk,
+        top_factors=factors_str,
+    )
+
+
+def _generate_with_gemini(inp: RecommendationInput) -> dict | None:
+    """Try Gemini generation. Returns parsed dict or None on failure."""
+    client = _get_gemini_client()
+    if client is None:
+        return None
+
+    from src.config import GEMINI_MODEL
+
+    try:
+        system_prompt = _get_system_prompt()
+        user_prompt = _build_user_prompt(inp)
+
+        response = client.models.generate_content(
+            model=GEMINI_MODEL,
+            contents=system_prompt + "\n\n" + user_prompt,
+            config={"temperature": 0.3, "max_output_tokens": 1024,
+                    "response_mime_type": "application/json"},
+        )
+
+        text = response.text.strip()
+        parsed = json.loads(text)
+
+        # Ensure required fields present
+        parsed.setdefault("school_id", inp.school_id)
+        parsed.setdefault("school_name", inp.school_name)
+        parsed.setdefault("district", inp.district)
+        parsed.setdefault("risk_level", bmkg_to_action(inp.risk_level))
+        parsed.setdefault("pm25_summary", _build_pm25_summary(inp))
+        parsed["generation_mode"] = "gemini_flash"
+
+        return parsed
+
+    except json.JSONDecodeError as exc:
+        logger.warning("Gemini returned invalid JSON for %s: %s", inp.school_id, exc)
+        return None
+    except Exception as exc:
+        logger.warning("Gemini generation failed for %s: %s", inp.school_id, exc)
+        return None
+
+
+# ── Template fallback ──────────────────────────────────────────────────────
+
 def _fmt_pm25(val: float) -> str:
     return f"{val:.1f} µg/m³" if pd.notna(val) else "tidak tersedia"
 
@@ -186,12 +305,8 @@ def _build_reasoning(inp: RecommendationInput) -> str:
     )
 
 
-def generate_recommendation(input_data: RecommendationInput | dict) -> dict:
-    if isinstance(input_data, dict):
-        inp = RecommendationInput(**input_data)
-    else:
-        inp = input_data
-
+def _generate_with_template(inp: RecommendationInput) -> dict:
+    """Template-based fallback when no LLM is available."""
     risk = bmkg_to_action(inp.risk_level)
     policy = ACTION_POLICIES.get(risk, ACTION_POLICIES["Tidak Ada Data"])
 
@@ -208,3 +323,21 @@ def generate_recommendation(input_data: RecommendationInput | dict) -> dict:
         parent_message=policy["parent_template"].format(school_name=inp.school_name),
     )
     return asdict(output)
+
+
+# ── Main entry point ───────────────────────────────────────────────────────
+
+def generate_recommendation(input_data: RecommendationInput | dict) -> dict:
+    """Generate recommendation using Gemini, with template fallback."""
+    if isinstance(input_data, dict):
+        inp = RecommendationInput(**input_data)
+    else:
+        inp = input_data
+
+    # Try Gemini first
+    gemini_result = _generate_with_gemini(inp)
+    if gemini_result is not None:
+        return gemini_result
+
+    # Fallback to template
+    return _generate_with_template(inp)

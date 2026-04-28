@@ -338,7 +338,7 @@ def _run_predict_pipeline(data_root: Optional[Path] = None) -> dict[str, Any]:
 
     master = pd.read_csv(master_path)
     master["datetime"] = pd.to_datetime(master["datetime"])
-    cutoff = now_wib - timedelta(hours=72)
+    cutoff = pd.Timestamp.now() - pd.Timedelta(hours=72)
     historical = master[master["datetime"] >= cutoff].copy()
     logger.info("Historical context: %d rows (last 72h)", len(historical))
 

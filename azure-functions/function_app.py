@@ -69,11 +69,22 @@ def _download_blob_to_temp(container: str, blob_name: str) -> Path:
         bc.download_blob().readinto(tmp)
         tmp.close()
         logger.info("Downloaded blob %s/%s → %s", container, blob_name, tmp.name)
+        _temp_files.append(tmp_path)
         return tmp_path
     except Exception:
         tmp.close()
         tmp_path.unlink(missing_ok=True)
         raise
+
+
+# Track temp files for cleanup after pipeline completes
+_temp_files: list[Path] = []
+
+
+def _cleanup_temp_files() -> None:
+    for p in _temp_files:
+        p.unlink(missing_ok=True)
+    _temp_files.clear()
 
 logger = logging.getLogger(__name__)
 
@@ -111,7 +122,7 @@ _WEATHER_VARS = [
 # ── ETL Pipeline (improved — matches Adit's format) ──────────────────────
 
 
-def _fetch_openmeteo_hourly(lat: float, lon: float, start_date: str, end_date: str) -> list[dict]:
+def _fetch_openmeteo_hourly(lat: float, lon: float, start_date: str, end_date: str) -> dict:
     import requests
     import time
 
@@ -281,6 +292,7 @@ def run_etl_pipeline(data_root: Optional[Path] = None) -> dict[str, Any]:
 
     logger.info("ETL completed. %d rows, %d files. Blob: %s",
                 len(merged), len(manifest["files"]), is_blob_configured())
+    _cleanup_temp_files()
     return manifest
 
 
@@ -343,7 +355,13 @@ def _run_predict_pipeline(data_root: Optional[Path] = None) -> dict[str, Any]:
         logger.warning("No residual corrector found — skipping correction")
 
     # Load school locations
-    schools = pd.read_csv(schools_path)
+    try:
+        schools = pd.read_csv(schools_path)
+    except Exception as exc:
+        manifest["status"] = "failed"
+        manifest["error"] = f"Failed to read schools CSV: {exc}"
+        logger.error("Schools CSV read failed: %s", exc)
+        return manifest
     valid_schools = schools.dropna(subset=["latitude", "longitude"]).copy()
     logger.info("Loaded %d schools (%d with valid coords)", len(schools), len(valid_schools))
 
@@ -478,6 +496,7 @@ def _run_predict_pipeline(data_root: Optional[Path] = None) -> dict[str, Any]:
     manifest["finished_at_utc"] = datetime.now(timezone.utc).isoformat()
     manifest["n_schools"] = len(school_results)
     manifest["n_stations"] = len(station_predictions)
+    _cleanup_temp_files()
     return manifest
 
 
@@ -611,6 +630,7 @@ def _run_recommend_pipeline(data_root: Optional[Path] = None) -> dict[str, Any]:
     manifest["n_schools"] = len(recommendations)
     manifest["risk_summary"] = risk_counts
     logger.info("Recommend completed. %d schools, risk: %s", len(recommendations), risk_counts)
+    _cleanup_temp_files()
     return manifest
 
 

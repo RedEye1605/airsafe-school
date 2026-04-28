@@ -195,9 +195,12 @@ def save_dataframe_dual(
     local_path.write_text(csv_text, encoding="utf-8")
 
     if is_blob_configured():
-        upload_text(
-            container, blob_path, csv_text, content_type="text/csv; charset=utf-8"
-        )
-        return f"blob://{container}/{blob_path}"
+        try:
+            upload_text(
+                container, blob_path, csv_text, content_type="text/csv; charset=utf-8"
+            )
+            return f"blob://{container}/{blob_path}"
+        except Exception:
+            logger.exception("Blob upload failed for %s/%s", container, blob_path)
 
     return str(local_path)

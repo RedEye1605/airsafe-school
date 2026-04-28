@@ -122,12 +122,7 @@ REQUIRED_OUTPUT_KEYS = [
     "generation_mode",
 ]
 
-_PREDICTION_TO_INPUT = {
-    "npsn": "school_id",
-    "pm25_h6": "pm25_6h",
-    "pm25_h12h": "pm25_12h",
-    "pm25_h24": "pm25_24h",
-}
+_MISSING = float("nan")
 
 
 def from_prediction_row(
@@ -146,12 +141,15 @@ def from_prediction_row(
         row.get("risk_h12", ""),
         row.get("risk_h24", ""),
     )
+
     def _safe_float(val):
+        if val is None:
+            return _MISSING
         try:
             v = float(val)
-            return v if pd.notna(v) else -1.0
+            return v if pd.notna(v) else _MISSING
         except (ValueError, TypeError):
-            return -1.0
+            return _MISSING
 
     return {
         "school_id": str(row.get("npsn", "")),
@@ -165,12 +163,16 @@ def from_prediction_row(
     }
 
 
+def _fmt_pm25(val: float) -> str:
+    return f"{val:.1f} µg/m³" if pd.notna(val) else "tidak tersedia"
+
+
 def _build_pm25_summary(inp: RecommendationInput) -> str:
     return (
         f"PM2.5 di sekitar {inp.school_name} diprediksi "
-        f"{inp.pm25_6h:.1f} µg/m³ dalam 6 jam, "
-        f"{inp.pm25_12h:.1f} µg/m³ dalam 12 jam, dan "
-        f"{inp.pm25_24h:.1f} µg/m³ dalam 24 jam."
+        f"{_fmt_pm25(inp.pm25_6h)} dalam 6 jam, "
+        f"{_fmt_pm25(inp.pm25_12h)} dalam 12 jam, dan "
+        f"{_fmt_pm25(inp.pm25_24h)} dalam 24 jam."
     )
 
 

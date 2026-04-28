@@ -41,9 +41,9 @@ jobs:
           cp azure-functions/function_app.py staging/
           cp azure-functions/host.json staging/
           cp azure-functions/requirements.txt staging/
-          cp -r azure-functions/etl staging/
           cp -r src staging/
           cp -r models staging/
+          cp -r prompts staging/
           cd staging && zip -r ../release.zip . && cd ..
 
       - name: Upload artifact for deployment job

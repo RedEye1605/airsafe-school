@@ -55,10 +55,16 @@ data/*.html
 *.bin
 *.safetensors
 *.ckpt
-models/
+# Allow specific model files needed for prediction
+!models/final_lgbm_h6.pkl
+!models/final_lgbm_h12.pkl
+!models/final_lgbm_h24.pkl
+!models/hourly_residual_corrector.pkl
+!models/station_stats_lookup.json
 
 # Jupyter
 .ipynb_checkpoints/
+notebooks/
 
 # Test/cache
 cache/

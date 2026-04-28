@@ -116,8 +116,23 @@ AIRSAFE_RAW_CONTAINER: Final[str] = os.environ.get(
 AIRSAFE_PROCESSED_CONTAINER: Final[str] = os.environ.get(
     "AIRSAFE_PROCESSED_CONTAINER", "processed"
 )
+AIRSAFE_PREDICT_CONTAINER: Final[str] = os.environ.get(
+    "AIRSAFE_PREDICT_CONTAINER", "predictions"
+)
 AIRSAFE_LOG_CONTAINER: Final[str] = os.environ.get(
     "AIRSAFE_LOG_CONTAINER", "logs"
+)
+AIRSAFE_MODELS_CONTAINER: Final[str] = os.environ.get(
+    "AIRSAFE_MODELS_CONTAINER", "models"
+)
+AIRSAFE_FEATURES_CONTAINER: Final[str] = os.environ.get(
+    "AIRSAFE_FEATURES_CONTAINER", "features"
+)
+AIRSAFE_REFERENCE_CONTAINER: Final[str] = os.environ.get(
+    "AIRSAFE_REFERENCE_CONTAINER", "reference"
+)
+AIRSAFE_SCRATCH_CONTAINER: Final[str] = os.environ.get(
+    "AIRSAFE_SCRATCH_CONTAINER", "scratch"
 )
 
 # ── ETL Schedule ────────────────────────────────────────────────────────────

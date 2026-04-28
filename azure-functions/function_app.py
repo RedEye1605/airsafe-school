@@ -1,12 +1,11 @@
 """
 AirSafe School — Azure Function App (Python v2 model).
 
-ETL pipeline that pulls SPKU + BMKG + Open-Meteo data and saves to
-Azure Blob Storage (when configured) or local filesystem (fallback).
-
-Functions:
-    1. etl_timer: Timer trigger (configurable schedule) — automated ETL
-    2. etl_http: HTTP POST trigger — run ETL manually for testing
+Two functions:
+    1. etl_timer / etl_http: ETL — scrape rendahemisi + Open-Meteo weather,
+       produce dataset_master_spku_weather format, append to Blob.
+    2. predict_timer / predict_http: Load LightGBM models, predict PM2.5 at
+       5 ISPU stations, Kriging + residual correction to 4,215 schools.
 
 Local testing:
     python function_app.py --local
@@ -19,13 +18,12 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Optional
 
-# Locate project root (repo: two levels up; deployed zip: one level up)
+# Locate project root
 _here = Path(__file__).resolve().parent
 _PROJECT_ROOT = _here.parent if (_here.parent / "src").is_dir() else _here
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-# Load .env locally (skip in Azure where env vars are set in app settings)
 _env_file = _PROJECT_ROOT / ".env"
 if _env_file.exists():
     from dotenv import load_dotenv
@@ -33,8 +31,10 @@ if _env_file.exists():
 
 from src.config import (
     AIRSAFE_LOG_CONTAINER,
+    AIRSAFE_PREDICT_CONTAINER,
     AIRSAFE_PROCESSED_CONTAINER,
     AIRSAFE_RAW_CONTAINER,
+    AIRSAFE_REFERENCE_CONTAINER,
     DATA_DIR,
     ETL_SCHEDULE,
     LOCAL_MODE,
@@ -43,21 +43,24 @@ from src.data.blob_client import (
     is_blob_configured,
     save_dataframe_dual,
     save_json_dual,
-    upload_json,
 )
-from src.data.bmkg_client import bmkg_to_dataframe, fetch_bmkg_forecast
-from src.data.spku_client import extract_pm25_readings, fetch_all_stations
-from src.data.transforms import (
-    enrich_spku_with_risk,
-    spku_to_dataframe,
-    weather_daily_to_dataframe,
-    weather_hourly_to_dataframe,
-)
-from src.data.weather_client import (
-    fetch_forecast_weather,
-    fetch_historical_weather,
-)
-from src.exceptions import DataAcquisitionError
+from src.data.rendahemisi_client import STATIONS, fetch_recent_hours
+from src.data.transforms import classify_pm25_hourly
+
+
+def _download_blob_to_temp(container: str, blob_name: str) -> Path:
+    """Download a blob to a temp file and return its path."""
+    from src.data.blob_client import _get_service
+    import tempfile
+
+    svc = _get_service()
+    bc = svc.get_blob_client(container=container, blob=blob_name)
+    suffix = Path(blob_name).suffix
+    tmp = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
+    bc.download_blob().readinto(tmp)
+    tmp.close()
+    logger.info("Downloaded blob %s/%s → %s", container, blob_name, tmp.name)
+    return Path(tmp.name)
 
 logger = logging.getLogger(__name__)
 
@@ -71,172 +74,371 @@ else:
     app = None  # type: ignore[assignment]
 
 
-# ── ETL Pipeline ─────────────────────────────────────────────────────────
+# ── Station coordinates for Open-Meteo per-station weather ────────────────
+
+_STATION_COORDS = {
+    "dki1-bundaran-hi":   {"latitude": -6.1931, "longitude": 106.8230},
+    "dki2-kelapa-gading": {"latitude": -6.1586, "longitude": 106.9050},
+    "dki3-jagakarsa":     {"latitude": -6.3346, "longitude": 106.8228},
+    "dki4-lubang-buaya":  {"latitude": -6.2908, "longitude": 106.9019},
+    "dki5-kebun-jeruk":   {"latitude": -6.1951, "longitude": 106.7694},
+}
+
+_WEATHER_VARS = [
+    "temperature_2m",
+    "relative_humidity_2m",
+    "precipitation",
+    "rain",
+    "surface_pressure",
+    "wind_speed_10m",
+    "wind_direction_10m",
+]
 
 
-def _ts_utc() -> tuple[str, str, str]:
-    """Return (iso_now, date_str, hour_str) in UTC."""
-    now = datetime.now(timezone.utc)
-    return (
-        now.isoformat(),
-        now.strftime("%Y-%m-%d"),
-        now.strftime("%H"),
-    )
+# ── ETL Pipeline (improved — matches Adit's format) ──────────────────────
+
+
+def _fetch_openmeteo_hourly(lat: float, lon: float, start_date: str, end_date: str) -> list[dict]:
+    import requests
+
+    url = "https://archive-api.open-meteo.com/v1/archive"
+    params = {
+        "latitude": lat,
+        "longitude": lon,
+        "start_date": start_date,
+        "end_date": end_date,
+        "hourly": ",".join(_WEATHER_VARS),
+        "timezone": "Asia/Jakarta",
+    }
+    resp = requests.get(url, params=params, timeout=120)
+    resp.raise_for_status()
+    data = resp.json()
+    return data.get("hourly", {})
+
+
+def _fetch_station_weather(slug: str, start_date: str, end_date: str) -> Optional[list[dict]]:
+    coords = _STATION_COORDS.get(slug)
+    if not coords:
+        return None
+    try:
+        return _fetch_openmeteo_hourly(coords["latitude"], coords["longitude"], start_date, end_date)
+    except Exception as exc:
+        logger.error("Open-Meteo fetch failed for %s: %s", slug, exc)
+        return None
 
 
 def run_etl_pipeline(data_root: Optional[Path] = None) -> dict[str, Any]:
-    """Core ETL — pulls SPKU + BMKG + weather, transforms, saves to Blob.
+    """Core ETL — scrape rendahemisi + Open-Meteo weather, merge, save.
+
+    Produces data matching Adit's dataset_master_spku_weather.csv format.
 
     Args:
         data_root: Root data directory (default: from config).
 
     Returns:
-        Manifest dict with stats, file paths, and per-source status.
+        Manifest dict with stats and file paths.
     """
+    import pandas as pd
+
     if data_root is None:
         data_root = Path(DATA_DIR)
 
-    now_iso, date_str, hour_str = _ts_utc()
-    ts_compact = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    now_utc = datetime.now(timezone.utc)
+    now_wib = now_utc + timedelta(hours=7)
+    ts_compact = now_utc.strftime("%Y%m%dT%H%M%SZ")
+    date_str = now_utc.strftime("%Y-%m-%d")
 
     manifest: dict[str, Any] = {
         "run_id": f"etl_{ts_compact}",
-        "started_at_utc": now_iso,
+        "started_at_utc": now_utc.isoformat(),
         "status": "running",
         "blob_enabled": is_blob_configured(),
         "files": [],
         "sources": {},
     }
 
-    # Step 1: SPKU air quality
-    logger.info("Step 1: Fetching SPKU data...")
+    # Step 1: Rendahemisi — scrape latest data
+    logger.info("Step 1: Scraping rendahemisi...")
     try:
-        spku_data = fetch_all_stations()
-        pm25_records = extract_pm25_readings(spku_data)
-        spku_df = spku_to_dataframe(pm25_records)
-        spku_df = enrich_spku_with_risk(spku_df)
-
-        # Raw snapshot
-        raw_blob = f"spku/date={date_str}/hour={hour_str}/spku_{ts_compact}.json"
-        raw_local = data_root / "raw" / "spku" / "snapshots" / f"spku_etl_{date_str}_{ts_compact}.json"
-        raw_payload = {
-            "collected_at": spku_data["collected_at"],
-            "total_stations": spku_data["total"],
-            "active_stations": spku_data["active"],
-            "active_pm25": spku_data["active_pm25"],
-            "pm25_record_count": len(pm25_records),
-            "valid_readings": len(spku_df),
+        spku_df = fetch_recent_hours(hours=72)
+        manifest["sources"]["rendahemisi"] = {
+            "ok": not spku_df.empty,
+            "rows": len(spku_df),
+            "stations": spku_df["station_slug"].nunique() if not spku_df.empty else 0,
         }
-        path = save_json_dual(raw_payload, raw_blob, raw_local)
-        manifest["files"].append(path)
+    except Exception as exc:
+        logger.error("Rendahemisi scrape failed: %s", exc)
+        spku_df = pd.DataFrame()
+        manifest["sources"]["rendahemisi"] = {"ok": False, "error": str(exc)}
 
-        # Processed CSV
-        if not spku_df.empty:
-            for name in (f"spku_pm25_{date_str}.csv", "spku_pm25_latest.csv"):
-                proc_blob = f"daily/{name}"
-                proc_local = data_root / "processed" / "daily" / name
-                path = save_dataframe_dual(spku_df, proc_blob, proc_local, container=AIRSAFE_PROCESSED_CONTAINER)
-                manifest["files"].append(path)
+    if spku_df.empty:
+        manifest["status"] = "failed"
+        manifest["error"] = "No rendahemisi data"
+        return manifest
 
-        manifest["sources"]["spku"] = {
+    # Save raw snapshot
+    raw_blob = f"spku/date={date_str}/spku_{ts_compact}.csv"
+    raw_local = data_root / "raw" / "spku" / f"spku_etl_{date_str}_{ts_compact}.csv"
+    path = save_dataframe_dual(spku_df, raw_blob, raw_local, container=AIRSAFE_RAW_CONTAINER)
+    manifest["files"].append(path)
+
+    # Step 2: Open-Meteo weather per station
+    logger.info("Step 2: Fetching Open-Meteo weather per station...")
+    end_date = now_wib.strftime("%Y-%m-%d")
+    start_date = (now_wib - timedelta(days=3)).strftime("%Y-%m-%d")
+
+    weather_dfs = []
+    for st in STATIONS:
+        slug = st["slug"]
+        try:
+            hourly = _fetch_station_weather(slug, start_date, end_date)
+            if hourly and "time" in hourly:
+                wdf = pd.DataFrame(hourly)
+                wdf["datetime"] = pd.to_datetime(wdf["time"])
+                wdf["station_slug"] = slug
+                wdf["station_name"] = st["station_name"]
+                wdf = wdf.drop(columns=["time"], errors="ignore")
+                weather_dfs.append(wdf)
+        except Exception as exc:
+            logger.error("Weather fetch failed for %s: %s", slug, exc)
+
+    if weather_dfs:
+        weather_df = pd.concat(weather_dfs, ignore_index=True)
+        manifest["sources"]["weather"] = {
             "ok": True,
-            "total_stations": spku_data["total"],
-            "active_pm25": spku_data["active_pm25"],
-            "valid_readings": len(spku_df),
+            "rows": len(weather_df),
+            "stations": weather_df["station_slug"].nunique(),
         }
+    else:
+        weather_df = pd.DataFrame()
+        manifest["sources"]["weather"] = {"ok": False, "error": "No weather data"}
 
-    except Exception as exc:
-        logger.error("SPKU fetch failed: %s", exc)
-        manifest["sources"]["spku"] = {"ok": False, "error": str(exc)}
+    # Step 3: Merge pollutant + weather
+    logger.info("Step 3: Merging pollutant + weather...")
+    if not weather_df.empty:
+        spku_df["datetime"] = pd.to_datetime(spku_df["datetime"]).dt.floor("h")
+        weather_df["datetime"] = pd.to_datetime(weather_df["datetime"]).dt.floor("h")
 
-    # Step 2: BMKG weather
-    logger.info("Step 2: Fetching BMKG weather...")
-    try:
-        bmkg_data = fetch_bmkg_forecast()
-        bmkg_records = bmkg_to_dataframe(bmkg_data)
+        merged = spku_df.merge(
+            weather_df,
+            on=["station_slug", "station_name", "datetime"],
+            how="left",
+        )
 
-        bmkg_blob = f"bmkg/date={date_str}/hour={hour_str}/bmkg_{ts_compact}.json"
-        bmkg_local = data_root / "raw" / "bmkg" / f"bmkg_{date_str}_{ts_compact}.json"
-        path = save_json_dual(bmkg_data, bmkg_blob, bmkg_local)
-        manifest["files"].append(path)
+        # Add temporal columns
+        merged["date"] = merged["datetime"].dt.normalize()
+        merged["year"] = merged["datetime"].dt.year
+        merged["month"] = merged["datetime"].dt.month
+        merged["day"] = merged["datetime"].dt.day
+        merged["hour_num"] = merged["datetime"].dt.hour
+        merged["dayofweek"] = merged["datetime"].dt.dayofweek
+        merged["is_weekend"] = (merged["dayofweek"] >= 5).astype(int)
+    else:
+        merged = spku_df.copy()
 
-        manifest["sources"]["bmkg"] = {
-            "ok": True,
-            "areas_fetched": bmkg_data.get("count", 0),
-            "areas_ok": bmkg_data.get("ok_count", 0),
-            "forecast_records": len(bmkg_records),
-        }
+    # Save merged dataset (Adit's format)
+    proc_blob = f"daily/dataset_master_spku_weather_{date_str}.csv"
+    proc_local = data_root / "processed" / "daily" / f"dataset_master_spku_weather_{date_str}.csv"
+    path = save_dataframe_dual(merged, proc_blob, proc_local, container=AIRSAFE_PROCESSED_CONTAINER)
+    manifest["files"].append(path)
 
-    except Exception as exc:
-        logger.exception("BMKG fetch failed")
-        manifest["sources"]["bmkg"] = {"ok": False, "error": str(exc)}
-
-    # Step 3: Open-Meteo weather archive
-    logger.info("Step 3: Fetching historical weather...")
-    try:
-        archive_end = (datetime.now() - timedelta(days=5)).strftime("%Y-%m-%d")
-        archive_start = (datetime.now() - timedelta(days=12)).strftime("%Y-%m-%d")
-        weather_data = fetch_historical_weather(archive_start, archive_end)
-
-        if "hourly" in weather_data:
-            hourly_df = weather_hourly_to_dataframe(weather_data["hourly"])
-            if not hourly_df.empty:
-                for name in (f"weather_hourly_{date_str}.csv", "weather_hourly_latest.csv"):
-                    w_blob = f"openmeteo/date={date_str}/{name}"
-                    w_local = data_root / "raw" / "weather" / name
-                    path = save_dataframe_dual(hourly_df, w_blob, w_local)
-                    manifest["files"].append(path)
-                manifest["sources"]["weather"] = {
-                    "ok": True,
-                    "hourly_records": len(hourly_df),
-                }
-
-        if "daily" in weather_data:
-            daily_df = weather_daily_to_dataframe(weather_data["daily"])
-            if not daily_df.empty:
-                name = f"weather_daily_{date_str}.csv"
-                w_blob = f"openmeteo/date={date_str}/{name}"
-                w_local = data_root / "raw" / "weather" / name
-                path = save_dataframe_dual(daily_df, w_blob, w_local)
-                manifest["files"].append(path)
-
-    except Exception as exc:
-        logger.error("Weather fetch failed: %s", exc)
-        manifest["sources"]["weather"] = {"ok": False, "error": str(exc)}
-
-    # Step 4: Open-Meteo forecast
-    logger.info("Step 4: Fetching forecast...")
-    try:
-        forecast_data = fetch_forecast_weather(forecast_days=3)
-        if "hourly" in forecast_data:
-            forecast_df = weather_hourly_to_dataframe(forecast_data["hourly"])
-            if not forecast_df.empty:
-                name = f"weather_forecast_{date_str}.csv"
-                w_blob = f"openmeteo/date={date_str}/{name}"
-                w_local = data_root / "raw" / "weather" / name
-                path = save_dataframe_dual(forecast_df, w_blob, w_local)
-                manifest["files"].append(path)
-                manifest["sources"]["forecast"] = {
-                    "ok": True,
-                    "records": len(forecast_df),
-                }
-    except Exception as exc:
-        logger.error("Forecast fetch failed: %s", exc)
-        manifest["sources"]["forecast"] = {"ok": False, "error": str(exc)}
+    # Also save as "latest"
+    latest_local = data_root / "processed" / "daily" / "dataset_master_spku_weather_latest.csv"
+    path = save_dataframe_dual(merged, "daily/dataset_master_spku_weather_latest.csv", latest_local, container=AIRSAFE_PROCESSED_CONTAINER)
+    manifest["files"].append(path)
 
     # Finalise manifest
     manifest["status"] = "completed"
     manifest["finished_at_utc"] = datetime.now(timezone.utc).isoformat()
+    manifest["merged_rows"] = len(merged)
 
-    # Save manifest
     manifest_blob = f"etl/date={date_str}/run_{ts_compact}.json"
     manifest_local = data_root / "processed" / f"etl_summary_{date_str}.json"
-    path = save_json_dual(
-        manifest, manifest_blob, manifest_local, container=AIRSAFE_LOG_CONTAINER
-    )
+    path = save_json_dual(manifest, manifest_blob, manifest_local, container=AIRSAFE_LOG_CONTAINER)
     manifest["files"].append(path)
 
-    logger.info("ETL completed. %d files saved. Blob: %s", len(manifest["files"]), is_blob_configured())
+    logger.info("ETL completed. %d rows, %d files. Blob: %s",
+                len(merged), len(manifest["files"]), is_blob_configured())
+    return manifest
+
+
+# ── Predict Pipeline ──────────────────────────────────────────────────────
+
+
+def _run_predict_pipeline(data_root: Optional[Path] = None) -> dict[str, Any]:
+    """Load models, predict at 5 stations, Kriging to 4,215 schools."""
+    import numpy as np
+    import pandas as pd
+    import pickle
+
+    from src.spatial.hourly_kriging import ISPU_STATION_COORDS
+    from src.spatial.kriging import KrigingConfig, kriging_interpolate
+    from src.spatial.residual_corrector import ResidualCorrector
+    from src.features.lag_features import build_prediction_features, prepare_model_input
+
+    if data_root is None:
+        data_root = Path(DATA_DIR)
+
+    now_utc = datetime.now(timezone.utc)
+    now_wib = now_utc + timedelta(hours=7)
+    ts_compact = now_utc.strftime("%Y%m%dT%H%M%SZ")
+
+    manifest: dict[str, Any] = {
+        "run_id": f"predict_{ts_compact}",
+        "started_at_utc": now_utc.isoformat(),
+        "status": "running",
+    }
+
+    models_dir = _PROJECT_ROOT / "models"
+    schools_path = data_root / "processed" / "schools" / "schools_geocoded.csv"
+
+    # Fall back to Blob if local file missing (Azure deployment)
+    if not schools_path.exists() and is_blob_configured():
+        schools_path = _download_blob_to_temp(
+            AIRSAFE_REFERENCE_CONTAINER, "schools/schools_geocoded.csv"
+        )
+
+    # Load models
+    models = {}
+    for h in [6, 12, 24]:
+        model_path = models_dir / f"final_lgbm_h{h}.pkl"
+        with open(model_path, "rb") as f:
+            models[h] = pickle.load(f)
+        logger.info("Loaded model h%d: %d features", h, models[h].n_features_)
+
+    # Load residual corrector
+    corrector_path = models_dir / "hourly_residual_corrector.pkl"
+    if corrector_path.exists():
+        corrector = ResidualCorrector.load(str(corrector_path))
+    else:
+        corrector = None
+        logger.warning("No residual corrector found — skipping correction")
+
+    # Load school locations
+    schools = pd.read_csv(schools_path)
+    valid_schools = schools.dropna(subset=["latitude", "longitude"]).copy()
+    logger.info("Loaded %d schools (%d with valid coords)", len(schools), len(valid_schools))
+
+    # Load historical data for feature context
+    master_path = data_root / "processed" / "daily" / "dataset_master_spku_weather_latest.csv"
+    if not master_path.exists() and is_blob_configured():
+        master_path = _download_blob_to_temp(
+            AIRSAFE_PROCESSED_CONTAINER, "daily/dataset_master_spku_weather_latest.csv"
+        )
+    if not master_path.exists():
+        # Try the full historical dataset from reference container
+        if is_blob_configured():
+            master_path = _download_blob_to_temp(
+                AIRSAFE_REFERENCE_CONTAINER, "historical/dataset_master_spku_weather.csv"
+            )
+    if not master_path.exists():
+        manifest["status"] = "failed"
+        manifest["error"] = f"No master dataset found"
+        return manifest
+
+    master = pd.read_csv(master_path)
+    master["datetime"] = pd.to_datetime(master["datetime"])
+    cutoff = now_wib - timedelta(hours=72)
+    historical = master[master["datetime"] >= cutoff].copy()
+    logger.info("Historical context: %d rows (last 72h)", len(historical))
+
+    # Build features and predict per horizon
+    station_predictions = []
+    school_results = valid_schools[["npsn", "latitude", "longitude"]].copy() if "npsn" in valid_schools.columns else valid_schools[["latitude", "longitude"]].copy()
+
+    for h in [6, 12, 24]:
+        logger.info("Predicting horizon h%d...", h)
+        features_df = build_prediction_features(historical, horizon=h)
+
+        X, feature_cols = prepare_model_input(
+            features_df, f"target_pm25_t_plus_{h}",
+            model_feature_order=models[h].feature_name_,
+        )
+        preds = models[h].predict(X)
+
+        # Station predictions
+        for i, row in features_df.iterrows():
+            station_predictions.append({
+                "station": row.get("station_name", ""),
+                "slug": str(row.get("station_slug", "")),
+                "horizon": h,
+                "pm25_predicted": float(preds[i]),
+            })
+
+        # Kriging interpolation
+        slug_to_coord = {
+            slug: coords for slug, coords in zip(
+                ["DKI1 Bundaran HI", "DKI2 Kelapa Gading", "DKI3 Jagakarsa",
+                 "DKI4 Lubang Buaya", "DKI5 Kebun Jeruk"],
+                ISPU_STATION_COORDS.values(),
+            )
+        }
+
+        sensor_data = []
+        for i, row in features_df.iterrows():
+            name = row.get("station_name", "")
+            coords = slug_to_coord.get(name)
+            if coords:
+                sensor_data.append({
+                    "station_name": name,
+                    "latitude": coords[0],
+                    "longitude": coords[1],
+                    "pm25": float(preds[i]),
+                })
+
+        if len(sensor_data) >= 3:
+            sensor_df = pd.DataFrame(sensor_data)
+
+            try:
+                kriging_result = kriging_interpolate(
+                    sensor_df, valid_schools,
+                    config=KrigingConfig(nlags=4, min_sensors=3),
+                )
+
+                if corrector is not None:
+                    kriging_result = corrector.correct(kriging_result, sensor_df)
+
+                pm25_col = "pm25_corrected" if "pm25_corrected" in kriging_result.columns else "pm25_kriging"
+                school_results[f"pm25_h{h}"] = kriging_result[pm25_col].values
+                school_results[f"risk_h{h}"] = kriging_result[pm25_col].apply(classify_pm25_hourly).values
+            except Exception as exc:
+                logger.error("Kriging failed for h%d: %s", h, exc)
+                school_results[f"pm25_h{h}"] = np.nan
+                school_results[f"risk_h{h}"] = "TIDAK ADA DATA"
+        else:
+            logger.warning("Not enough sensors (%d) for Kriging h%d", len(sensor_data), h)
+            school_results[f"pm25_h{h}"] = np.nan
+            school_results[f"risk_h{h}"] = "TIDAK ADA DATA"
+
+    # Build output JSON
+    output = {
+        "timestamp_utc": now_utc.isoformat(),
+        "timestamp_wib": now_wib.isoformat(),
+        "station_predictions": station_predictions,
+        "n_schools": len(school_results),
+    }
+
+    # School predictions — convert to list of dicts
+    school_list = []
+    for _, row in school_results.iterrows():
+        entry = {k: v for k, v in row.items() if pd.notna(v)}
+        school_list.append(entry)
+    output["school_predictions"] = school_list
+
+    # Save to Blob (predictions container)
+    date_str = now_utc.strftime("%Y-%m-%d")
+    predict_blob = f"daily/predict_{date_str}_{ts_compact}.json"
+    predict_local = data_root / "processed" / "daily" / f"predict_{date_str}_{ts_compact}.json"
+    save_json_dual(output, predict_blob, predict_local, container=AIRSAFE_PREDICT_CONTAINER)
+
+    # Also save latest
+    latest_local = data_root / "processed" / "daily" / "predict_latest.json"
+    save_json_dual(output, "daily/predict_latest.json", latest_local, container=AIRSAFE_PREDICT_CONTAINER)
+
+    manifest["status"] = "completed"
+    manifest["finished_at_utc"] = datetime.now(timezone.utc).isoformat()
+    manifest["n_schools"] = len(school_results)
+    manifest["n_stations"] = len(station_predictions)
     return manifest
 
 
@@ -275,6 +477,38 @@ if not LOCAL_MODE and app is not None:
                 status_code=500,
             )
 
+    @app.function_name(name="predict_timer")
+    @app.timer_trigger(
+        schedule="0 0 15 * * *",
+        arg_name="myTimer",
+        run_on_startup=False,
+    )
+    def predict_timer(myTimer: func.TimerRequest) -> None:
+        """Timer-triggered predict at 15:00 UTC = 22:00 WIB daily."""
+        if myTimer.past_due:
+            logger.warning("Predict timer is past due!")
+        manifest = _run_predict_pipeline()
+        logger.info("Predict finished: %s", manifest["status"])
+
+    @app.function_name(name="predict_http")
+    @app.route(route="predict", methods=["POST"])
+    def predict_http(req: func.HttpRequest) -> func.HttpResponse:
+        """HTTP-triggered predict for manual testing."""
+        try:
+            manifest = _run_predict_pipeline()
+            return func.HttpResponse(
+                json.dumps(manifest, default=str, indent=2),
+                mimetype="application/json",
+                status_code=200 if manifest["status"] == "completed" else 500,
+            )
+        except Exception as exc:
+            logger.exception("Predict HTTP failed")
+            return func.HttpResponse(
+                json.dumps({"error": str(exc)}),
+                mimetype="application/json",
+                status_code=500,
+            )
+
 
 # ── Local entry point ───────────────────────────────────────────────────
 
@@ -288,16 +522,19 @@ if __name__ == "__main__":
         import os
         os.environ["AIRSAFE_LOCAL_MODE"] = "1"
 
+        mode = sys.argv[sys.argv.index("--local") + 1] if len(sys.argv) > sys.argv.index("--local") + 1 else "etl"
+
         print("=" * 60)
-        print("AirSafe ETL Pipeline — LOCAL MODE")
+        print(f"AirSafe Pipeline — LOCAL MODE ({mode})")
         print(f"Blob Storage: {'ENABLED' if is_blob_configured() else 'NOT CONFIGURED'}")
         print("=" * 60)
 
-        manifest = run_etl_pipeline()
+        if mode == "predict":
+            manifest = _run_predict_pipeline()
+        else:
+            manifest = run_etl_pipeline()
+
         print(json.dumps(manifest, indent=2, default=str))
-        print(f"\n{len(manifest['files'])} files saved:")
-        for f in manifest["files"]:
-            print(f"  -> {f}")
     else:
-        print("Usage: python function_app.py --local")
+        print("Usage: python function_app.py --local [etl|predict]")
         print("  Or set AIRSAFE_LOCAL_MODE=1")

@@ -39,6 +39,7 @@ from src.config import (
     AIRSAFE_REFERENCE_CONTAINER,
     DATA_DIR,
     LOCAL_MODE,
+    OPEN_METEO_ARCHIVE_URL,
 )
 from src.data.blob_client import (
     is_blob_configured,
@@ -126,7 +127,7 @@ def _fetch_openmeteo_hourly(lat: float, lon: float, start_date: str, end_date: s
     import requests
     import time
 
-    url = "https://archive-api.open-meteo.com/v1/archive"
+    url = OPEN_METEO_ARCHIVE_URL
     params = {
         "latitude": lat,
         "longitude": lon,
@@ -149,7 +150,7 @@ def _fetch_openmeteo_hourly(lat: float, lon: float, start_date: str, end_date: s
     return {}
 
 
-def _fetch_station_weather(slug: str, start_date: str, end_date: str) -> Optional[list[dict]]:
+def _fetch_station_weather(slug: str, start_date: str, end_date: str) -> Optional[dict]:
     coords = _STATION_COORDS.get(slug)
     if not coords:
         return None
@@ -548,7 +549,8 @@ def _generate_recommendations(
     predictions: dict,
     school_meta: dict[str, dict],
 ) -> list[dict]:
-    """Generate recommendations for all schools in predictions."""
+    """Generate template-based recommendations for all schools in predictions."""
+    from src.recommendations.engine import RecommendationInput, _generate_with_template
     results = []
     for school in predictions.get("school_predictions", []):
         npsn = str(school.get("npsn", ""))
@@ -558,7 +560,8 @@ def _generate_recommendations(
             school_name=meta.get("nama_sekolah", npsn),
             district=meta.get("kecamatan", ""),
         )
-        rec = generate_recommendation(adapted)
+        inp_obj = RecommendationInput(**adapted)
+        rec = _generate_with_template(inp_obj)
         results.append({
             "npsn": npsn,
             "nama_sekolah": meta.get("nama_sekolah", ""),

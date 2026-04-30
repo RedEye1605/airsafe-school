@@ -94,6 +94,8 @@ def _fill_pm25_series(s: pd.Series) -> pd.Series:
         med = s.median()
         if pd.notna(med):
             s = s.fillna(med)
+        else:
+            s = s.fillna(0)
     return s
 
 
@@ -359,7 +361,7 @@ def prepare_model_input(
         "datetime", "date",
         "station_name", "lokasi",
         "season_simple",
-        "pm25_raw", "pm25_clean_full",
+        "pm25_clean_full",
         "last_update", "source_url", "source_file",
         "hour", "hc",
     }
@@ -367,6 +369,18 @@ def prepare_model_input(
 
     feature_cols = [c for c in df.columns if c not in exclude]
     X = df[feature_cols].copy()
+
+    # One-hot encode categoricals for ablation-trained models
+    cat_cols_to_encode = []
+    for col in ["kategori", "station_slug"]:
+        if col in X.columns:
+            cat_cols_to_encode.append(col)
+    if cat_cols_to_encode:
+        # Normalize spaces to underscores so column names match model training
+        for col in cat_cols_to_encode:
+            if X[col].dtype == "object" or hasattr(X[col], "str"):
+                X[col] = X[col].astype(str).str.replace(" ", "_")
+        X = pd.get_dummies(X, columns=cat_cols_to_encode, dtype="int8")
 
     # Object columns → category for LightGBM
     for col in X.columns:
@@ -376,7 +390,98 @@ def prepare_model_input(
     # Reorder to match model's expected feature order
     if model_feature_order is not None:
         ordered = [c for c in model_feature_order if c in X.columns]
-        X = X[ordered]
-        feature_cols = ordered
+        missing = [c for c in model_feature_order if c not in X.columns]
+        if missing:
+            logger.warning("Missing %d model features: %s", len(missing), missing[:10])
+        # Add missing features as zero columns so LightGBM doesn't crash
+        for feat in missing:
+            X[feat] = 0
+        X = X[model_feature_order]
+        feature_cols = list(model_feature_order)
 
     return X, feature_cols
+
+
+# ── SHAP explainability ───────────────────────────────────────────────────
+
+_SHAP_REASON_MAP = {
+    "pm25": "konsentrasi PM2.5 saat ini",
+    "pm25_lag": "nilai PM2.5 sebelumnya",
+    "pm25_diff": "perubahan PM2.5 baru-baru ini",
+    "pm25_roll": "tren PM2.5 historis",
+    "temperature_2m": "pengaruh suhu udara",
+    "relative_humidity_2m": "pengaruh kelembapan udara",
+    "rain": "pengaruh curah hujan",
+    "surface_pressure": "pengaruh tekanan udara",
+    "wind_speed_10m": "pengaruh kecepatan angin",
+    "wind_u": "pengaruh komponen angin timur-barat",
+    "wind_v": "pengaruh komponen angin utara-selatan",
+    "pm10_work": "konsentrasi PM10 pendukung",
+    "so2_work": "konsentrasi SO2 pendukung",
+    "co_work": "konsentrasi CO pendukung",
+    "o3_work": "konsentrasi O3 pendukung",
+    "no2_work": "konsentrasi NO2 pendukung",
+    "station_hour_mean": "profil PM2.5 rata-rata per jam stasiun",
+    "station_month_mean": "profil PM2.5 rata-rata per bulan stasiun",
+    "hour_sin": "pola waktu harian",
+    "hour_cos": "pola waktu harian",
+    "month_sin": "pola waktu bulanan",
+    "month_cos": "pola waktu bulanan",
+    "season_dry_flag": "pengaruh musim kering",
+    "is_rush_morning": "jam sibuk pagi",
+    "is_rush_evening": "jam sibuk sore",
+    "is_workhour": "jam kerja",
+    "is_weekend": "pengaruh akhir pekan",
+    "has_rain": "kondisi hujan",
+}
+
+
+def _shap_reason(feature: str, value: float, shap_val: float) -> str:
+    """Convert a feature name + SHAP value into a human-readable reason."""
+    for prefix, reason in _SHAP_REASON_MAP.items():
+        if feature.startswith(prefix) or feature == prefix:
+            direction = "meningkatkan" if shap_val > 0 else "menurunkan"
+            return f"{reason} ({direction} prediksi)"
+    return "faktor model"
+
+
+def compute_shap_top_features(
+    model,
+    X: pd.DataFrame,
+    n_top: int = 5,
+) -> list[list[dict]]:
+    """Compute SHAP top contributors per row.
+
+    Returns list (one per row) of list of dicts:
+        [{"feature": str, "direction": "+"|"-", "reason": str, "shap_value": float}]
+    """
+    import shap
+
+    explainer = shap.TreeExplainer(model)
+    shap_values = explainer.shap_values(X)
+    feature_names = X.columns.tolist()
+
+    results = []
+    for row_idx in range(len(X)):
+        row_shap = shap_values[row_idx]
+        row_vals = X.iloc[row_idx].values
+
+        items = []
+        for feat, val, sv in zip(feature_names, row_vals, row_shap):
+            items.append((feat, float(val), float(sv), abs(float(sv))))
+
+        items.sort(key=lambda x: x[3], reverse=True)
+
+        top = []
+        for feat, val, sv, _ in items[:n_top]:
+            direction = "+" if sv > 0 else "-"
+            reason = _shap_reason(feat, val, sv)
+            top.append({
+                "feature": feat,
+                "direction": direction,
+                "reason": reason,
+                "shap_value": round(sv, 2),
+            })
+        results.append(top)
+
+    return results

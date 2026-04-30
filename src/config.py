@@ -12,7 +12,7 @@ from typing import Final
 # ── Project Paths ────────────────────────────────────────────────────────────
 
 PROJECT_ROOT: Final[Path] = Path(
-    os.environ.get("AIRSAFE_ROOT", Path(__file__).resolve().parent.parent.parent)
+    os.environ.get("AIRSAFE_ROOT", Path(__file__).resolve().parent.parent)
 )
 DATA_DIR: Final[Path] = Path(os.environ.get("DATA_DIR", PROJECT_ROOT / "data"))
 RAW_DIR: Final[Path] = DATA_DIR / "raw"
@@ -79,11 +79,11 @@ ISPU_STATION_CITY: Final[dict[str, str]] = {
 }
 
 ISPU_STATION_COORDS: Final[dict[str, tuple[float, float]]] = {
-    "DKI1": (-6.1753, 106.8272),   # Bunderan HI
-    "DKI2": (-6.1578, 106.9067),   # Kelapa Gading
-    "DKI3": (-6.3692, 106.8186),   # Jagakarsa
-    "DKI4": (-6.2942, 106.8897),   # Lubang Buaya
-    "DKI5": (-6.1909, 106.7369),   # Kebon Jeruk
+    "DKI1": (-6.195459, 106.822731),   # Bundaran HI
+    "DKI2": (-6.154085, 106.908249),   # Kelapa Gading
+    "DKI3": (-6.336216, 106.818082),   # Jagakarsa
+    "DKI4": (-6.290800, 106.908501),   # Lubang Buaya
+    "DKI5": (-6.207255, 106.752560),   # Kebun Jeruk
 }
 
 # ── Map Defaults ─────────────────────────────────────────────────────────────

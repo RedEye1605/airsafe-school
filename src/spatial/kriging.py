@@ -248,6 +248,74 @@ def _pick_best_variogram(
     )
 
 
+def extract_kriging_weights(
+    ok: OrdinaryKriging,
+    target_lats: np.ndarray,
+    target_lons: np.ndarray,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Extract actual Kriging λ weights from a fitted OrdinaryKriging model.
+
+    Re-solves the Kriging system A · x = b for each target point using the
+    same variogram model and parameters that were used for prediction. The
+    returned weights matrix can be used to attribute each prediction to its
+    contributing source stations.
+
+    This uses the identical math PyKrige uses internally in ``_exec_vector``
+    (lines 650-683 of ok.py): builds the Kriging matrix inverse, constructs
+    right-hand-side vectors from variogram distances, and solves for weights.
+
+    **Important**: PyKrige reorders stations internally during fitting. The
+    returned lats/lons reflect the OK object's internal station order, NOT
+    the original input order. Use these to match weights back to station
+    identities (by coordinate proximity), not positional indexing.
+
+    Args:
+        ok: Fitted OrdinaryKriging object (after calling execute()).
+        target_lats: Target point latitudes, shape (n_targets,).
+        target_lons: Target point longitudes, shape (n_targets,).
+
+    Returns:
+        (weights, station_lats, station_lons) where:
+        - weights: shape (n_targets, n_stations), each row sums to ~1.0
+        - station_lats: shape (n_stations,), internal OK station latitudes
+        - station_lons: shape (n_stations,), internal OK station longitudes
+    """
+    from pykrige import core as _pk_core
+    import scipy.linalg
+
+    n = ok.X_ADJUSTED.shape[0]
+    target_lats = np.asarray(target_lats, dtype=float)
+    target_lons = np.asarray(target_lons, dtype=float)
+    npt = len(target_lats)
+
+    a = ok._get_kriging_matrix(n)
+    if ok.pseudo_inv:
+        from pykrige.core import P_INV
+        a_inv = P_INV[ok.pseudo_inv_type](a)
+    else:
+        a_inv = scipy.linalg.inv(a)
+
+    bd = _pk_core.great_circle_distance(
+        target_lons[:, np.newaxis],
+        target_lats[:, np.newaxis],
+        ok.X_ADJUSTED,
+        ok.Y_ADJUSTED,
+    )
+
+    b = np.zeros((npt, n + 1))
+    b[:, :n] = -ok.variogram_function(ok.variogram_model_parameters, bd)
+    b[:, n] = 1.0
+
+    if ok.exact_values:
+        zero_mask = np.abs(bd) <= ok.eps
+        b[:, :n][zero_mask] = 0.0
+
+    x = np.dot(a_inv, b.T)
+    weights = x[:n, :].T
+
+    return weights, ok.Y_ADJUSTED.copy(), ok.X_ADJUSTED.copy()
+
+
 def kriging_interpolate(
     sensor_df: pd.DataFrame,
     target_df: pd.DataFrame,
@@ -256,7 +324,8 @@ def kriging_interpolate(
     lon_col: str = "longitude",
     target_id_col: str = "npsn",
     config: Optional[KrigingConfig] = None,
-) -> pd.DataFrame:
+    return_kriging_model: bool = False,
+) -> pd.DataFrame | tuple[pd.DataFrame, Optional[OrdinaryKriging]]:
     """Estimate PM2.5 at target locations using Ordinary Kriging.
 
     Fits multiple variogram models, selects the one with lowest LOOCV
@@ -272,9 +341,12 @@ def kriging_interpolate(
         lon_col: Longitude column name.
         target_id_col: ID column in target_df.
         config: Kriging configuration.
+        return_kriging_model: If True, return (result_df, ok_object_or_None)
+            tuple. The OK object can be used with extract_kriging_weights().
 
     Returns:
         target_df augmented with kriging estimates, variance, and metadata.
+        If return_kriging_model is True, returns (result_df, ok_or_None).
         Rows with invalid coordinates are dropped.  When the IDW fallback
         is used, ``kriging_variance`` and ``kriging_std`` are set to NaN
         (IDW does not produce statistically-comparable uncertainty).
@@ -341,6 +413,8 @@ def kriging_interpolate(
         result["kriging_std"] = np.nan
         result["variogram_model"] = "fallback_idw"
         result["n_sensors"] = n_sensors
+        if return_kriging_model:
+            return result, None
         return result
 
     x = sensors[lon_col].to_numpy(dtype=float)
@@ -362,6 +436,8 @@ def kriging_interpolate(
         result["kriging_std"] = np.sqrt(result["kriging_variance"])
         result["variogram_model"] = best_model
         result["n_sensors"] = n_sensors
+        if return_kriging_model:
+            return result, ok
         return result
     except RuntimeError:
         pass  # All models failed — fall through to IDW
@@ -381,4 +457,6 @@ def kriging_interpolate(
     result["kriging_std"] = np.nan
     result["variogram_model"] = "fallback_idw"
     result["n_sensors"] = n_sensors
+    if return_kriging_model:
+        return result, None
     return result

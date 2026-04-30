@@ -27,13 +27,15 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Create and start virtual environment
-        run: |
-          python -m venv venv
-          source venv/bin/activate
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: 'latest'
 
-      - name: Install dependencies
-        run: pip install -r azure-functions/requirements.txt
+      - name: Create venv and install dependencies
+        run: |
+          uv venv venv --python ${{ env.PYTHON_VERSION }}
+          uv pip install --python venv/bin/python -r azure-functions/requirements.txt
 
       - name: Zip artifact for deployment
         run: |

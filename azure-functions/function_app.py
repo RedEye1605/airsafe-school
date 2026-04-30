@@ -307,7 +307,7 @@ def _run_predict_pipeline(data_root: Optional[Path] = None) -> dict[str, Any]:
     import pickle
 
     from src.spatial.hourly_kriging import ISPU_STATION_COORDS
-    from src.spatial.kriging import KrigingConfig, kriging_interpolate
+    from src.spatial.kriging import KrigingConfig, kriging_interpolate, extract_kriging_weights
     from src.spatial.residual_corrector import ResidualCorrector
     from src.features.lag_features import build_prediction_features, prepare_model_input
 
@@ -362,6 +362,7 @@ def _run_predict_pipeline(data_root: Optional[Path] = None) -> dict[str, Any]:
         manifest["status"] = "failed"
         manifest["error"] = f"Failed to read schools CSV: {exc}"
         logger.error("Schools CSV read failed: %s", exc)
+        _cleanup_temp_files()
         return manifest
     valid_schools = schools.dropna(subset=["latitude", "longitude"]).copy()
     logger.info("Loaded %d schools (%d with valid coords)", len(schools), len(valid_schools))
@@ -381,6 +382,7 @@ def _run_predict_pipeline(data_root: Optional[Path] = None) -> dict[str, Any]:
     if not master_path.exists():
         manifest["status"] = "failed"
         manifest["error"] = f"No master dataset found"
+        _cleanup_temp_files()
         return manifest
 
     try:
@@ -389,6 +391,7 @@ def _run_predict_pipeline(data_root: Optional[Path] = None) -> dict[str, Any]:
         manifest["status"] = "failed"
         manifest["error"] = f"Failed to read master dataset: {exc}"
         logger.error("Master dataset read failed: %s", exc)
+        _cleanup_temp_files()
         return manifest
     master["datetime"] = pd.to_datetime(master["datetime"])
     cutoff = pd.Timestamp.now() - pd.Timedelta(hours=72)
@@ -398,6 +401,19 @@ def _run_predict_pipeline(data_root: Optional[Path] = None) -> dict[str, Any]:
     # Build features and predict per horizon
     station_predictions = []
     school_results = valid_schools[["npsn", "latitude", "longitude"]].copy() if "npsn" in valid_schools.columns else valid_schools[["latitude", "longitude"]].copy()
+
+    # Track OK objects per horizon for Kriging weight extraction
+    ok_objects: dict[int, Any] = {6: None, 12: None, 24: None}
+    # Track station names in Kriging sensor order per horizon
+    kriging_sensor_coords: dict[int, dict[str, tuple[float, float]]] = {}
+
+    slug_to_coord = {
+        slug: coords for slug, coords in zip(
+            ["DKI1 Bundaran HI", "DKI2 Kelapa Gading", "DKI3 Jagakarsa",
+             "DKI4 Lubang Buaya", "DKI5 Kebun Jeruk"],
+            ISPU_STATION_COORDS.values(),
+        )
+    }
 
     for h in [6, 12, 24]:
         logger.info("Predicting horizon h%d...", h)
@@ -414,6 +430,15 @@ def _run_predict_pipeline(data_root: Optional[Path] = None) -> dict[str, Any]:
         )
         preds = models[h].predict(X)
 
+        # SHAP top features per station
+        try:
+            from src.features.lag_features import compute_shap_top_features
+            shap_tops = compute_shap_top_features(models[h], X, n_top=5)
+            logger.info("SHAP computed for h%d: %d stations", h, len(shap_tops))
+        except Exception as exc:
+            logger.warning("SHAP failed for h%d: %s", h, exc)
+            shap_tops = [[] for _ in range(len(X))]
+
         # Station predictions
         for i, row in features_df.iterrows():
             station_predictions.append({
@@ -421,17 +446,10 @@ def _run_predict_pipeline(data_root: Optional[Path] = None) -> dict[str, Any]:
                 "slug": str(row.get("station_slug", "")),
                 "horizon": h,
                 "pm25_predicted": float(preds[i]),
+                "top_shap_factors": shap_tops[i],
             })
 
         # Kriging interpolation
-        slug_to_coord = {
-            slug: coords for slug, coords in zip(
-                ["DKI1 Bundaran HI", "DKI2 Kelapa Gading", "DKI3 Jagakarsa",
-                 "DKI4 Lubang Buaya", "DKI5 Kebun Jeruk"],
-                ISPU_STATION_COORDS.values(),
-            )
-        }
-
         sensor_data = []
         for i, row in features_df.iterrows():
             name = row.get("station_name", "")
@@ -448,9 +466,10 @@ def _run_predict_pipeline(data_root: Optional[Path] = None) -> dict[str, Any]:
             sensor_df = pd.DataFrame(sensor_data)
 
             try:
-                kriging_result = kriging_interpolate(
+                kriging_result, ok_obj = kriging_interpolate(
                     sensor_df, valid_schools,
                     config=KrigingConfig(nlags=4, min_sensors=3),
+                    return_kriging_model=True,
                 )
 
                 if corrector is not None:
@@ -459,6 +478,14 @@ def _run_predict_pipeline(data_root: Optional[Path] = None) -> dict[str, Any]:
                 pm25_col = "pm25_corrected" if "pm25_corrected" in kriging_result.columns else "pm25_kriging"
                 school_results[f"pm25_h{h}"] = kriging_result[pm25_col].values
                 school_results[f"risk_h{h}"] = kriging_result[pm25_col].apply(classify_pm25_hourly).values
+
+                ok_objects[h] = ok_obj
+                # Track sensor coords for coordinate-based weight alignment
+                # (PyKrige reorders stations internally, so we can't use positional index)
+                kriging_sensor_coords[h] = {
+                    s["station_name"]: (s["latitude"], s["longitude"])
+                    for s in sensor_data
+                }
             except Exception as exc:
                 logger.error("Kriging failed for h%d: %s", h, exc)
                 school_results[f"pm25_h{h}"] = np.nan
@@ -476,10 +503,128 @@ def _run_predict_pipeline(data_root: Optional[Path] = None) -> dict[str, Any]:
         "n_schools": len(school_results),
     }
 
+    # ── Per-school weighted SHAP via real Kriging weights (all horizons) ───
+    n_schools = len(school_results)
+
+    # Collect station SHAP per horizon: {horizon: [{name, factors}]}
+    station_shap_by_horizon: dict[int, dict[str, list[dict]]] = {}
+    for sp in station_predictions:
+        h = sp["horizon"]
+        if sp.get("top_shap_factors"):
+            name = sp.get("station", "")
+            if name:
+                station_shap_by_horizon.setdefault(h, {})[name] = sp["top_shap_factors"]
+
+    # Extract Kriging weights per horizon and compute weighted SHAP
+    has_any_ok = any(ok_objects.get(h) is not None for h in station_shap_by_horizon)
+
+    if station_shap_by_horizon and has_any_ok:
+        school_lats = school_results["latitude"].values
+        school_lons = school_results["longitude"].values
+
+        # For each horizon: extract weights + build OK-internal → station name map
+        horizon_weights: dict[int, tuple[np.ndarray, dict[int, str]]] = {}
+        for h in station_shap_by_horizon:
+            ok_obj = ok_objects.get(h)
+            sensor_coords = kriging_sensor_coords.get(h)
+            if ok_obj is None or not sensor_coords:
+                continue
+            w, ok_lats, ok_lons = extract_kriging_weights(ok_obj, school_lats, school_lons)
+
+            # Match OK internal station coords to our station names (by haversine < 1m)
+            ok_idx_to_name: dict[int, str] = {}
+            for ok_idx in range(len(ok_lats)):
+                best_name, best_dist = "", float("inf")
+                for name, (lat, lon) in sensor_coords.items():
+                    d = abs(ok_lats[ok_idx] - lat) + abs(ok_lons[ok_idx] - lon)
+                    if d < best_dist:
+                        best_dist, best_name = d, name
+                if best_name:
+                    ok_idx_to_name[ok_idx] = best_name
+
+            horizon_weights[h] = (w, ok_idx_to_name)
+            logger.info(
+                "h%d Kriging weights: shape %s, row sums min=%.4f max=%.4f",
+                h, w.shape, w.sum(axis=1).min(), w.sum(axis=1).max(),
+            )
+
+        school_shap = []
+        for si in range(n_schools):
+            scored: dict[str, tuple[float, dict]] = {}
+            for h, (weights, ok_idx_to_name) in horizon_weights.items():
+                shap_map = station_shap_by_horizon.get(h, {})
+                for st_idx, name in ok_idx_to_name.items():
+                    if name not in shap_map:
+                        continue
+                    w = float(weights[si, st_idx])
+                    for f in shap_map[name]:
+                        feat = f["feature"]
+                        score = w * abs(f["shap_value"])
+                        if feat not in scored or score > scored[feat][0]:
+                            scored[feat] = (score, f)
+
+            top = sorted(scored.values(), key=lambda x: x[0], reverse=True)[:5]
+            school_shap.append([f for _, f in top])
+
+        logger.info(
+            "Per-school SHAP computed: %d schools, %d horizons, weighted by Kriging λ",
+            n_schools, len(horizon_weights),
+        )
+
+    elif station_shap_by_horizon:
+        # Fallback to IDW if no Kriging OK objects available
+        all_station_names = sorted({
+            name for h_shap in station_shap_by_horizon.values() for name in h_shap
+        })
+        station_coords = []
+        for name in all_station_names:
+            coords = slug_to_coord.get(name)
+            if coords:
+                station_coords.append((name, coords[0], coords[1]))
+        if not station_coords:
+            school_shap = [[] for _ in range(n_schools)]
+        else:
+            s_lats = np.array([c[1] for c in station_coords])
+            s_lons = np.array([c[2] for c in station_coords])
+            name_to_idx = {c[0]: i for i, c in enumerate(station_coords)}
+
+            lat1 = np.radians(school_results["latitude"].values)[:, None]
+            lon1 = np.radians(school_results["longitude"].values)[:, None]
+            lat2 = np.radians(s_lats)[None, :]
+            lon2 = np.radians(s_lons)[None, :]
+            dlat = lat2 - lat1
+            dlon = lon2 - lon1
+            a = np.sin(dlat / 2) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2) ** 2
+            dist_km = 6371.0 * 2 * np.arcsin(np.sqrt(np.clip(a, 0, 1)))
+
+            idw_w = 1.0 / np.power(np.maximum(dist_km, 0.01), 2.0)
+            idw_w = idw_w / idw_w.sum(axis=1, keepdims=True)
+
+            school_shap = []
+            for si in range(n_schools):
+                scored: dict[str, tuple[float, dict]] = {}
+                for h, shap_map in station_shap_by_horizon.items():
+                    for name, factors in shap_map.items():
+                        idx = name_to_idx.get(name)
+                        if idx is None:
+                            continue
+                        w = idw_w[si, idx]
+                        for f in factors:
+                            feat = f["feature"]
+                            score = w * abs(f["shap_value"])
+                            if feat not in scored or score > scored[feat][0]:
+                                scored[feat] = (score, f)
+                top = sorted(scored.values(), key=lambda x: x[0], reverse=True)[:5]
+                school_shap.append([f for _, f in top])
+            logger.info("Per-school SHAP computed: %d schools weighted by IDW fallback", n_schools)
+    else:
+        school_shap = [[] for _ in range(n_schools)]
+
     # School predictions — convert to list of dicts
     school_list = []
-    for _, row in school_results.iterrows():
+    for idx, (_, row) in enumerate(school_results.iterrows()):
         entry = {k: v for k, v in row.items() if pd.notna(v)}
+        entry["top_shap_factors"] = school_shap[idx]
         school_list.append(entry)
     output["school_predictions"] = school_list
 

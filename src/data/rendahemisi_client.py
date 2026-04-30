@@ -12,7 +12,7 @@ from __future__ import annotations
 import logging
 import re
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from io import StringIO
 from typing import Optional
 
@@ -209,7 +209,7 @@ def fetch_recent_hours(hours: int = 72) -> pd.DataFrame:
     Returns:
         Combined DataFrame with all station data.
     """
-    now = datetime.now()
+    now = datetime.now(timezone(timedelta(hours=7)))  # WIB (UTC+7)
     n_days = (hours // 24) + 2  # buffer
     dates = [now - timedelta(days=d) for d in range(n_days)]
 
@@ -238,7 +238,8 @@ def fetch_recent_hours(hours: int = 72) -> pd.DataFrame:
     # Filter to requested time range
     cutoff = now - timedelta(hours=hours)
     combined["datetime"] = pd.to_datetime(combined["datetime"])
-    combined = combined[combined["datetime"] >= cutoff].reset_index(drop=True)
+    cutoff_ts = pd.Timestamp(cutoff).tz_localize(None)
+    combined = combined[combined["datetime"] >= cutoff_ts].reset_index(drop=True)
 
     logger.info(
         "Rendahemisi: fetched %d rows across %d stations (last %dh)",

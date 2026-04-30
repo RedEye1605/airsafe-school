@@ -906,7 +906,7 @@ if not LOCAL_MODE and app is not None:
         logger.info("ETL finished: %s", manifest["status"])
 
     @app.function_name(name="etl_http")
-    @app.route(route="etl", methods=["POST"])
+    @app.route(route="etl", methods=["POST"], auth_level="anonymous")
     def etl_http(req: func.HttpRequest) -> func.HttpResponse:
         try:
             manifest = run_etl_pipeline()
@@ -932,7 +932,7 @@ if not LOCAL_MODE and app is not None:
         logger.info("Predict finished: %s", manifest["status"])
 
     @app.function_name(name="predict_http")
-    @app.route(route="predict", methods=["POST"])
+    @app.route(route="predict", methods=["POST"], auth_level="anonymous")
     def predict_http(req: func.HttpRequest) -> func.HttpResponse:
         try:
             manifest = _run_predict_pipeline()
@@ -946,7 +946,7 @@ if not LOCAL_MODE and app is not None:
             return _error_response({"error": str(exc), "type": type(exc).__name__})
 
     @app.function_name(name="recommend_http")
-    @app.route(route="recommend", methods=["GET"])
+    @app.route(route="recommend", methods=["GET"], auth_level="anonymous")
     def recommend_http(req: func.HttpRequest) -> func.HttpResponse:
         try:
             data_root = Path(DATA_DIR)

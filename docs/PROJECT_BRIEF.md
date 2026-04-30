@@ -17,8 +17,9 @@ Jakarta experiences hazardous air quality episodes where PM2.5 levels exceed saf
 AirSafe School bridges this gap by:
 1. Collecting hourly pollutant data from 5 Jakarta monitoring stations
 2. Predicting PM2.5 levels at 6h, 12h, and 24h horizons using LightGBM
-3. Interpolating predictions to 4,215 school locations using Ordinary Kriging
-4. Generating actionable recommendations in Bahasa Indonesia via LLM
+3. Interpolating predictions to 3,985 school locations using Ordinary Kriging
+4. Attributing per-school SHAP explanations via Kriging λ weights (multi-horizon)
+5. Generating actionable recommendations in Bahasa Indonesia via LLM
 
 ---
 
@@ -67,11 +68,14 @@ AirSafe School bridges this gap by:
 │  Step 3: Station Prediction       → LightGBM predict at 5 ISPU stations│
 │                                                                         │
 │  Step 4: Spatial Interpolation    → Ordinary Kriging (PyKrige)         │
-│          (kriging_interpolate)       5 stations → 4,215 schools        │
+│          (kriging_interpolate)       5 stations → 3,985 schools        │
 │          + Residual Correction     → LightGBM corrects Kriging bias    │
 │                                                                         │
 │  Step 5: Risk Classification      → BMKG hourly thresholds             │
 │          (classify_pm25_hourly)       BAIK/SEDANG/TIDAK SEHAT/BAHAYA   │
+│                                                                         │
+│  Step 6: SHAP Explainability     → Per-school top-5 factors            │
+│          (extract_kriging_weights)  Kriging λ-weighted across h6/h12/h24│
 │                                                                         │
 │  Output: predictions JSON → Azure Blob (predictions container)          │
 │  Schedule: Daily at 15:00 UTC                                          │
@@ -188,7 +192,7 @@ Collects hourly multi-pollutant data from Jakarta's 5 ISPU monitoring stations a
 ### 4.2 Predict Pipeline
 
 #### Purpose
-Loads trained LightGBM models, builds prediction features from the latest ETL data, predicts PM2.5 at 5 ISPU stations, then spatially interpolates to all 4,215 Jakarta schools using Ordinary Kriging with optional residual correction.
+Loads trained LightGBM models, builds prediction features from the latest ETL data, predicts PM2.5 at 5 ISPU stations, spatially interpolates to all 3,985 Jakarta schools using Ordinary Kriging with optional residual correction, and computes per-school SHAP explanations weighted by Kriging influence.
 
 #### Model Architecture
 
@@ -216,6 +220,7 @@ The `build_prediction_features()` function in `src/features/lag_features.py` pro
 | Temporal | hour_sin, hour_cos, month_sin, month_cos, is_weekend | Cyclical encoding |
 | Wind | wind_speed, wind_dir_sin, wind_dir_cos | Decomposed |
 | Station Stats | pm25_station_mean, pm25_station_std (from JSON lookup) | Precomputed |
+| SHAP | Per-school top-5 features, Kriging λ-weighted | Explainability |
 
 Configuration per horizon (`HORIZON_CONFIG`):
 - **h6**: Short lags (1-6h), rolling windows (3-6h)
@@ -253,6 +258,21 @@ Station Predictions (5 points)          School Predictions (4,215 points)
 - Auto-selects best variogram model via LOOCV (lowest cR statistic)
 - Clips output to max 1000 µg/m³
 
+**Kriging Weight Extraction:** `extract_kriging_weights()` re-solves the Kriging system (A · x = b) to extract actual λ weights per target point. PyKrige reorders stations internally, so coordinate-based matching is used to align weights back to station identities. Weights sum to ~1.0 (Ordinary Kriging constraint).
+
+**Per-School SHAP Attribution:**
+```
+For each school:
+  1. Extract Kriging λ weights from OK objects (one per horizon h6/h12/h24)
+  2. Match weights to station names via coordinate proximity
+  3. For each station × horizon: score = station_weight × |shap_value|
+  4. Deduplicate by feature (keep highest weighted score)
+  5. Return top-5 features as school-specific SHAP explanation
+
+Result: Each of 3,985 schools gets a unique, location-aware explanation
+        reflecting which stations and factors drive their PM2.5 prediction.
+```
+
 **Residual Correction:** Optional two-stage correction using `ResidualCorrector`
 - Trained on LOSOCV residuals from historical data
 - Adds `pm25_corrected = pm25_kriging + predicted_residual`
@@ -277,7 +297,14 @@ Uses BMKG hourly thresholds (from `src/data/transforms.py`):
   "timestamp_utc": "2026-04-28T12:05:00Z",
   "timestamp_wib": "2026-04-28T19:05:00+07:00",
   "station_predictions": [
-    {"station": "DKI1 Bundaran HI", "slug": "dki1-bundaran-hi", "horizon": 6, "pm25_predicted": 42.3}
+    {
+      "station": "DKI1 Bundaran HI", "slug": "dki1-bundaran-hi", "horizon": 6,
+      "pm25_predicted": 42.3,
+      "top_shap_factors": [
+        {"feature": "pm25", "direction": "+", "reason": "konsentrasi PM2.5 saat ini (meningkatkan prediksi)", "shap_value": 12.3},
+        {"feature": "pm25_lag_1", "direction": "+", "reason": "nilai PM2.5 sebelumnya (meningkatkan prediksi)", "shap_value": 5.1}
+      ]
+    }
   ],
   "n_schools": 4215,
   "school_predictions": [
@@ -290,7 +317,11 @@ Uses BMKG hourly thresholds (from `src/data/transforms.py`):
       "pm25_h24": 35.1,
       "risk_h6": "SEDANG",
       "risk_h12": "SEDANG",
-      "risk_h24": "SEDANG"
+      "risk_h24": "SEDANG",
+      "top_shap_factors": [
+        {"feature": "pm25", "direction": "+", "reason": "konsentrasi PM2.5 saat ini (meningkatkan prediksi)", "shap_value": 8.5},
+        {"feature": "pm25_lag_24", "direction": "-", "reason": "nilai PM2.5 sebelumnya (menurunkan prediksi)", "shap_value": -3.2}
+      ]
     }
   ]
 }
@@ -437,11 +468,12 @@ GitHub (main branch) → GitHub Actions → Azure Functions (flexconsumption)
                          │
                          ├── Checkout
                          ├── Setup Python 3.11
-                         ├── Install deps (requirements.txt)
+                         ├── Install uv
+                         ├── Install deps (uv pip install -r requirements.txt)
                          ├── Stage: function_app.py + host.json + requirements.txt
                          │         + src/ + models/ + prompts/ (symlinked)
                          ├── Zip artifact
-                         └── Deploy via Azure/functions-action
+                         └── Deploy via Azure/functions-action (remote-build: pip)
 ```
 
 **Trigger:** Push to `main` branch or manual workflow dispatch
@@ -488,12 +520,12 @@ airsafe-school/
 │   │   ├── transforms.py              # PM2.5 risk classification, data transforms
 │   │   └── school_registry.py          # School data helpers (placeholder)
 │   ├── features/                       # Feature engineering
-│   │   ├── lag_features.py             # Temporal lag + rolling features for ML
+│   │   ├── lag_features.py             # Temporal lag + rolling features + SHAP explainability
 │   │   ├── school_features.py          # Spatial context features orchestrator
 │   │   ├── elevation_features.py       # Elevation data via Open-Meteo
 │   │   └── osm_features.py             # OSM road/land-use/building features
 │   ├── spatial/                        # Spatial interpolation
-│   │   ├── kriging.py                  # Ordinary Kriging (PyKrige) + IDW fallback
+│   │   ├── kriging.py                  # Ordinary Kriging (PyKrige) + IDW fallback + λ weight extraction
 │   │   ├── hourly_kriging.py           # Per-hour Kriging pipeline
 │   │   ├── lag_kriging.py              # Temporal lag Kriging pipeline
 │   │   ├── residual_corrector.py       # LightGBM Kriging bias correction
@@ -603,6 +635,8 @@ airsafe-school/
 | Dual-write (local + Blob) | Ensures data availability even when Blob Storage is unavailable |
 | Symlinks for deployment | `src/`, `models/`, `prompts/` symlinked into `azure-functions/` to avoid duplication |
 | Kriging + Residual Correction | Two-stage approach improves accuracy over plain Kriging by correcting systematic spatial bias |
+| Kriging λ weights for SHAP | Extracts real OK weights (not IDW approximation) for per-school SHAP attribution; coordinate-based matching handles PyKrige's internal station reordering |
+| Multi-horizon SHAP (h6+h12+h24) | All 3 horizons contribute to school-level explanations, each with its own variogram model |
 | LightGBM over neural networks | Handles tabular data well, fast inference, feature importance for XAI |
 | BMKG hourly thresholds | Uses official Indonesian government classification system for consistency |
 | Timer + HTTP triggers | ETL/Predict run on schedule but can be manually triggered; Recommend is on-demand only |
@@ -641,13 +675,16 @@ airsafe-school/
 ┌──────────────┐    ┌──────────────┐
 │   Kriging    │    │   School     │
 │ Interpolation│◄───│  Locations   │
-│ (5 → 4,215)  │    │  (geocoded)  │
+│ (5 → 3,985)  │    │  (geocoded)  │
 └──────┬───────┘    └──────────────┘
+       │ School PM2.5 + risk classification
+       │ + Kriging λ weights per horizon
+       ▼
        │ School PM2.5 + risk classification
        ▼
 ┌──────────────┐    ┌──────────────┐
 │   Residual   │    │  Azure Blob  │
-│  Correction  │───►│(predictions) │
+│  Correction  │───►│(predictions) │    ← includes per-school SHAP factors
 └──────┬───────┘    └──────┬───────┘
        │                    │ predict_latest.json
        ▼                    ▼

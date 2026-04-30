@@ -2,7 +2,7 @@
 
 **End-to-end air quality prediction and recommendation system for schools in DKI Jakarta.**
 
-AirSafe School collects hourly PM2.5 data from Jakarta's 5 ISPU monitoring stations, enriches it with weather data, trains LightGBM models to predict PM2.5 at 6h/12h/24h horizons, spatially interpolates predictions to 4,215 school locations using Ordinary Kriging, and generates actionable Bahasa Indonesia recommendations via LLM — all deployed as Azure Functions.
+AirSafe School collects hourly PM2.5 data from Jakarta's 5 ISPU monitoring stations, enriches it with weather data, trains LightGBM models to predict PM2.5 at 6h/12h/24h horizons, spatially interpolates predictions to 3,985 school locations using Ordinary Kriging with Kriging-weighted SHAP explainability per school, and generates actionable Bahasa Indonesia recommendations via LLM — all deployed as Azure Functions.
 
 ---
 
@@ -11,7 +11,7 @@ AirSafe School collects hourly PM2.5 data from Jakarta's 5 ISPU monitoring stati
 Three pipelines run as Azure Functions:
 
 1. **ETL** (hourly) — Scrapes Rendahemisi ISPU data + Open-Meteo weather → merged dataset
-2. **Predict** (daily) — LightGBM station prediction → Kriging interpolation to 4,215 schools
+2. **Predict** (daily) — LightGBM station prediction → Kriging interpolation to 3,985 schools + per-school SHAP
 3. **Recommend** (on-demand) — OpenRouter LLM / template fallback → Bahasa Indonesia recommendations
 
 ```
@@ -26,8 +26,9 @@ Open-Meteo Weather ─────────┘                        │
                                     at 5 ISPU stations
                                                       │
                                                       ▼
-                                    Ordinary Kriging (5 stations → 4,215 schools)
+                                    Ordinary Kriging (5 stations → 3,985 schools)
                                     + Residual Correction (LightGBM)
+                                    + Per-School SHAP (Kriging λ-weighted, multi-horizon)
                                                       │
                                                       ▼
                                     Risk Classification (BMKG thresholds)
@@ -60,12 +61,12 @@ airsafe-school/
 │   │   ├── transforms.py           # PM2.5 risk classification, data transforms
 │   │   └── school_registry.py      # School data helpers
 │   ├── features/
-│   │   ├── lag_features.py         # Temporal lag + rolling features for LightGBM
+│   │   ├── lag_features.py         # Temporal lag + rolling features + SHAP explainability
 │   │   ├── school_features.py      # Spatial context features orchestrator
 │   │   ├── elevation_features.py   # Elevation data via Open-Meteo
 │   │   └── osm_features.py         # OSM road/land-use/building features
 │   ├── spatial/
-│   │   ├── kriging.py              # Ordinary Kriging (PyKrige) + IDW fallback
+│   │   ├── kriging.py              # Ordinary Kriging (PyKrige) + IDW fallback + λ weight extraction
 │   │   ├── hourly_kriging.py       # Per-hour Kriging pipeline
 │   │   ├── lag_kriging.py          # Temporal lag Kriging pipeline
 │   │   ├── residual_corrector.py   # LightGBM Kriging bias correction
@@ -181,6 +182,8 @@ Feature engineering includes: PM2.5 lags, rolling statistics (mean/std/min/max),
 
 Spatial interpolation uses Ordinary Kriging (PyKrige) with auto-selected variogram model (spherical/exponential/gaussian/linear) via LOOCV, with IDW fallback when <3 sensors available.
 
+**Per-School SHAP Explainability:** Each school's top-5 SHAP factors are computed using real Kriging λ weights extracted from the OK object (`extract_kriging_weights`). All 3 horizons (h6/h12/h24) contribute, weighted by each station's Kriging influence on that school. This gives each of the 3,985 schools a unique, location-specific explanation.
+
 ## Risk Classification
 
 PM2.5 predictions are classified using BMKG hourly thresholds:
@@ -202,7 +205,7 @@ PM2.5 predictions are classified using BMKG hourly thresholds:
 - **Open-Meteo** — Free historical/forecast weather (ERA5 reanalysis)
 - **Rendahemisi** — Jakarta ISPU hourly pollutant data (5 stations)
 - **PyKrige** — Ordinary Kriging spatial interpolation
-- **GitHub Actions** — CI/CD deployment to Azure Functions
+- **GitHub Actions** — CI/CD deployment to Azure Functions (uv for dep resolution)
 
 ## Team
 
